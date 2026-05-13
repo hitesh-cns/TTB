@@ -3537,7 +3537,7 @@ a.footer-contact-item:hover { color: var(--ivory); }
   padding: 60px 40px;
   background: var(--espresso);
   border-radius: 16px;
-  margin: 24px 40px 0;
+  margin: 24px 40px 8px;
   overflow: hidden;
 }
 .coll-hero__title {
@@ -3557,7 +3557,7 @@ a.footer-contact-item:hover { color: var(--ivory); }
   line-height: 1.7;
 }
 
-/* Sticky filter bar */
+/* Sticky filter bar — position:sticky creates a containing block for the absolute dropdown */
 .coll-filter-bar {
   position: sticky;
   top: var(--sticky-bar-height, 80px);
@@ -3566,8 +3566,8 @@ a.footer-contact-item:hover { color: var(--ivory); }
   backdrop-filter: blur(8px);
   border-top: 1px solid rgba(219,193,185,0.3);
   border-bottom: 1px solid rgba(219,193,185,0.3);
-  padding: 14px 0;
-  margin-top: 20px;
+  padding: 0 0 14px 0;
+  margin-top: 0;
   margin-bottom: 0;
 }
 .coll-filter-bar__inner {
@@ -3658,14 +3658,30 @@ a.footer-contact-item:hover { color: var(--ivory); }
 }
 .filter-chip:hover { background: var(--ivory-dk); }
 
-/* Filter panel — collapsible full-width, toggled by Filters button */
+/* Filter panel — absolute, floats over product grid, animated open/close */
 .collection-sidebar {
-  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
   background: var(--white);
-  border-bottom: 1px solid var(--ivory-dk);
-  margin-bottom: 28px;
+  border: 1px solid var(--ivory-dk);
+  border-top: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-8px);
+  transition: max-height 250ms ease-in-out, opacity 250ms ease-in-out, transform 250ms ease-in-out;
+  pointer-events: none;
 }
-.collection-sidebar.is-mobile-open { display: block; }
+.collection-sidebar.is-mobile-open {
+  max-height: 400px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
 .coll-filter-panel {
   position: relative;
   padding: 20px 0;
@@ -3746,11 +3762,13 @@ a.footer-contact-item:hover { color: var(--ivory); }
 .cpc-image-wrap {
   position: relative;
   display: block;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 4;
   border-radius: 12px;
   overflow: hidden;
   background: var(--ivory);
   margin-bottom: 12px;
+  isolation: isolate;
+  transform: translateZ(0);
 }
 .cpc-image-link {
   display: block;
@@ -3763,6 +3781,8 @@ a.footer-contact-item:hover { color: var(--ivory); }
   object-fit: cover;
   display: block;
   transition: transform 0.7s ease;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 .collection-product-card:hover .cpc-img { transform: scale(1.05); }
 

@@ -817,3 +817,65 @@
   });
 
 })();
+
+/* ================================================================
+   COLLECTION CARD — Swatch Image Switcher + Arrow Key Navigation
+   ================================================================
+   Clicking a colour swatch fades the card image to the swatch's
+   associated image (data-image). Left/right arrow keys navigate
+   swatches when the cursor is over the image container.
+   ================================================================ */
+(function () {
+  'use strict';
+
+  function switchImage(card, swatch) {
+    const img = card.querySelector('.cpc-img');
+    const newSrc = swatch.dataset.image;
+    if (!img || !newSrc) return;
+
+    img.style.transition = 'opacity 200ms ease';
+    img.style.opacity = '0';
+    setTimeout(() => {
+      img.src = newSrc;
+      img.style.opacity = '1';
+    }, 200);
+  }
+
+  // Swatch click — switch image + move selection ring
+  document.addEventListener('click', e => {
+    const swatch = e.target.closest('.cpc-color-swatch');
+    if (!swatch || !swatch.dataset.image) return;
+    const card = swatch.closest('.collection-product-card');
+    if (!card) return;
+    switchImage(card, swatch);
+  });
+
+  // Arrow key navigation through swatches while hovering image container
+  let hoveredCard = null;
+  document.addEventListener('mouseover', e => {
+    const wrap = e.target.closest('.cpc-image-wrap');
+    hoveredCard = wrap ? wrap.closest('.collection-product-card') : null;
+  });
+  document.addEventListener('mouseout', e => {
+    if (!e.relatedTarget || !e.relatedTarget.closest('.cpc-image-wrap')) {
+      hoveredCard = null;
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!hoveredCard) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+
+    const swatches = Array.from(hoveredCard.querySelectorAll('.cpc-color-swatch'));
+    if (swatches.length < 2) return;
+
+    const activeIdx = swatches.findIndex(s => s.classList.contains('is-selected'));
+    const nextIdx = e.key === 'ArrowRight'
+      ? (activeIdx + 1) % swatches.length
+      : (activeIdx - 1 + swatches.length) % swatches.length;
+
+    swatches[nextIdx].click();
+    e.preventDefault();
+  });
+
+})();
