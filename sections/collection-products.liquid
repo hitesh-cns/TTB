@@ -130,10 +130,10 @@
     {% if collection.products.size > 0 %}
       <div class="collection-grid" id="collection-grid" data-columns="{{ section.settings.grid_columns }}">
         {% for product in collection.products %}
-          <div class="collection-product-card" data-tags="{{ product.tags | join: ',' | escape }}">
+          <div class="collection-product-card" data-tags="{{ product.tags | join: ',' | escape }}" data-variants='[{% for variant in product.variants %}{"id":{{ variant.id }},"title":"{{ variant.title | escape }}","options":{{ variant.options | json }},"available":{{ variant.available }}}{% unless forloop.last %},{% endunless %}{% endfor %}]'>
 
-            <!-- Image area with badges and hover cart button -->
-            <div class="cpc-image-wrap">
+            <!-- Image area with badges, carousel, and add to cart -->
+            <div class="cpc-image-wrap" data-images='[{% for img in product.images limit: 6 %}"{{ img | img_url: "600x" }}"{% unless forloop.last %},{% endunless %}{% endfor %}]'>
               <a href="{{ product.url }}" class="cpc-image-link" tabindex="0">
                 {% if product.featured_image %}
                   <img
@@ -166,15 +166,52 @@
                 <div class="cpc-badge cpc-badge--label">Restock</div>
               {% endif %}
 
-              <!-- Add to cart — bottom right, visible on hover -->
+              <!-- Carousel arrows (multiple images only) -->
+              {% if product.images.size > 1 %}
+                <button class="cpc-arrow cpc-arrow--prev" aria-label="Previous image" tabindex="-1">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button class="cpc-arrow cpc-arrow--next" aria-label="Next image" tabindex="-1">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <div class="cpc-dots-container" aria-hidden="true"></div>
+              {% endif %}
+
+              <!-- Add to Cart — full-width pill at bottom, visible on hover -->
               <button
                 class="cpc-add-btn"
                 data-variant-id="{{ product.variants.first.id }}"
                 {% if product.variants.size > 1 %}data-has-variants="true"{% endif %}
                 aria-label="Add {{ product.title | escape }} to cart"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              </button>
+              >Add to Cart</button>
+
+              <!-- Size selector overlay — opens on Add to Cart click -->
+              <div class="cpc-size-selector">
+                <div class="cpc-size-selector__header">
+                  <span class="cpc-size-label">Select Size</span>
+                  <button class="cpc-size-close" aria-label="Close">✕</button>
+                </div>
+                <div class="cpc-size-options">
+                  {% assign size_option = nil %}
+                  {% for option in product.options_with_values %}
+                    {% if option.name == 'Size' or option.name == 'size' %}
+                      {% assign size_option = option %}
+                    {% endif %}
+                  {% endfor %}
+                  {% if size_option %}
+                    {% for value in size_option.values %}
+                      <button class="cpc-size-btn" data-size="{{ value | escape }}">{{ value }}</button>
+                    {% endfor %}
+                  {% else %}
+                    <button class="cpc-size-btn" data-size="NB">NB</button>
+                    <button class="cpc-size-btn" data-size="0-3M">0-3M</button>
+                    <button class="cpc-size-btn" data-size="3-6M">3-6M</button>
+                    <button class="cpc-size-btn" data-size="6-12M">6-12M</button>
+                    <button class="cpc-size-btn" data-size="12-18M">12-18M</button>
+                    <button class="cpc-size-btn" data-size="18-24M">18-24M</button>
+                  {% endif %}
+                </div>
+              </div>
 
             </div>
 
