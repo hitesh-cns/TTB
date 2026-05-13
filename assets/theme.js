@@ -815,15 +815,15 @@
 (function () {
   'use strict';
 
-  const backdrop    = document.getElementById('size-sheet-backdrop');
-  const sheet       = document.getElementById('size-sheet');
-  const sheetName   = document.getElementById('size-sheet-name');
-  const sheetColor  = document.getElementById('size-sheet-color');
-  const sheetGrid   = document.getElementById('size-sheet-grid');
-  const sheetConfirm = document.getElementById('size-sheet-confirm');
+  const backdrop        = document.getElementById('size-sheet-backdrop');
+  const sheet           = document.getElementById('size-sheet');
+  const sheetThumb      = document.getElementById('size-sheet-thumb');
+  const sheetName       = document.getElementById('size-sheet-name');
+  const sheetColorDot   = document.getElementById('size-sheet-color-dot');
+  const sheetColorLabel = document.getElementById('size-sheet-color-label');
+  const sheetGrid       = document.getElementById('size-sheet-grid');
 
-  let currentVariantId = null;
-  let currentAddBtn    = null;
+  let currentAddBtn = null;
 
   async function updateCartBadge() {
     try {
@@ -847,15 +847,11 @@
         body: JSON.stringify({ items: [{ id: parseInt(variantId, 10), quantity: 1 }] })
       });
       if (res.ok) {
-        // Fetch fresh cart data, render it, THEN open drawer
         const cartData = await fetch('/cart.js').then(r => r.json());
-        if (typeof window.renderCart === 'function') {
-          window.renderCart(cartData);
-        }
+        if (typeof window.renderCart === 'function') window.renderCart(cartData);
         await updateCartBadge();
         const cartDrawer  = document.getElementById('cart-drawer');
         const cartOverlay = document.getElementById('cart-overlay');
-        // Force reflow before open animation so content is painted first
         if (cartDrawer) void cartDrawer.offsetHeight;
         if (cartDrawer)  { cartDrawer.setAttribute('aria-hidden', 'false'); cartDrawer.classList.add('is-open'); }
         if (cartOverlay) cartOverlay.classList.add('is-visible');
@@ -872,26 +868,26 @@
     if (!sheet || !backdrop) return;
     sheet.classList.remove('is-open');
     backdrop.classList.remove('is-visible');
-    backdrop.setAttribute('aria-hidden', 'true');
-    sheet.setAttribute('aria-hidden', 'true');
-    setTimeout(() => {
-      currentVariantId = null;
-      currentAddBtn    = null;
-    }, 300);
   }
 
   function openSheet(card, btn) {
     if (!sheet || !backdrop) return;
 
-    // Populate header
+    currentAddBtn = btn;
+
+    // Populate product context synchronously before animation
     const title = (card.querySelector('.cpc-title a') || card.querySelector('.cpc-title'))?.textContent?.trim() || '';
     const activeSwatch = card.querySelector('.cpc-color-swatch.is-selected');
     const colorName = activeSwatch ? (activeSwatch.dataset.color || '') : '';
-    if (sheetName)  sheetName.textContent  = title;
-    if (sheetColor) sheetColor.textContent = colorName;
+    const activeImg = card.querySelector('.cpc-img');
 
-    currentAddBtn    = btn;
-    currentVariantId = btn.dataset.variantId || null;
+    if (sheetName)       sheetName.textContent        = title;
+    if (sheetColorLabel) sheetColorLabel.textContent   = colorName;
+    if (sheetThumb && activeImg) { sheetThumb.src = activeImg.src; sheetThumb.alt = title; }
+    if (sheetColorDot && activeSwatch) {
+      sheetColorDot.style.backgroundColor = activeSwatch.style.backgroundColor || colorName.toLowerCase().replace(/\s+/g, '');
+      sheetColorDot.style.borderColor = activeSwatch.style.borderColor || 'rgba(0,0,0,0.12)';
+    }
 
     // Extract sizes from variants data
     const sizeIdx = parseInt(card.dataset.sizeOptionIndex ?? '-1', 10);
@@ -913,14 +909,13 @@
       }
     });
 
-    // Fallback to default baby sizes
     if (!sizes.length) {
       ['NB', '0-3M', '3-6M', '6-12M', '12-18M', '18-24M'].forEach(s => {
-        sizes.push({ size: s, variantId: currentVariantId, available: true });
+        sizes.push({ size: s, variantId: btn.dataset.variantId, available: true });
       });
     }
 
-    // Build size pills
+    // Build size pills synchronously
     if (sheetGrid) {
       sheetGrid.innerHTML = '';
       sizes.forEach(({ size, variantId, available }) => {
@@ -930,41 +925,29 @@
         pill.dataset.size = size;
         if (!available) pill.disabled = true;
         pill.addEventListener('click', () => {
+          // Select instantly — no transition delay
           sheetGrid.querySelectorAll('.size-sheet__pill').forEach(p => p.classList.remove('is-selected'));
           pill.classList.add('is-selected');
-          currentVariantId = variantId;
-          if (sheetConfirm) {
-            sheetConfirm.disabled = false;
-            sheetConfirm.textContent = `Add to Cart — ${size}`;
-          }
+          // Capture refs before closeSheet clears them
+          const capturedVariantId = variantId;
+          const capturedBtn = currentAddBtn;
+          // Close immediately, fire add-to-cart non-blocking
+          closeSheet();
+          if (capturedVariantId && capturedBtn) confirmAddToCart(capturedVariantId, capturedBtn);
         });
         sheetGrid.appendChild(pill);
       });
     }
 
-    if (sheetConfirm) {
-      sheetConfirm.disabled = true;
-      sheetConfirm.textContent = 'Add to Cart';
-    }
-
-    backdrop.setAttribute('aria-hidden', 'false');
-    backdrop.classList.add('is-visible');
-    sheet.setAttribute('aria-hidden', 'false');
-    // Double rAF ensures CSS transition fires after display
-    requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add('is-open')));
+    // Start both transitions simultaneously in a single rAF
+    requestAnimationFrame(() => {
+      backdrop.classList.add('is-visible');
+      sheet.classList.add('is-open');
+    });
   }
 
-  sheetConfirm && sheetConfirm.addEventListener('click', async () => {
-    if (!currentVariantId || !currentAddBtn) return;
-    const btn = currentAddBtn;
-    closeSheet();
-    await confirmAddToCart(currentVariantId, btn);
-  });
-
-  // Backdrop closes sheet without adding to cart
   backdrop && backdrop.addEventListener('click', closeSheet);
 
-  // Delegate click for Add to Cart buttons
   document.addEventListener('click', async e => {
     const btn = e.target.closest('.cpc-add-btn');
     if (!btn) return;
@@ -978,7 +961,7 @@
     }
   });
 
-  // Also update swatch → image matching to normalize hyphens/underscores
+  // Swatch click — ring toggle + variant update + carousel image filter
   function normColor(str) {
     return str.toLowerCase().replace(/[-_\s]+/g, '');
   }

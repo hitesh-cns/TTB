@@ -286,16 +286,21 @@
 </div>
 
 <!-- = GLOBAL SIZE SHEET = -->
-<div id="size-sheet-backdrop" class="size-sheet-backdrop" aria-hidden="true"></div>
-<div id="size-sheet" class="size-sheet" aria-hidden="true" role="dialog" aria-label="Select size" aria-modal="true">
+<div id="size-sheet-backdrop" class="size-sheet-backdrop"></div>
+<div id="size-sheet" class="size-sheet" role="dialog" aria-label="Select size" aria-modal="true">
   <div class="size-sheet__handle" aria-hidden="true"></div>
-  <div class="size-sheet__header">
-    <p class="size-sheet__product-name" id="size-sheet-name"></p>
-    <p class="size-sheet__color" id="size-sheet-color"></p>
+  <div class="size-sheet__context">
+    <img class="size-sheet__thumb" id="size-sheet-thumb" src="" alt="" aria-hidden="true">
+    <div class="size-sheet__info">
+      <p class="size-sheet__product-name" id="size-sheet-name"></p>
+      <p class="size-sheet__color-row">
+        <span class="size-sheet__color-dot" id="size-sheet-color-dot"></span>
+        <span id="size-sheet-color-label"></span>
+      </p>
+    </div>
   </div>
   <p class="size-sheet__label">Select Size</p>
   <div class="size-sheet__grid" id="size-sheet-grid"></div>
-  <button class="size-sheet__confirm" id="size-sheet-confirm" disabled>Add to Cart</button>
 </div>
 
 <script>
