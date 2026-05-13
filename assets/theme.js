@@ -491,6 +491,10 @@
   visibleStyle.textContent = `.is-visible { opacity: 1 !important; transform: translateY(0) !important; }`;
   document.head.appendChild(visibleStyle);
 
+  /* ---- Expose cart functions globally for use by other scripts ---- */
+  window.fetchCart = fetchCart;
+  window.renderCart = renderCart;
+
   /* ---- Initial Cart Load ---- */
   fetchCart();
 
@@ -788,30 +792,6 @@
   }
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', initAll) : initAll();
 
-  // Swatch click — ring toggle + variant update + carousel image filter
-  document.addEventListener('click', e => {
-    const swatch = e.target.closest('.cpc-color-swatch');
-    if (!swatch) return;
-    const card = swatch.closest('.collection-product-card');
-    if (!card) return;
-
-    card.querySelectorAll('.cpc-color-swatch').forEach(s => {
-      s.classList.remove('is-selected'); s.setAttribute('aria-pressed', 'false');
-    });
-    swatch.classList.add('is-selected');
-    swatch.setAttribute('aria-pressed', 'true');
-
-    const addBtn = card.querySelector('.cpc-add-btn');
-    if (addBtn && swatch.dataset.variantId) addBtn.dataset.variantId = swatch.dataset.variantId;
-
-    const wrap = card.querySelector('.cpc-image-wrap');
-    if (!wrap || !wrap._carousel) return;
-    const colorName = (swatch.dataset.color || '').toLowerCase().trim();
-    const all = wrap._carousel.defaultImages;
-    const filtered = colorName ? all.filter(u => u.toLowerCase().includes(colorName)) : [];
-    wrap._carousel.setImages(filtered.length ? filtered : all);
-  });
-
   // Arrow key nav when hovering image container
   let hoveredCard = null;
   document.addEventListener('mouseover', e => {
@@ -830,10 +810,20 @@
 })();
 
 /* ================================================================
-   COLLECTION CARDS — Add to Cart + Size Selector
+   COLLECTION CARDS — Add to Cart + Size Sheet
    ================================================================ */
 (function () {
   'use strict';
+
+  const backdrop    = document.getElementById('size-sheet-backdrop');
+  const sheet       = document.getElementById('size-sheet');
+  const sheetName   = document.getElementById('size-sheet-name');
+  const sheetColor  = document.getElementById('size-sheet-color');
+  const sheetGrid   = document.getElementById('size-sheet-grid');
+  const sheetConfirm = document.getElementById('size-sheet-confirm');
+
+  let currentVariantId = null;
+  let currentAddBtn    = null;
 
   async function updateCartBadge() {
     try {
@@ -857,12 +847,19 @@
         body: JSON.stringify({ items: [{ id: parseInt(variantId, 10), quantity: 1 }] })
       });
       if (res.ok) {
-        if (typeof fetchCart === 'function') await fetchCart();
+        // Fetch fresh cart data, render it, THEN open drawer
+        const cartData = await fetch('/cart.js').then(r => r.json());
+        if (typeof window.renderCart === 'function') {
+          window.renderCart(cartData);
+        }
         await updateCartBadge();
-        const cartDrawer = document.getElementById('cart-drawer');
+        const cartDrawer  = document.getElementById('cart-drawer');
         const cartOverlay = document.getElementById('cart-overlay');
-        if (cartDrawer) { cartDrawer.setAttribute('aria-hidden', 'false'); cartDrawer.classList.add('is-open'); }
+        // Force reflow before open animation so content is painted first
+        if (cartDrawer) void cartDrawer.offsetHeight;
+        if (cartDrawer)  { cartDrawer.setAttribute('aria-hidden', 'false'); cartDrawer.classList.add('is-open'); }
         if (cartOverlay) cartOverlay.classList.add('is-visible');
+        document.body.style.overflow = 'hidden';
         btn.textContent = 'Added ✓';
         setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
       } else {
@@ -871,48 +868,139 @@
     } catch(e) { btn.innerHTML = original; btn.disabled = false; }
   }
 
+  function closeSheet() {
+    if (!sheet || !backdrop) return;
+    sheet.classList.remove('is-open');
+    backdrop.classList.remove('is-visible');
+    backdrop.setAttribute('aria-hidden', 'true');
+    sheet.setAttribute('aria-hidden', 'true');
+    setTimeout(() => {
+      currentVariantId = null;
+      currentAddBtn    = null;
+    }, 300);
+  }
+
+  function openSheet(card, btn) {
+    if (!sheet || !backdrop) return;
+
+    // Populate header
+    const title = (card.querySelector('.cpc-title a') || card.querySelector('.cpc-title'))?.textContent?.trim() || '';
+    const activeSwatch = card.querySelector('.cpc-color-swatch.is-selected');
+    const colorName = activeSwatch ? (activeSwatch.dataset.color || '') : '';
+    if (sheetName)  sheetName.textContent  = title;
+    if (sheetColor) sheetColor.textContent = colorName;
+
+    currentAddBtn    = btn;
+    currentVariantId = btn.dataset.variantId || null;
+
+    // Extract sizes from variants data
+    const sizeIdx = parseInt(card.dataset.sizeOptionIndex ?? '-1', 10);
+    let variants = [];
+    try { variants = JSON.parse(card.dataset.variants || '[]'); } catch(e) {}
+
+    const seenSizes = new Set();
+    const sizes = [];
+    variants.forEach(v => {
+      let size;
+      if (sizeIdx >= 0 && Array.isArray(v.options) && v.options[sizeIdx] !== undefined) {
+        size = v.options[sizeIdx];
+      } else if (v.title && v.title !== 'Default Title') {
+        size = v.title;
+      }
+      if (size && !seenSizes.has(size)) {
+        seenSizes.add(size);
+        sizes.push({ size, variantId: v.id, available: v.available !== false });
+      }
+    });
+
+    // Fallback to default baby sizes
+    if (!sizes.length) {
+      ['NB', '0-3M', '3-6M', '6-12M', '12-18M', '18-24M'].forEach(s => {
+        sizes.push({ size: s, variantId: currentVariantId, available: true });
+      });
+    }
+
+    // Build size pills
+    if (sheetGrid) {
+      sheetGrid.innerHTML = '';
+      sizes.forEach(({ size, variantId, available }) => {
+        const pill = document.createElement('button');
+        pill.className = 'size-sheet__pill' + (available ? '' : ' is-unavailable');
+        pill.textContent = size;
+        pill.dataset.size = size;
+        if (!available) pill.disabled = true;
+        pill.addEventListener('click', () => {
+          sheetGrid.querySelectorAll('.size-sheet__pill').forEach(p => p.classList.remove('is-selected'));
+          pill.classList.add('is-selected');
+          currentVariantId = variantId;
+          if (sheetConfirm) {
+            sheetConfirm.disabled = false;
+            sheetConfirm.textContent = `Add to Cart — ${size}`;
+          }
+        });
+        sheetGrid.appendChild(pill);
+      });
+    }
+
+    if (sheetConfirm) {
+      sheetConfirm.disabled = true;
+      sheetConfirm.textContent = 'Add to Cart';
+    }
+
+    backdrop.setAttribute('aria-hidden', 'false');
+    backdrop.classList.add('is-visible');
+    sheet.setAttribute('aria-hidden', 'false');
+    // Double rAF ensures CSS transition fires after display
+    requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add('is-open')));
+  }
+
+  sheetConfirm && sheetConfirm.addEventListener('click', async () => {
+    if (!currentVariantId || !currentAddBtn) return;
+    const btn = currentAddBtn;
+    closeSheet();
+    await confirmAddToCart(currentVariantId, btn);
+  });
+
+  // Backdrop closes sheet without adding to cart
+  backdrop && backdrop.addEventListener('click', closeSheet);
+
+  // Delegate click for Add to Cart buttons
   document.addEventListener('click', async e => {
-    // Size button confirm
-    const sizeBtn = e.target.closest('.cpc-size-btn');
-    if (sizeBtn) {
-      e.stopPropagation();
-      const card = sizeBtn.closest('.collection-product-card');
-      if (!card) return;
-      card.querySelector('.cpc-size-selector')?.classList.remove('is-open');
-      const selectedSize = sizeBtn.dataset.size;
-      let variantId = card.querySelector('.cpc-add-btn')?.dataset.variantId;
-      try {
-        const match = JSON.parse(card.dataset.variants || '[]')
-          .find(v => v.options && v.options.some(o => o.toLowerCase() === selectedSize.toLowerCase()));
-        if (match) variantId = match.id;
-      } catch(e) {}
-      const btn = card.querySelector('.cpc-add-btn');
-      if (variantId && btn) await confirmAddToCart(variantId, btn);
-      return;
-    }
-
-    // Size close button
-    if (e.target.closest('.cpc-size-close')) {
-      e.target.closest('.cpc-size-selector')?.classList.remove('is-open');
-      return;
-    }
-
-    // Add to Cart button — show size selector
     const btn = e.target.closest('.cpc-add-btn');
-    if (btn) {
-      e.stopPropagation();
-      const card = btn.closest('.collection-product-card');
-      const sel = card?.querySelector('.cpc-size-selector');
-      if (sel) { sel.classList.add('is-open'); return; }
-      // No size selector (single variant) — add directly
+    if (!btn) return;
+    e.stopPropagation();
+    const card = btn.closest('.collection-product-card');
+    if (!card) return;
+    if (btn.dataset.hasVariants) {
+      openSheet(card, btn);
+    } else {
       if (btn.dataset.variantId) await confirmAddToCart(btn.dataset.variantId, btn);
-      return;
     }
+  });
 
-    // Click outside — close all open size selectors
-    if (!e.target.closest('.cpc-size-selector') && !e.target.closest('.cpc-add-btn')) {
-      document.querySelectorAll('.cpc-size-selector.is-open').forEach(s => s.classList.remove('is-open'));
-    }
+  // Also update swatch → image matching to normalize hyphens/underscores
+  function normColor(str) {
+    return str.toLowerCase().replace(/[-_\s]+/g, '');
+  }
+
+  document.addEventListener('click', e => {
+    const swatch = e.target.closest('.cpc-color-swatch');
+    if (!swatch) return;
+    const card = swatch.closest('.collection-product-card');
+    if (!card) return;
+    card.querySelectorAll('.cpc-color-swatch').forEach(s => {
+      s.classList.remove('is-selected'); s.setAttribute('aria-pressed', 'false');
+    });
+    swatch.classList.add('is-selected');
+    swatch.setAttribute('aria-pressed', 'true');
+    const addBtn = card.querySelector('.cpc-add-btn');
+    if (addBtn && swatch.dataset.variantId) addBtn.dataset.variantId = swatch.dataset.variantId;
+    const wrap = card.querySelector('.cpc-image-wrap');
+    if (!wrap || !wrap._carousel) return;
+    const colorNorm = normColor(swatch.dataset.color || '');
+    const all = wrap._carousel.defaultImages;
+    const filtered = colorNorm ? all.filter(u => normColor(u).includes(colorNorm)) : [];
+    wrap._carousel.setImages(filtered.length ? filtered : all);
   });
 
 })();

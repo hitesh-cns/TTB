@@ -47,27 +47,29 @@
 </div>
 
 <!-- = STICKY FILTER BAR = -->
-<div class="coll-filter-bar" id="coll-filter-bar">
+<div class="coll-filter-bar filter-wrapper" id="coll-filter-bar">
   <div class="container">
     <div class="coll-filter-bar__inner">
 
       <div class="coll-filter-bar__left">
-        <button
-          class="coll-filter-toggle"
-          id="filter-toggle-mobile"
-          aria-expanded="false"
-          aria-controls="collection-sidebar"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
-          {{ section.settings.filters_label | default: "Filters" }}
-          <span class="filter-count-badge" id="filter-count-badge" aria-live="polite"></span>
-        </button>
+        <div class="coll-filter-bar__controls">
+          <button
+            class="coll-filter-toggle"
+            id="filter-toggle-mobile"
+            aria-expanded="false"
+            aria-controls="collection-sidebar"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+            {{ section.settings.filters_label | default: "Filters" }}
+            <span class="filter-count-badge" id="filter-count-badge" aria-live="polite"></span>
+          </button>
 
-        <span class="coll-filter-divider" aria-hidden="true"></span>
+          <span class="coll-filter-divider" aria-hidden="true"></span>
+
+          <button class="coll-clear-all" id="sidebar-clear-all">{{ section.settings.clear_label | default: "Clear All" }}</button>
+        </div>
 
         <div class="active-filter-chips" id="active-filter-chips" aria-label="Active filters" aria-live="polite"></div>
-
-        <button class="coll-clear-all" id="sidebar-clear-all">{{ section.settings.clear_label | default: "Clear All" }}</button>
       </div>
 
       <div class="coll-filter-bar__right">
@@ -130,7 +132,8 @@
     {% if collection.products.size > 0 %}
       <div class="collection-grid" id="collection-grid" data-columns="{{ section.settings.grid_columns }}">
         {% for product in collection.products %}
-          <div class="collection-product-card" data-tags="{{ product.tags | join: ',' | escape }}" data-variants='[{% for variant in product.variants %}{"id":{{ variant.id }},"title":"{{ variant.title | escape }}","options":{{ variant.options | json }},"available":{{ variant.available }}}{% unless forloop.last %},{% endunless %}{% endfor %}]'>
+          {% assign size_opt_idx = '' %}{% for _o in product.options %}{% if _o == 'Size' or _o == 'size' %}{% assign size_opt_idx = forloop.index0 %}{% endif %}{% endfor %}
+          <div class="collection-product-card" data-tags="{{ product.tags | join: ',' | escape }}" data-variants='[{% for variant in product.variants %}{"id":{{ variant.id }},"title":"{{ variant.title | escape }}","options":{{ variant.options | json }},"available":{{ variant.available }}}{% unless forloop.last %},{% endunless %}{% endfor %}]'{% if size_opt_idx != '' %} data-size-option-index="{{ size_opt_idx }}"{% endif %}>
 
             <!-- Image area with badges, carousel, and add to cart -->
             <div class="cpc-image-wrap" data-images='[{% for img in product.images limit: 6 %}"{{ img | img_url: "600x" }}"{% unless forloop.last %},{% endunless %}{% endfor %}]'>
@@ -185,33 +188,6 @@
                 aria-label="Add {{ product.title | escape }} to cart"
               >Add to Cart</button>
 
-              <!-- Size selector overlay — opens on Add to Cart click -->
-              <div class="cpc-size-selector">
-                <div class="cpc-size-selector__header">
-                  <span class="cpc-size-label">Select Size</span>
-                  <button class="cpc-size-close" aria-label="Close">✕</button>
-                </div>
-                <div class="cpc-size-options">
-                  {% assign size_option = nil %}
-                  {% for option in product.options_with_values %}
-                    {% if option.name == 'Size' or option.name == 'size' %}
-                      {% assign size_option = option %}
-                    {% endif %}
-                  {% endfor %}
-                  {% if size_option %}
-                    {% for value in size_option.values %}
-                      <button class="cpc-size-btn" data-size="{{ value | escape }}">{{ value }}</button>
-                    {% endfor %}
-                  {% else %}
-                    <button class="cpc-size-btn" data-size="NB">NB</button>
-                    <button class="cpc-size-btn" data-size="0-3M">0-3M</button>
-                    <button class="cpc-size-btn" data-size="3-6M">3-6M</button>
-                    <button class="cpc-size-btn" data-size="6-12M">6-12M</button>
-                    <button class="cpc-size-btn" data-size="12-18M">12-18M</button>
-                    <button class="cpc-size-btn" data-size="18-24M">18-24M</button>
-                  {% endif %}
-                </div>
-              </div>
 
             </div>
 
@@ -308,6 +284,43 @@
 
   {% endpaginate %}
 </div>
+
+<!-- = GLOBAL SIZE SHEET = -->
+<div id="size-sheet-backdrop" class="size-sheet-backdrop" aria-hidden="true"></div>
+<div id="size-sheet" class="size-sheet" aria-hidden="true" role="dialog" aria-label="Select size" aria-modal="true">
+  <div class="size-sheet__handle" aria-hidden="true"></div>
+  <div class="size-sheet__header">
+    <p class="size-sheet__product-name" id="size-sheet-name"></p>
+    <p class="size-sheet__color" id="size-sheet-color"></p>
+  </div>
+  <p class="size-sheet__label">Select Size</p>
+  <div class="size-sheet__grid" id="size-sheet-grid"></div>
+  <button class="size-sheet__confirm" id="size-sheet-confirm" disabled>Add to Cart</button>
+</div>
+
+<script>
+(function() {
+  var swatchUrl = {{ 'swatches.json' | asset_url | json }};
+  fetch(swatchUrl)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      window.swatchConfig = {};
+      (data.swatches || []).forEach(function(s) {
+        window.swatchConfig[s.name] = { hex: s.hex, border: s.border, label: s.label };
+      });
+      document.querySelectorAll('[data-color]').forEach(function(el) {
+        var name = (el.dataset.color || '').toLowerCase().replace(/\s+/g, '-');
+        var cfg = window.swatchConfig[name];
+        if (cfg) {
+          el.style.backgroundColor = cfg.hex;
+          el.style.borderColor = cfg.border;
+          el.title = cfg.label;
+        }
+      });
+    })
+    .catch(function() {});
+})();
+</script>
 
 {% schema %}
 {

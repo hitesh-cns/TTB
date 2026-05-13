@@ -1,0 +1,35 @@
+{
+  "_comment": "To add a new swatch color: add an entry with name, label, hex, border. Name must match the prefix in your product image filenames. e.g. name: 'mint' matches images: mint_1.jpg, mint_2.jpg",
+  "swatches": [
+    {
+      "name": "white",
+      "label": "White",
+      "hex": "#FFFFFF",
+      "border": "#E5E5E5"
+    },
+    {
+      "name": "baby-pink",
+      "label": "Baby Pink",
+      "hex": "#F4C2C2",
+      "border": "#E8A0A0"
+    },
+    {
+      "name": "sage",
+      "label": "Sage",
+      "hex": "#8E9B90",
+      "border": "#6E7D70"
+    },
+    {
+      "name": "oat",
+      "label": "Oat",
+      "hex": "#D1C6B8",
+      "border": "#B8A89A"
+    },
+    {
+      "name": "dusty-blue",
+      "label": "Dusty Blue",
+      "hex": "#A8B8C8",
+      "border": "#8899AA"
+    }
+  ]
+}

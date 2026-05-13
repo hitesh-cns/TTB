@@ -253,20 +253,37 @@
     window.location.href = url.toString();
   });
 
-  // -- Filter panel toggle — second click closes if already open --
-  function openSidebar() {
+  // -- Filter panel toggle — outside-click aware --
+  const filterBar = document.getElementById('coll-filter-bar');
+
+  function closeSidebar() {
+    sidebar && sidebar.classList.remove('is-mobile-open');
+    filterBar && filterBar.classList.remove('filter-open');
+    mobileToggle && mobileToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  mobileToggle && mobileToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
     if (sidebar && sidebar.classList.contains('is-mobile-open')) {
       closeSidebar();
       return;
     }
+    // Close any other open filter dropdowns
+    document.querySelectorAll('.filter-wrapper.filter-open').forEach(function(fw) {
+      if (fw !== filterBar) fw.classList.remove('filter-open');
+    });
     sidebar && sidebar.classList.add('is-mobile-open');
+    filterBar && filterBar.classList.add('filter-open');
     mobileToggle && mobileToggle.setAttribute('aria-expanded', 'true');
-  }
-  function closeSidebar() {
-    sidebar && sidebar.classList.remove('is-mobile-open');
-    mobileToggle && mobileToggle.setAttribute('aria-expanded', 'false');
-  }
-  mobileToggle && mobileToggle.addEventListener('click', openSidebar);
+    // Attach outside-click handler on next tick so this click doesn't immediately fire it
+    setTimeout(function() {
+      document.addEventListener('click', function outsideHandler(ev) {
+        if (!ev.target.closest('.filter-wrapper')) {
+          closeSidebar();
+        }
+      }, { once: true });
+    }, 0);
+  });
 
   // -- Sidebar X close button --
   const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
