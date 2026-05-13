@@ -740,142 +740,179 @@
 })();
 
 /* ================================================================
-   COLLECTION PAGE — Colour Swatch Selection + Add to Cart
-   ================================================================
-   When a customer clicks a colour swatch on a collection card:
-   1. The swatch gets a selected ring (is-selected class)
-   2. The Add to Cart button's data-variant-id updates to that
-      colour's first variant
-   3. Clicking Add to Cart adds the selected variant to the cart
-      and opens the drawer
+   COLLECTION CARDS — Carousel, Swatch Image Mapping, Arrow Keys
    ================================================================ */
 (function () {
   'use strict';
 
-  // -- Colour swatch selection --
+  function initCarousel(wrap) {
+    let images;
+    try { images = JSON.parse(wrap.dataset.images || '[]'); } catch(e) { return; }
+    if (!images.length) return;
+
+    let idx = 0;
+    let activeImages = images.slice();
+    const img     = wrap.querySelector('.cpc-img');
+    const dotsEl  = wrap.querySelector('.cpc-dots-container');
+    const prevBtn = wrap.querySelector('.cpc-arrow--prev');
+    const nextBtn = wrap.querySelector('.cpc-arrow--next');
+
+    function renderDots() {
+      if (!dotsEl) return;
+      dotsEl.innerHTML = activeImages.map((_, i) =>
+        `<span class="cpc-dot${i === idx ? ' is-active' : ''}"></span>`
+      ).join('');
+    }
+
+    function goTo(newIdx) {
+      if (!img || !activeImages.length) return;
+      idx = ((newIdx % activeImages.length) + activeImages.length) % activeImages.length;
+      img.style.opacity = '0';
+      setTimeout(() => { img.src = activeImages[idx]; img.style.opacity = '1'; }, 200);
+      renderDots();
+    }
+
+    prevBtn && prevBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goTo(idx - 1); });
+    nextBtn && nextBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); goTo(idx + 1); });
+
+    renderDots();
+    wrap._carousel = {
+      goTo,
+      setImages(arr) { activeImages = arr.slice(); idx = 0; renderDots(); if (img && arr[0]) goTo(0); },
+      get defaultImages() { return images.slice(); }
+    };
+  }
+
+  function initAll() {
+    document.querySelectorAll('.cpc-image-wrap[data-images]').forEach(initCarousel);
+  }
+  document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', initAll) : initAll();
+
+  // Swatch click — ring toggle + variant update + carousel image filter
   document.addEventListener('click', e => {
     const swatch = e.target.closest('.cpc-color-swatch');
     if (!swatch) return;
-
     const card = swatch.closest('.collection-product-card');
     if (!card) return;
 
-    // Deselect all swatches in this card
     card.querySelectorAll('.cpc-color-swatch').forEach(s => {
-      s.classList.remove('is-selected');
-      s.setAttribute('aria-pressed', 'false');
+      s.classList.remove('is-selected'); s.setAttribute('aria-pressed', 'false');
     });
-
-    // Select clicked swatch
     swatch.classList.add('is-selected');
     swatch.setAttribute('aria-pressed', 'true');
 
-    // Update the Add to Cart button to use this swatch's variant
     const addBtn = card.querySelector('.cpc-add-btn');
-    if (addBtn && swatch.dataset.variantId) {
-      addBtn.dataset.variantId = swatch.dataset.variantId;
-    }
+    if (addBtn && swatch.dataset.variantId) addBtn.dataset.variantId = swatch.dataset.variantId;
+
+    const wrap = card.querySelector('.cpc-image-wrap');
+    if (!wrap || !wrap._carousel) return;
+    const colorName = (swatch.dataset.color || '').toLowerCase().trim();
+    const all = wrap._carousel.defaultImages;
+    const filtered = colorName ? all.filter(u => u.toLowerCase().includes(colorName)) : [];
+    wrap._carousel.setImages(filtered.length ? filtered : all);
   });
 
-  // -- Add to Cart button on collection cards --
-  document.addEventListener('click', async e => {
-    const btn = e.target.closest('.cpc-add-btn');
-    if (!btn) return;
+  // Arrow key nav when hovering image container
+  let hoveredCard = null;
+  document.addEventListener('mouseover', e => {
+    const w = e.target.closest('.cpc-image-wrap');
+    hoveredCard = w ? w.closest('.collection-product-card') : null;
+  });
+  document.addEventListener('keydown', e => {
+    if (!hoveredCard || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+    const swatches = Array.from(hoveredCard.querySelectorAll('.cpc-color-swatch'));
+    if (swatches.length < 2) return;
+    const ai = swatches.findIndex(s => s.classList.contains('is-selected'));
+    swatches[e.key === 'ArrowRight' ? (ai + 1) % swatches.length : (ai - 1 + swatches.length) % swatches.length].click();
+    e.preventDefault();
+  });
 
-    const variantId = btn.dataset.variantId;
-    if (!variantId) return;
+})();
 
+/* ================================================================
+   COLLECTION CARDS — Add to Cart + Size Selector
+   ================================================================ */
+(function () {
+  'use strict';
+
+  async function updateCartBadge() {
+    try {
+      const cart = await fetch('/cart.js').then(r => r.json());
+      const count = cart.item_count || 0;
+      document.querySelectorAll('[data-cart-count]').forEach(el => {
+        el.textContent = count > 0 ? count : '';
+        el.style.display = count > 0 ? 'flex' : 'none';
+      });
+    } catch(e) {}
+  }
+
+  async function confirmAddToCart(variantId, btn) {
     const original = btn.innerHTML;
     btn.disabled = true;
     btn.textContent = 'Adding…';
-
     try {
       const res = await fetch('/cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: [{ id: parseInt(variantId, 10), quantity: 1 }] })
       });
-
       if (res.ok) {
-        btn.textContent = 'Added ✓';
-        // Refresh cart drawer
         if (typeof fetchCart === 'function') await fetchCart();
-        // Open the cart drawer
+        await updateCartBadge();
         const cartDrawer = document.getElementById('cart-drawer');
         const cartOverlay = document.getElementById('cart-overlay');
         if (cartDrawer) { cartDrawer.setAttribute('aria-hidden', 'false'); cartDrawer.classList.add('is-open'); }
         if (cartOverlay) cartOverlay.classList.add('is-visible');
+        btn.textContent = 'Added ✓';
         setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
       } else {
-        btn.innerHTML = original;
-        btn.disabled = false;
+        btn.innerHTML = original; btn.disabled = false;
       }
-    } catch {
-      btn.innerHTML = original;
-      btn.disabled = false;
-    }
-  });
-
-})();
-
-/* ================================================================
-   COLLECTION CARD — Swatch Image Switcher + Arrow Key Navigation
-   ================================================================
-   Clicking a colour swatch fades the card image to the swatch's
-   associated image (data-image). Left/right arrow keys navigate
-   swatches when the cursor is over the image container.
-   ================================================================ */
-(function () {
-  'use strict';
-
-  function switchImage(card, swatch) {
-    const img = card.querySelector('.cpc-img');
-    const newSrc = swatch.dataset.image;
-    if (!img || !newSrc) return;
-
-    img.style.transition = 'opacity 200ms ease';
-    img.style.opacity = '0';
-    setTimeout(() => {
-      img.src = newSrc;
-      img.style.opacity = '1';
-    }, 200);
+    } catch(e) { btn.innerHTML = original; btn.disabled = false; }
   }
 
-  // Swatch click — switch image + move selection ring
-  document.addEventListener('click', e => {
-    const swatch = e.target.closest('.cpc-color-swatch');
-    if (!swatch || !swatch.dataset.image) return;
-    const card = swatch.closest('.collection-product-card');
-    if (!card) return;
-    switchImage(card, swatch);
-  });
-
-  // Arrow key navigation through swatches while hovering image container
-  let hoveredCard = null;
-  document.addEventListener('mouseover', e => {
-    const wrap = e.target.closest('.cpc-image-wrap');
-    hoveredCard = wrap ? wrap.closest('.collection-product-card') : null;
-  });
-  document.addEventListener('mouseout', e => {
-    if (!e.relatedTarget || !e.relatedTarget.closest('.cpc-image-wrap')) {
-      hoveredCard = null;
+  document.addEventListener('click', async e => {
+    // Size button confirm
+    const sizeBtn = e.target.closest('.cpc-size-btn');
+    if (sizeBtn) {
+      e.stopPropagation();
+      const card = sizeBtn.closest('.collection-product-card');
+      if (!card) return;
+      card.querySelector('.cpc-size-selector')?.classList.remove('is-open');
+      const selectedSize = sizeBtn.dataset.size;
+      let variantId = card.querySelector('.cpc-add-btn')?.dataset.variantId;
+      try {
+        const match = JSON.parse(card.dataset.variants || '[]')
+          .find(v => v.options && v.options.some(o => o.toLowerCase() === selectedSize.toLowerCase()));
+        if (match) variantId = match.id;
+      } catch(e) {}
+      const btn = card.querySelector('.cpc-add-btn');
+      if (variantId && btn) await confirmAddToCart(variantId, btn);
+      return;
     }
-  });
 
-  document.addEventListener('keydown', e => {
-    if (!hoveredCard) return;
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    // Size close button
+    if (e.target.closest('.cpc-size-close')) {
+      e.target.closest('.cpc-size-selector')?.classList.remove('is-open');
+      return;
+    }
 
-    const swatches = Array.from(hoveredCard.querySelectorAll('.cpc-color-swatch'));
-    if (swatches.length < 2) return;
+    // Add to Cart button — show size selector
+    const btn = e.target.closest('.cpc-add-btn');
+    if (btn) {
+      e.stopPropagation();
+      const card = btn.closest('.collection-product-card');
+      const sel = card?.querySelector('.cpc-size-selector');
+      if (sel) { sel.classList.add('is-open'); return; }
+      // No size selector (single variant) — add directly
+      if (btn.dataset.variantId) await confirmAddToCart(btn.dataset.variantId, btn);
+      return;
+    }
 
-    const activeIdx = swatches.findIndex(s => s.classList.contains('is-selected'));
-    const nextIdx = e.key === 'ArrowRight'
-      ? (activeIdx + 1) % swatches.length
-      : (activeIdx - 1 + swatches.length) % swatches.length;
-
-    swatches[nextIdx].click();
-    e.preventDefault();
+    // Click outside — close all open size selectors
+    if (!e.target.closest('.cpc-size-selector') && !e.target.closest('.cpc-add-btn')) {
+      document.querySelectorAll('.cpc-size-selector.is-open').forEach(s => s.classList.remove('is-open'));
+    }
   });
 
 })();
