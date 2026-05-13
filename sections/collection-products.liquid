@@ -317,8 +317,29 @@
           el.title = cfg.label;
         }
       });
+      initCardImages();
     })
-    .catch(function() {});
+    .catch(function() { initCardImages(); });
+
+  function normColor(str) {
+    return str.toLowerCase().replace(/[-_\s]+/g, '');
+  }
+
+  function initCardImages() {
+    document.querySelectorAll('.collection-product-card').forEach(function(card) {
+      var wrap = card.querySelector('.cpc-image-wrap');
+      if (!wrap || !wrap._carousel) return;
+      var activeSwatch = card.querySelector('.cpc-color-swatch.is-selected');
+      if (!activeSwatch) return;
+      var colorNorm = normColor(activeSwatch.dataset.color || '');
+      if (!colorNorm) return;
+      var all = wrap._carousel.defaultImages;
+      var filtered = all.filter(function(u) { return normColor(u).includes(colorNorm); });
+      if (filtered.length) {
+        wrap._carousel.setImages(filtered);
+      }
+    });
+  }
 })();
 </script>
 
