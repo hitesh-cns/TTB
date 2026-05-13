@@ -1,0 +1,23 @@
+{%- if section.settings.custom_liquid != blank -%}
+  {{ section.settings.custom_liquid }}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Custom liquid",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "Custom liquid",
+      "info": "Add your own Liquid code to create advanced customizations."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom liquid"
+    }
+  ]
+}
+{% endschema %}

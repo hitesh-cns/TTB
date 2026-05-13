@@ -1,0 +1,126 @@
+<div class="be-page">
+
+  <div class="be-page__hero">
+    <div class="container">
+      <p class="section-eyebrow">{{ section.settings.eyebrow | default: 'Shop with Confidence' }}</p>
+      <h1 class="be-page__title">{{ section.settings.heading | default: 'Return & Exchange Policy' }}</h1>
+      <p class="be-page__sub">{{ section.settings.subheading | default: 'Last updated: January 2025' }}</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="policy-layout">
+
+      <!-- Quick summary cards -->
+      <div class="policy-summary">
+        <div class="policy-summary-card">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <p class="policy-summary-card__num">15 Days</p>
+          <p class="policy-summary-card__label">{{ section.settings.card1_label | default: "Return Window" }}</p>
+        </div>
+        <div class="policy-summary-card">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <p class="policy-summary-card__num">{{ section.settings.card1_num | default: "Free" }}</p>
+          <p class="policy-summary-card__label">Return Pickup</p>
+        </div>
+        <div class="policy-summary-card">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <p class="policy-summary-card__num">5–7 Days</p>
+          <p class="policy-summary-card__label">Refund Time</p>
+        </div>
+        <div class="policy-summary-card">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 14 15.82l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <p class="policy-summary-card__num">24h</p>
+          <p class="policy-summary-card__label">Response Time</p>
+        </div>
+      </div>
+
+      <!-- Full policy content -->
+      <div class="policy-content">
+
+        {% if section.settings.custom_content != blank %}
+          <div class="rte">{{ section.settings.custom_content }}</div>
+        {% else %}
+          <div class="rte">
+
+            <h2>Return Eligibility</h2>
+            <p>We want you to love every Elara purchase. If you're not completely satisfied, we'll gladly accept returns within <strong>15 days of delivery</strong>.</p>
+            <p>To be eligible for a return, items must be:</p>
+            <ul>
+              <li>Unworn and unwashed</li>
+              <li>In original condition with all tags attached</li>
+              <li>In their original packaging</li>
+              <li>Accompanied by the original invoice or order confirmation</li>
+            </ul>
+
+            <h2>Non-Returnable Items</h2>
+            <p>The following cannot be returned:</p>
+            <ul>
+              <li>Items marked <strong>Final Sale</strong></li>
+              <li>Items that have been washed, worn or altered</li>
+              <li>Gift cards</li>
+              <li>Items returned after 15 days of delivery</li>
+            </ul>
+
+            <h2>How to Initiate a Return</h2>
+            <ol>
+              <li>Email us at <a href="mailto:returns@yourstore.com">returns@yourstore.com</a> with your order number and the items you wish to return</li>
+              <li>Our team will respond within 24 hours with a return authorisation</li>
+              <li>We'll arrange a free pickup from your address (most major cities)</li>
+              <li>Once received and inspected, your refund will be processed</li>
+            </ol>
+
+            <h2>Exchanges</h2>
+            <p>We're happy to exchange for a different size or colour, subject to availability. Follow the same process as a return and specify what you'd like instead.</p>
+
+            <h2>Refunds</h2>
+            <p>Once your return is received and approved:</p>
+            <ul>
+              <li><strong>Original payment method:</strong> Refund processed within 5–7 business days</li>
+              <li><strong>Store credit:</strong> Issued immediately upon approval, valid for 12 months</li>
+              <li>Original shipping charges are non-refundable unless the return is due to our error</li>
+            </ul>
+
+            <h2>Defective or Wrong Items</h2>
+            <p>If you received a defective item or the wrong product, please email us within <strong>48 hours of delivery</strong> with photos. We'll replace or refund immediately at no cost to you.</p>
+
+            <h2>Contact Us</h2>
+            <p>For any questions about your return: <a href="mailto:returns@yourstore.com">returns@yourstore.com</a> or <a href="/pages/contact">use our contact form</a>.</p>
+
+          </div>
+        {% endif %}
+
+      </div>
+
+    </div>
+
+    <!-- Help CTA -->
+    <div class="faq-cta">
+      <p>Need help with a return?</p>
+      <a href="/pages/contact" class="btn btn--primary">Contact Us</a>
+      <a href="{{ section.settings.faq_url | default: '/pages/faq' }}" class="btn btn--ghost">{{ section.settings.faq_cta | default: "View FAQ" }}</a>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Returns Policy",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Shop with Confidence" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Return & Exchange Policy" },
+    { "type": "text", "id": "subheading", "label": "Last Updated Text", "default": "Last updated: January 2025" },
+    { "type": "richtext", "id": "custom_content",  "label": "Custom Policy Content", "info": "Leave blank to use default policy text above." },
+    { "type": "header",   "content": "Summary Cards" },
+    { "type": "text",     "id": "card1_num",   "label": "Card 1 Number/Value",  "default": "Free" },
+    { "type": "text",     "id": "card1_label", "label": "Card 1 Label",         "default": "Return Window" },
+    { "type": "text",     "id": "card2_val",   "label": "Card 2 Label",         "default": "Return Pickup" },
+    { "type": "text",     "id": "card3_val",   "label": "Card 3 Label",         "default": "Refund Time" },
+    { "type": "text",     "id": "card4_val",   "label": "Card 4 Label",         "default": "Response Time" },
+    { "type": "header",   "content": "CTA" },
+    { "type": "text",     "id": "faq_cta",     "label": "FAQ Button Text",      "default": "View FAQ" },
+    { "type": "url",      "id": "faq_url",     "label": "FAQ Button URL" }
+  ]
+}
+{% endschema %}

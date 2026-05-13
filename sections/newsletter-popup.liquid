@@ -1,0 +1,216 @@
+<div class="nl-popup" id="nl-popup" aria-modal="true" role="dialog" aria-label="Newsletter signup" style="display:none;">
+  <div class="nl-popup__overlay" id="nl-overlay"></div>
+  <div class="nl-popup__card">
+
+    <button class="nl-popup__close" id="nl-close" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <!-- Decorative image half -->
+    <div class="nl-popup__image">
+      {% if section.settings.image != blank %}
+        <img src="{{ section.settings.image | image_url: width: 600 }}" alt="Newsletter" loading="lazy">
+      {% else %}
+        <div class="nl-popup__image-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(249,243,238,0.5)" stroke-width="0.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <p>{{ shop.name }}</p>
+        </div>
+      {% endif %}
+      {% if section.settings.offer_text != blank %}
+        <div class="nl-popup__offer-badge">{{ section.settings.offer_text }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Form half -->
+    <div class="nl-popup__body">
+      <p class="section-eyebrow">{{ section.settings.eyebrow | default: 'Join the Family' }}</p>
+      <h2 class="nl-popup__title">{{ section.settings.heading | default: 'Little Ones, Big Love' }}</h2>
+      <p class="nl-popup__sub">{{ section.settings.subtext | default: 'Subscribe for new arrivals, styling tips and exclusive member offers.' }}</p>
+
+      {% if section.settings.show_offer %}
+        <div class="nl-popup__incentive">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          {{ section.settings.incentive_text | default: 'Get 10% off your first order' }}
+        </div>
+      {% endif %}
+
+      {% form 'customer', id: 'nl-form', class: 'nl-popup__form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        {% if section.settings.show_offer and section.settings.offer_code != blank %}
+          <input type="hidden" name="contact[note]" value="Discount code: {{ section.settings.offer_code }}">
+        {% endif %}
+
+        <div class="nl-popup__field-wrap">
+          <input type="email" name="contact[email]" class="nl-popup__input" id="nl-email"
+                 placeholder="your@email.com" required autocomplete="email">
+        </div>
+
+        {% if form.posted_successfully? %}
+          <div class="nl-popup__success">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <div>
+              <p><strong>{{ section.settings.success_heading | default: "You're in!" }}</strong></p>
+              {% if section.settings.show_offer and section.settings.offer_code != blank %}
+                <p>Use <strong>{{ section.settings.offer_code }}</strong> for {{ section.settings.incentive_text }}.</p>
+              {% else %}
+                <p>{{ section.settings.success_sub | default: "Welcome to the family." }}</p>
+              {% endif %}
+            </div>
+          </div>
+        {% else %}
+          <button type="submit" class="btn btn--primary btn--full nl-popup__submit">
+            {{ section.settings.button_text | default: 'Subscribe & Save' }}
+          </button>
+        {% endif %}
+      {% endform %}
+
+      <button type="button" class="nl-popup__skip" id="nl-skip">
+        No thanks, I'll pay full price
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY  = 'be_nl_dismissed';
+  const REDISPLAY_DAYS = {{ section.settings.redisplay_days | default: 30 }};
+  const DELAY_SEC    = {{ section.settings.delay_seconds | default: 5 }};
+  const popup  = document.getElementById('nl-popup');
+  const overlay = document.getElementById('nl-overlay');
+  const closeBtn = document.getElementById('nl-close');
+  const skipBtn  = document.getElementById('nl-skip');
+
+  function isDismissed() {
+    try {
+      const val = localStorage.getItem(STORAGE_KEY);
+      if (!val) return false;
+      const date = new Date(parseInt(val, 10));
+      const diff = (Date.now() - date) / (1000 * 60 * 60 * 24);
+      return diff < REDISPLAY_DAYS;
+    } catch { return false; }
+  }
+
+  function dismiss() {
+    try { localStorage.setItem(STORAGE_KEY, Date.now().toString()); } catch {}
+    popup.classList.remove('is-open');
+    setTimeout(() => { popup.style.display = 'none'; }, 400);
+    document.body.style.overflow = '';
+  }
+
+  function open() {
+    popup.style.display = 'flex';
+    requestAnimationFrame(() => popup.classList.add('is-open'));
+    document.body.style.overflow = 'hidden';
+    document.getElementById('nl-email') && document.getElementById('nl-email').focus({ preventScroll: true });
+  }
+
+  // Don't show on account pages or checkout
+  const skip = window.location.pathname.startsWith('/account') ||
+               window.location.pathname.startsWith('/checkout') ||
+               window.location.pathname.startsWith('/cart');
+
+  if (!isDismissed() && !skip) {
+    setTimeout(open, DELAY_SEC * 1000);
+  }
+
+  closeBtn && closeBtn.addEventListener('click', dismiss);
+  skipBtn  && skipBtn.addEventListener('click', dismiss);
+  overlay  && overlay.addEventListener('click', dismiss);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') dismiss(); });
+
+  // If form was posted successfully, auto-dismiss after 4s
+  if (document.querySelector('.nl-popup__success')) {
+    setTimeout(dismiss, 4000);
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Newsletter popup",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Side Image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Join the Family"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Little Ones, Big Love"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Subscribe for new arrivals, styling tips and exclusive member offers."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_offer",
+      "label": "Show Discount Incentive",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "incentive_text",
+      "label": "Incentive Text",
+      "default": "Get 10% off your first order",
+      "info": "Shown below the subtext and after signup"
+    },
+    {
+      "type": "text",
+      "id": "offer_code",
+      "label": "Discount Code",
+      "default": "WELCOME10",
+      "info": "Shown to user after signup"
+    },
+    {
+      "type": "text",
+      "id": "offer_text",
+      "label": "Badge on Image",
+      "default": "10% OFF",
+      "info": "Badge overlaid on the image panel"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "range",
+      "id": "delay_seconds",
+      "label": "Show after (seconds)",
+      "min": 2,
+      "max": 30,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "redisplay_days",
+      "label": "Re-show after dismissal (days)",
+      "min": 1,
+      "max": 90,
+      "step": 1,
+      "default": 30
+    }
+  ]
+}
+{% endschema %}

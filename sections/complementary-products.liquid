@@ -1,0 +1,54 @@
+{%- if recommendations.performed and recommendations.products_count > 0 -%}
+<section class="complementary-products" data-section-id="{{ section.id }}" data-product-id="{{ product.id }}">
+  <div class="complementary-products__inner">
+    {%- if section.settings.heading != blank -%}
+      <p class="complementary-products__eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2 class="complementary-products__title">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    <div class="complementary-products__grid">
+      {%- for product in recommendations.products limit: section.settings.products_count -%}
+        {%- render 'product-card', product: product -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+<script>
+  (function() {
+    const section = document.querySelector('[data-section-id="{{ section.id }}"]');
+    if (!section) return;
+    const productId = section.dataset.productId;
+    const limit = {{ section.settings.products_count }};
+    const url = `${window.Shopify.routes.root}recommendations/products.json?product_id=${productId}&limit=${limit}&intent=complementary`;
+
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.products || data.products.length === 0) { section.remove(); return; }
+      })
+      .catch(() => {});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Complementary products",
+  "limit": 1,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "Goes well with" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Pair it with" },
+    { "type": "range", "id": "products_count", "label": "Number of products", "min": 2, "max": 8, "step": 1, "default": 4 }
+  ],
+  "presets": [
+    { "name": "Complementary products" }
+  ]
+}
+{% endschema %}
+
+<style>
+.complementary-products { padding: 40px 0; border-top: 1px solid var(--color-border, #e8ddd4); }
+.complementary-products__eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .75rem; margin-bottom: 4px; color: #888; }
+.complementary-products__title { font-family: var(--font-display); font-size: clamp(1.25rem,3vw,2rem); margin-bottom: 24px; }
+.complementary-products__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 20px; }
+</style>

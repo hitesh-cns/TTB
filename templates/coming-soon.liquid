@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TTB — Coming Soon</title>
+  <meta name="description" content="Something extraordinary is almost here. Join the list for early access and exclusive offers." />
+
+  <!-- Shopify Theme Asset Placeholders -->
+
+  <!-- {{ 'coming-soon.css' | asset_url | stylesheet_tag }} -->
+
+  <style>
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #0b0b0b;
+      --bone:     #f0ebe3;
+      --cream:    #e8e1d5;
+      --accent:   #c8a96e;
+      --smoke:    #9e9488;
+      --grain-opacity: 0.045;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--ink);
+      color: var(--bone);
+      font-family: 'Barlow Condensed', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ─── GRAIN OVERLAY ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      opacity: var(--grain-opacity);
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      animation: grain 0.8s steps(1) infinite;
+    }
+    @keyframes grain {
+      0%,100%{background-position:0 0}
+      10%{background-position:-5% -10%}
+      20%{background-position:-15% 5%}
+      30%{background-position:7% -25%}
+      40%{background-position:-5% 25%}
+      50%{background-position:-15% 10%}
+      60%{background-position:15% 0%}
+      70%{background-position:0 15%}
+      80%{background-position:3% 35%}
+      90%{background-position:-10% 10%}
+    }
+
+    /* ─── LAYOUT ─── */
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      position: relative;
+    }
+
+    /* ─── BACKGROUND TEXTURE ─── */
+    .bg-lines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bg-lines::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 60vw;
+      height: 120vh;
+      background: radial-gradient(ellipse at center, rgba(200,169,110,0.06) 0%, transparent 65%);
+    }
+    .bg-lines::after {
+      content: '';
+      position: absolute;
+      bottom: -10%;
+      left: -5%;
+      width: 45vw;
+      height: 80vh;
+      background: radial-gradient(ellipse at center, rgba(240,235,227,0.04) 0%, transparent 60%);
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 2.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(240,235,227,0.08);
+      animation: fadeDown 0.9s ease both;
+    }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--bone);
+      text-transform: uppercase;
+    }
+    .logo span { color: var(--accent); }
+    .header-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      font-weight: 300;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    main {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 4rem 3rem 3rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      gap: 0;
+    }
+
+    /* ─── EYEBROW ─── */
+    .eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 400;
+      margin-bottom: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      animation: fadeUp 0.9s 0.2s ease both;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 2.5rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    /* ─── HERO TEXT ─── */
+    .hero-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(4.5rem, 12vw, 10rem);
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      color: var(--bone);
+      margin-bottom: 0.2em;
+      animation: fadeUp 1s 0.3s ease both;
+    }
+    .hero-headline em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      font-weight: 200;
+      letter-spacing: 0.12em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      margin-top: 1.5rem;
+      margin-bottom: 3.5rem;
+      max-width: 38ch;
+      line-height: 1.7;
+      animation: fadeUp 1s 0.45s ease both;
+    }
+
+    /* ─── COUNTDOWN ─── */
+    .countdown-wrap {
+      display: flex;
+      gap: 2.5rem;
+      margin-bottom: 4rem;
+      animation: fadeUp 1s 0.55s ease both;
+    }
+    .count-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .count-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      line-height: 1;
+      color: var(--bone);
+      min-width: 2ch;
+      text-align: center;
+    }
+    .count-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+    .count-divider {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      color: rgba(158,148,136,0.25);
+      align-self: flex-start;
+      padding-top: 0.2rem;
+    }
+
+    /* ─── EMAIL FORM ─── */
+    .form-section {
+      animation: fadeUp 1s 0.65s ease both;
+      width: 100%;
+      max-width: 520px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-bottom: 1rem;
+    }
+    .form-row {
+      display: flex;
+      border: 1px solid rgba(240,235,227,0.15);
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .form-row:focus-within {
+      border-color: var(--accent);
+    }
+    .form-row::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.4s ease;
+    }
+    .form-row:focus-within::before { width: 100%; }
+
+    input[type="email"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 1.1rem 1.4rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--bone);
+      caret-color: var(--accent);
+    }
+    input[type="email"]::placeholder { color: rgba(158,148,136,0.5); }
+
+    .btn-submit {
+      background: var(--accent);
+      color: var(--ink);
+      border: none;
+      padding: 0 2rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+      white-space: nowrap;
+    }
+    .btn-submit:hover { background: var(--bone); color: var(--ink); }
+    .btn-submit:active { transform: scale(0.98); }
+
+    .form-note {
+      margin-top: 0.9rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(158,148,136,0.5);
+    }
+    .form-note a { color: var(--smoke); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ─── SUCCESS MESSAGE ─── */
+    .success-msg {
+      display: none;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 1rem 1.4rem;
+      background: rgba(200,169,110,0.1);
+      border: 1px solid rgba(200,169,110,0.3);
+      color: var(--accent);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 1rem;
+    }
+    .success-msg.show { display: flex; animation: fadeUp 0.5s ease both; }
+    .success-icon { font-size: 1rem; }
+
+    /* ─── VERTICAL MARQUEE TEXT ─── */
+    .side-text {
+      position: fixed;
+      right: 2.5rem;
+      top: 50%;
+      transform: translateY(-50%) rotate(90deg);
+      transform-origin: center;
+      font-size: 0.55rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(158,148,136,0.2);
+      white-space: nowrap;
+      z-index: 10;
+      animation: fadeIn 1.5s 1s ease both;
+    }
+
+    /* ─── ACCENT LINE ─── */
+    .accent-line {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 2px;
+      height: 100vh;
+      background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+      opacity: 0.2;
+      z-index: 10;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative;
+      z-index: 10;
+      padding: 2rem 3rem;
+      border-top: 1px solid rgba(240,235,227,0.07);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadeUp 1s 0.8s ease both;
+    }
+    .footer-copy {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: rgba(158,148,136,0.4);
+      text-transform: uppercase;
+    }
+    .footer-social {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-social a {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: rgba(158,148,136,0.4);
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-social a:hover { color: var(--accent); }
+
+    /* ─── LARGE BACKGROUND NUMBER ─── */
+    .bg-year {
+      position: fixed;
+      bottom: -0.1em;
+      right: -0.05em;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(12rem, 30vw, 28rem);
+      font-weight: 300;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(240,235,227,0.04);
+      line-height: 1;
+      pointer-events: none;
+      z-index: 1;
+      user-select: none;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 600px) {
+      header { padding: 1.75rem 1.5rem; }
+      main   { padding: 3rem 1.5rem 2rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+      .side-text { display: none; }
+      .countdown-wrap { gap: 1.5rem; }
+      .count-divider { font-size: 2rem; }
+      .btn-submit { padding: 0 1.2rem; }
+    }
+  </style>
+
+  {{ settings.font_heading | font_face: font_display: 'swap' }}
+  {{ settings.font_body | font_face: font_display: 'swap' }}
+  <style>
+    :root {
+      --font-display: {{ settings.font_heading.family | json }}, Georgia, serif;
+      --font-body: {{ settings.font_body.family | json }}, 'Helvetica Neue', sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+<div class="accent-line"></div>
+<div class="bg-lines"></div>
+<div class="bg-year">26</div>
+<div class="side-text">SS26 Collection — Arriving Soon — TTB</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+
+  <header>
+    <div class="logo">T<span>T</span>B</div>
+    <div class="header-tag">Est. 2024 &nbsp;/&nbsp; New Collection</div>
+  </header>
+
+  <!-- MAIN -->
+
+  <main>
+
+```
+<div class="eyebrow">Coming Soon</div>
+
+<h1 class="hero-headline">
+  The<br/>
+  <em>New</em><br/>
+  Chapter
+</h1>
+
+<p class="hero-sub">
+  Something refined is taking shape.<br/>
+  Be first to discover the SS26 collection — exclusive early access, launch offers, and more.
+</p>
+
+<!-- COUNTDOWN -->
+<div class="countdown-wrap" id="countdown">
+  <div class="count-block">
+    <span class="count-num" id="cd-days">00</span>
+    <span class="count-label">Days</span>
+  </div>
+  <div class="count-divider">·</div>
+  <div class="count-block">
+    <span class="count-num" id="cd-hours">00</span>
+    <span class="count-label">Hours</span>
+  </div>
+  <div class="count-divider">·</div>
+  <div class="count-block">
+    <span class="count-num" id="cd-mins">00</span>
+    <span class="count-label">Mins</span>
+  </div>
+  <div class="count-divider">·</div>
+  <div class="count-block">
+    <span class="count-num" id="cd-secs">00</span>
+    <span class="count-label">Secs</span>
+  </div>
+</div>
+
+<!-- EMAIL FORM -->
+<div class="form-section">
+  <label class="form-label" for="email-input">
+    Notify me &nbsp;/&nbsp; Join the list
+  </label>
+  <div class="form-row">
+    <input
+      type="email"
+      id="email-input"
+      placeholder="your@email.com"
+      autocomplete="email"
+      spellcheck="false"
+    />
+    <button class="btn-submit" id="submit-btn" type="button">
+      Notify Me
+    </button>
+  </div>
+  <p class="form-note">
+    No spam. Unsubscribe anytime. &nbsp;
+    <a href="#">Privacy Policy</a>
+  </p>
+  <div class="success-msg" id="success-msg">
+    <span class="success-icon">✦</span>
+    You're on the list — we'll be in touch.
+  </div>
+</div>
+```
+
+  </main>
+
+  <!-- FOOTER -->
+
+  <footer>
+    <div class="footer-copy">© 2026 TTB. All rights reserved.</div>
+    <nav class="footer-social">
+      <a href="#">Instagram</a>
+      <a href="#">TikTok</a>
+      <a href="#">Pinterest</a>
+    </nav>
+  </footer>
+
+</div>
+
+<script>
+  /* ─── COUNTDOWN TIMER ─── */
+  // Set your launch date here (YYYY, MM-1, DD, HH, MM, SS)
+  const LAUNCH = new Date('2026-06-21T10:00:00');
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function tick(){
+    const now  = new Date();
+    const diff = LAUNCH - now;
+    if(diff <= 0){
+      document.getElementById('cd-days').textContent  = '00';
+      document.getElementById('cd-hours').textContent = '00';
+      document.getElementById('cd-mins').textContent  = '00';
+      document.getElementById('cd-secs').textContent  = '00';
+      return;
+    }
+    const days  = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000) / 60000);
+    const secs  = Math.floor((diff % 60000) / 1000);
+
+    document.getElementById('cd-days').textContent  = pad(days);
+    document.getElementById('cd-hours').textContent = pad(hours);
+    document.getElementById('cd-mins').textContent  = pad(mins);
+    document.getElementById('cd-secs').textContent  = pad(secs);
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  /* ─── EMAIL FORM ─── */
+  document.getElementById('submit-btn').addEventListener('click', function(){
+    const input   = document.getElementById('email-input');
+    const success = document.getElementById('success-msg');
+    const email   = input.value.trim();
+
+    // Basic validation
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!re.test(email)){
+      input.style.outline = 'none';
+      input.parentElement.style.borderColor = 'rgba(200,60,60,0.5)';
+      input.focus();
+      setTimeout(()=>{ input.parentElement.style.borderColor = ''; }, 1500);
+      return;
+    }
+
+    // Hide form, show success
+    input.parentElement.style.display = 'none';
+    success.classList.add('show');
+
+    /*
+     * Shopify Integration Note:
+     * Replace this block with a fetch() call to your Shopify Customer API
+     * or a Klaviyo / Mailchimp webhook endpoint, e.g.:
+     *
+     * fetch('/contact#newsletter', {
+     *   method: 'POST',
+     *   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+     *   body: `form_type=customer&email=${encodeURIComponent(email)}&tags=coming-soon`
+     * });
+     */
+  });
+</script>
+
+</body>
+</html>

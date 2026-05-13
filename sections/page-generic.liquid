@@ -1,0 +1,17 @@
+<div class="page-generic container">
+  <h1 class="page-generic__title">{{ page.title }}</h1>
+  <div class="page-generic__content rte">{{ page.content }}</div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": [],
+  "presets": [{ "name": "Page" }]
+}
+{% endschema %}
+<style>
+.page-generic { max-width: 800px; margin: 0 auto; padding: 60px 24px; }
+.page-generic__title { font-family: var(--font-display); font-size: clamp(1.75rem,4vw,3rem); margin-bottom: 24px; }
+.page-generic__content { line-height: 1.7; }
+</style>

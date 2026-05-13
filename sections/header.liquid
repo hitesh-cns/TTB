@@ -1,0 +1,804 @@
+<!-- = MOBILE DRAWER = -->
+<div class="mobile-drawer" id="mobile-drawer" aria-hidden="true" role="dialog" aria-label="Site navigation">
+  <div class="mobile-drawer__inner">
+
+    <div class="mobile-drawer__header">
+      <div class="mobile-drawer__logo">
+        {% if section.settings.logo != blank %}
+          <a href="{{ routes.root_url }}"><img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}" class="logo-img"></a>
+        {% else %}
+          <a href="{{ routes.root_url }}" class="logo-text">{{ shop.name }}</a>
+        {% endif %}
+      </div>
+      <button class="mobile-drawer__close" id="mobile-drawer-close" aria-label="Close menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <nav class="mobile-drawer__nav" aria-label="Mobile navigation">
+
+      <!-- -- Hardcoded: Girls -- -->
+      <div class="mobile-nav-group">
+        <button class="mobile-nav-group__trigger" aria-expanded="false">
+          Girls
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mobile-nav-group__children">
+          <a href="{{ section.settings.girls_url | default: '/collections/girls' }}" class="mobile-nav-child mobile-nav-child--all">{{ section.settings.girls_title | default: 'All Girls' }}</a>
+          {% if section.settings.girls_menu != blank and linklists[section.settings.girls_menu] != blank %}
+            {% for link in linklists[section.settings.girls_menu].links %}
+              <a href="{{ link.url }}" class="mobile-nav-child">{{ link.title }}</a>
+            {% endfor %}
+          {% else %}
+            <a href="/collections/girls-tops"     class="mobile-nav-child">Tops &amp; T-Shirts</a>
+            <a href="/collections/girls-dresses"  class="mobile-nav-child">Dresses &amp; Frocks</a>
+            <a href="/collections/girls-bottoms"  class="mobile-nav-child">Bottoms &amp; Pants</a>
+            <a href="/collections/girls-sets"     class="mobile-nav-child">Co-ord Sets</a>
+            <a href="/collections/girls-nightwear"class="mobile-nav-child">Nightwear</a>
+            <a href="/collections/girls-newborn"  class="mobile-nav-child">Newborn</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- -- Hardcoded: Boys -- -->
+      <div class="mobile-nav-group">
+        <button class="mobile-nav-group__trigger" aria-expanded="false">
+          Boys
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mobile-nav-group__children">
+          <a href="{{ section.settings.boys_url | default: '/collections/boys' }}" class="mobile-nav-child mobile-nav-child--all">{{ section.settings.boys_title | default: 'All Boys' }}</a>
+          {% if section.settings.boys_menu != blank and linklists[section.settings.boys_menu] != blank %}
+            {% for link in linklists[section.settings.boys_menu].links %}
+              <a href="{{ link.url }}" class="mobile-nav-child">{{ link.title }}</a>
+            {% endfor %}
+          {% else %}
+            <a href="/collections/boys-tops"     class="mobile-nav-child">Tops &amp; T-Shirts</a>
+            <a href="/collections/boys-shorts"   class="mobile-nav-child">Shorts &amp; Pants</a>
+            <a href="/collections/boys-sets"     class="mobile-nav-child">Co-ord Sets</a>
+            <a href="/collections/boys-nightwear"class="mobile-nav-child">Nightwear</a>
+            <a href="/collections/boys-newborn"  class="mobile-nav-child">Newborn</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- -- Hardcoded: Family -- -->
+      <div class="mobile-nav-group">
+        <button class="mobile-nav-group__trigger" aria-expanded="false">
+          Family
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mobile-nav-group__children">
+          <a href="{{ section.settings.family_url | default: '/collections/family' }}" class="mobile-nav-child mobile-nav-child--all">{{ section.settings.family_title | default: 'All Family' }}</a>
+          {% if section.settings.family_menu != blank and linklists[section.settings.family_menu] != blank %}
+            {% for link in linklists[section.settings.family_menu].links %}
+              <a href="{{ link.url }}" class="mobile-nav-child">{{ link.title }}</a>
+            {% endfor %}
+          {% else %}
+            <a href="/collections/matching-sets" class="mobile-nav-child">Matching Sets</a>
+            <a href="/collections/mom-and-baby"  class="mobile-nav-child">Mom &amp; Baby</a>
+            <a href="/collections/sibling-sets"  class="mobile-nav-child">Sibling Sets</a>
+            <a href="/collections/gifts"         class="mobile-nav-child">Gift Sets</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- -- Menu-driven extra links -- -->
+      {% for link in linklists[section.settings.menu].links %}
+        {% if link.links != blank %}
+          <div class="mobile-nav-group">
+            <button class="mobile-nav-group__trigger" aria-expanded="false">
+              {{ link.title }}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="mobile-nav-group__children">
+              <a href="{{ link.url }}" class="mobile-nav-child mobile-nav-child--all">All {{ link.title }}</a>
+              {% for child in link.links %}
+                <a href="{{ child.url }}" class="mobile-nav-child">{{ child.title }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}
+          <a href="{{ link.url }}" class="mobile-nav-link">{{ link.title }}</a>
+        {% endif %}
+      {% endfor %}
+
+    </nav>
+
+    <!-- Mobile Pages section -->
+    <div class="mobile-drawer__pages">
+      <p class="mobile-drawer__pages-title">{{ section.settings.drawer_pages_heading | default: "Explore" }}</p>
+      <a href="{{ section.settings.page1_url | default: '/pages/about' }}" class="mobile-nav-link">{{ section.settings.page1_label | default: "About Us" }}</a>
+      <a href="{{ section.settings.page2_url | default: '/pages/contact' }}" class="mobile-nav-link">{{ section.settings.page2_label | default: "Contact Us" }}</a>
+      <a href="{{ section.settings.page3_url | default: '/pages/faq' }}" class="mobile-nav-link">{{ section.settings.page3_label | default: "FAQs" }}</a>
+      <a href="{{ section.settings.page4_url | default: '/pages/returns' }}" class="mobile-nav-link">{{ section.settings.page4_label | default: "Returns &amp; Exchanges" }}</a>
+    </div>
+
+    <div class="mobile-drawer__footer">
+      {% if shop.customer_accounts_enabled %}
+        {% if customer %}
+          <a href="{{ routes.account_url }}" class="mobile-drawer__footer-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Account
+          </a>
+          <a href="{{ routes.account_logout_url }}" class="mobile-drawer__footer-link" style="color:var(--rose)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </a>
+        {% else %}
+          <a href="{{ routes.account_login_url }}" class="mobile-drawer__footer-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Sign In
+          </a>
+          <a href="/account/register" class="mobile-drawer__footer-link" style="color:var(--rose)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><polyline points="16 3 20 7 16 11"/><line x1="20" y1="7" x2="9" y2="7"/></svg>
+            Create Account
+          </a>
+        {% endif %}
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+<div class="mobile-drawer__overlay" id="mobile-drawer-overlay" aria-hidden="true"></div>
+
+<!-- = MAIN HEADER = -->
+<header class="site-header" id="site-header" role="banner">
+  <div class="header-inner container">
+
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-drawer">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Desktop navigation -->
+    <nav class="header-nav header-nav--left" aria-label="Main navigation">
+      <ul class="nav-list" role="list">
+
+        <!-- = GIRLS — hardcoded mega menu = -->
+        <li class="nav-item nav-item--mega" id="mega-girls">
+          <a href="/collections/girls" class="nav-link" aria-haspopup="true" aria-expanded="false">
+            Girls
+            <svg class="nav-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="mega-panel" role="region" aria-label="Girls collections">
+            <div class="mega-panel__inner container">
+              <div class="mega-panel__hero mega-panel__hero--girls">
+                <p class="mega-panel__eyebrow">{{ section.settings.mega_eyebrow | default: "Explore" }}</p>
+                <h3 class="mega-panel__title">{{ section.settings.girls_title | default: "Girls" }}</h3>
+                <p class="mega-panel__desc">{{ section.settings.girls_desc | default: "Beautiful, playful clothing for every little girl." }}</p>
+                <a href="{{ section.settings.girls_url | default: '/collections/girls' }}" class="mega-panel__cta">
+                  {{ section.settings.girls_cta | default: "Shop All Girls" }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+              <div class="mega-panel__grid">
+                {% assign girls_links = "Tops & T-Shirts,/collections/girls-tops|Dresses & Frocks,/collections/girls-dresses|Bottoms & Pants,/collections/girls-bottoms|Co-ord Sets,/collections/girls-sets|Nightwear,/collections/girls-nightwear|Newborn,/collections/girls-newborn" | split: "|" %}
+                {% for item in girls_links %}
+                  {% assign parts = item | split: "," %}
+                  <a href="{{ parts[1] }}" class="mega-card">
+                    <div class="mega-card__img-wrap">
+                      {% assign mega_img = nil %}
+                      {% for block in section.blocks %}
+                        {% if block.type == 'mega_image' and block.settings.link_title == parts[0] %}
+                          {% assign mega_img = block.settings.image %}
+                        {% endif %}
+                      {% endfor %}
+                      {% if mega_img %}
+                        <img src="{{ mega_img | image_url: width: 300 }}" alt="{{ parts[0] }}" loading="lazy" class="mega-card__img">
+                      {% else %}
+                        <div class="mega-card__img-placeholder">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <span class="mega-card__label">{{ parts[0] }}</span>
+                    <span class="mega-card__arrow">→</span>
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- = BOYS — hardcoded mega menu = -->
+        <li class="nav-item nav-item--mega" id="mega-boys">
+          <a href="/collections/boys" class="nav-link" aria-haspopup="true" aria-expanded="false">
+            Boys
+            <svg class="nav-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="mega-panel" role="region" aria-label="Boys collections">
+            <div class="mega-panel__inner container">
+              <div class="mega-panel__hero mega-panel__hero--boys">
+                <p class="mega-panel__eyebrow">{{ section.settings.mega_eyebrow | default: "Explore" }}</p>
+                <h3 class="mega-panel__title">{{ section.settings.boys_title | default: "Boys" }}</h3>
+                <p class="mega-panel__desc">{{ section.settings.boys_desc | default: "Comfortable, cool clothing for every little boy." }}</p>
+                <a href="{{ section.settings.boys_url | default: '/collections/boys' }}" class="mega-panel__cta">
+                  {{ section.settings.boys_cta | default: "Shop All Boys" }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+              <div class="mega-panel__grid">
+                {% assign boys_links = "Tops & T-Shirts,/collections/boys-tops|Shorts & Pants,/collections/boys-shorts|Co-ord Sets,/collections/boys-sets|Nightwear,/collections/boys-nightwear|Newborn,/collections/boys-newborn" | split: "|" %}
+                {% for item in boys_links %}
+                  {% assign parts = item | split: "," %}
+                  <a href="{{ parts[1] }}" class="mega-card">
+                    <div class="mega-card__img-wrap">
+                      {% assign mega_img = nil %}
+                      {% for block in section.blocks %}
+                        {% if block.type == 'mega_image' and block.settings.link_title == parts[0] %}
+                          {% assign mega_img = block.settings.image %}
+                        {% endif %}
+                      {% endfor %}
+                      {% if mega_img %}
+                        <img src="{{ mega_img | image_url: width: 300 }}" alt="{{ parts[0] }}" loading="lazy" class="mega-card__img">
+                      {% else %}
+                        <div class="mega-card__img-placeholder">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <span class="mega-card__label">{{ parts[0] }}</span>
+                    <span class="mega-card__arrow">→</span>
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- = FAMILY — hardcoded mega menu = -->
+        <li class="nav-item nav-item--mega" id="mega-family">
+          <a href="/collections/family" class="nav-link" aria-haspopup="true" aria-expanded="false">
+            Family
+            <svg class="nav-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="mega-panel" role="region" aria-label="Family collections">
+            <div class="mega-panel__inner container">
+              <div class="mega-panel__hero mega-panel__hero--family">
+                <p class="mega-panel__eyebrow">{{ section.settings.mega_eyebrow | default: "Explore" }}</p>
+                <h3 class="mega-panel__title">{{ section.settings.family_title | default: "Family" }}</h3>
+                <p class="mega-panel__desc">{{ section.settings.family_desc | default: "Matching sets and gifts for the whole family." }}</p>
+                <a href="{{ section.settings.family_url | default: '/collections/family' }}" class="mega-panel__cta">
+                  {{ section.settings.family_cta | default: "Shop All Family" }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+              <div class="mega-panel__grid">
+                {% assign family_links = "Matching Sets,/collections/matching-sets|Mom & Baby,/collections/mom-and-baby|Sibling Sets,/collections/sibling-sets|Gift Sets,/collections/gifts|New Arrivals,/collections/new-arrivals|Sale,/collections/sale" | split: "|" %}
+                {% for item in family_links %}
+                  {% assign parts = item | split: "," %}
+                  <a href="{{ parts[1] }}" class="mega-card">
+                    <div class="mega-card__img-wrap">
+                      {% assign mega_img = nil %}
+                      {% for block in section.blocks %}
+                        {% if block.type == 'mega_image' and block.settings.link_title == parts[0] %}
+                          {% assign mega_img = block.settings.image %}
+                        {% endif %}
+                      {% endfor %}
+                      {% if mega_img %}
+                        <img src="{{ mega_img | image_url: width: 300 }}" alt="{{ parts[0] }}" loading="lazy" class="mega-card__img">
+                      {% else %}
+                        <div class="mega-card__img-placeholder">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <span class="mega-card__label">{{ parts[0] }}</span>
+                    <span class="mega-card__arrow">→</span>
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- -- Additional links from Shopify Navigation menu -- -->
+        {% for link in linklists[section.settings.menu].links %}
+          {% if link.links != blank %}
+            <li class="nav-item nav-item--mega">
+              <a href="{{ link.url }}" class="nav-link" aria-haspopup="true" aria-expanded="false">
+                {{ link.title }}
+                <svg class="nav-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </a>
+              <div class="mega-panel" role="region" aria-label="{{ link.title }} categories">
+                <div class="mega-panel__inner container">
+                  <div class="mega-panel__hero">
+                    <p class="mega-panel__eyebrow">Explore</p>
+                    <h3 class="mega-panel__title">{{ link.title }}</h3>
+                    <a href="{{ link.url }}" class="mega-panel__cta">
+                      Shop All {{ link.title }}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
+                  </div>
+                  <div class="mega-panel__grid">
+                    {% for child in link.links %}
+                      <a href="{{ child.url }}" class="mega-card">
+                        <div class="mega-card__img-wrap">
+                          {% assign mega_img = nil %}
+                          {% for block in section.blocks %}
+                            {% if block.type == 'mega_image' and block.settings.link_title == child.title %}
+                              {% assign mega_img = block.settings.image %}
+                            {% endif %}
+                          {% endfor %}
+                          {% if mega_img %}
+                            <img src="{{ mega_img | image_url: width: 300 }}" alt="{{ child.title }}" loading="lazy" class="mega-card__img">
+                          {% else %}
+                            <div class="mega-card__img-placeholder">
+                              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                            </div>
+                          {% endif %}
+                        </div>
+                        <span class="mega-card__label">{{ child.title }}</span>
+                        <span class="mega-card__arrow">→</span>
+                      </a>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a href="{{ link.url }}" class="nav-link">{{ link.title }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+
+      </ul>
+    </nav>
+
+    <!-- Logo -->
+    <div class="header-logo">
+      <a href="{{ routes.root_url }}" class="header-logo__link" aria-label="{{ shop.name }} — Home">
+        {%- comment -%}
+          Logo sizing:
+          - logo_height: height in px (width scales automatically unless overridden)
+          - logo_width:  optional max-width in px (e.g. for very wide wordmark logos)
+          - logo_height_mobile: smaller size for mobile screens
+          Both height and width are controlled from Theme Editor → Header → Logo Size.
+        {%- endcomment -%}
+        {%- assign logo_h   = section.settings.logo_height        | default: 48 -%}
+        {%- assign logo_w   = section.settings.logo_width         | default: 0  -%}
+        {%- assign logo_hm  = section.settings.logo_height_mobile | default: 36 -%}
+        {%- assign logo_wm  = section.settings.logo_width_mobile  | default: 0  -%}
+        {% if section.settings.logo != blank %}
+          <img src="{{ section.settings.logo | image_url: width: 600 }}"
+               srcset="{{ section.settings.logo | image_url: width: 300 }} 300w,
+                       {{ section.settings.logo | image_url: width: 600 }} 600w"
+               alt="{{ shop.name }}" class="logo-img"
+               style="height:{{ logo_h }}px;
+                      {% if logo_w > 0 %}max-width:{{ logo_w }}px;{% else %}width:auto;{% endif %}
+                      --logo-h-mobile:{{ logo_hm }}px;
+                      {% if logo_wm > 0 %}--logo-w-mobile:{{ logo_wm }}px;{% endif %}"
+               loading="eager" fetchpriority="high">
+        {% elsif section.settings.logo_icon != blank %}
+          <img src="{{ section.settings.logo_icon | image_url: width: 240 }}"
+               alt="{{ shop.name }}" class="logo-img"
+               style="height:{{ logo_h }}px;
+                      {% if logo_w > 0 %}max-width:{{ logo_w }}px;{% else %}width:auto;{% endif %}
+                      --logo-h-mobile:{{ logo_hm }}px;"
+               loading="eager">
+        {% else %}
+          <span class="logo-text">{{ shop.name }}</span>
+        {% endif %}
+      </a>
+    </div>
+
+    <!-- Right icons -->
+    <div class="header-actions">
+      <button class="header-action search-toggle" id="search-toggle" aria-label="Search" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
+
+      {% if shop.customer_accounts_enabled %}
+        <div class="header-account-wrap">
+          <a href="{{ routes.account_url }}" class="header-action" aria-label="My account">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          {% unless customer %}
+          <div class="header-account-dropdown">
+            <a href="{{ routes.account_login_url }}" class="header-account-dropdown__link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Sign In
+            </a>
+            <a href="/account/register" class="header-account-dropdown__link header-account-dropdown__link--cta">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><polyline points="16 3 20 7 16 11"/><line x1="20" y1="7" x2="9" y2="7"/></svg>
+              Create Account
+            </a>
+          </div>
+          {% endunless %}
+        </div>
+      {% endif %}
+
+      <button class="header-action cart-toggle" id="cart-toggle" aria-label="Shopping basket">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="cart-count {% if cart.item_count == 0 %}is-empty{% endif %}" id="cart-count">{{ cart.item_count }}</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mega backdrop -->
+  <div class="mega-backdrop" id="mega-backdrop"></div>
+
+  <!-- Search bar -->
+  <div class="header-search-bar" id="header-search-bar" aria-hidden="true">
+    <div class="header-search-bar__inner container">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="header-search-form">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="search" name="q" id="header-search-input"
+          placeholder="{{ section.settings.search_placeholder | default: 'Search products…' }}"
+          class="header-search-input" autocomplete="off" aria-label="{{ 'header.search_placeholder' | t }}"
+          role="combobox" aria-expanded="false" aria-controls="predictive-search-results" aria-autocomplete="list">
+        <button type="submit" class="header-search-submit" aria-label="{{ 'search.submit' | t }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button type="button" class="header-search-clear" id="header-search-clear" aria-label="{{ 'general.close' | t }}">&#x2715;</button>
+      </form>
+
+      <ul id="predictive-search-results" class="predictive-search" role="listbox" aria-label="{{ 'search.title' | t }}" hidden>
+        <li class="predictive-search__loading" hidden>
+          <span>{{ 'general.loading' | t }}</span>
+        </li>
+      </ul>
+      </form>
+    </div>
+  </div>
+
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo Image",
+      "info": "Your main logo. SVG or PNG with transparent background recommended."
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_icon",
+      "label": "Logo Icon (fallback)",
+      "info": "Shown if Logo Image is blank. Good for square/icon-only logos."
+    },
+    {
+      "type": "header",
+      "content": "Logo Size  -  Desktop"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo Height",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 48,
+      "info": "Height in pixels. Width scales automatically to maintain aspect ratio."
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo Max Width (optional)",
+      "min": 0,
+      "max": 320,
+      "step": 8,
+      "unit": "px",
+      "default": 0,
+      "info": "Set a max-width to constrain very wide wordmark logos. 0 = no limit."
+    },
+    {
+      "type": "header",
+      "content": "Logo Size  -  Mobile"
+    },
+    {
+      "type": "range",
+      "id": "logo_height_mobile",
+      "label": "Mobile Logo Height",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36,
+      "info": "Smaller height for phones and small screens."
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "label": "Mobile Logo Max Width (optional)",
+      "min": 0,
+      "max": 240,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Extra Nav Links",
+      "info": "Girls, Boys and Family menus are always shown. Add any extra links here (e.g. Sale, Blog).",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Drawer  -  Category Sub-menus"
+    },
+    {
+      "type": "paragraph",
+      "content": "Connect a Shopify Navigation menu to populate each category's sub-links. Create menus at Online Store -> Navigation (e.g. 'Girls Mobile Menu'). If blank, default links are used."
+    },
+    {
+      "type": "link_list",
+      "id": "girls_menu",
+      "label": "Girls Sub-menu",
+      "info": "Links shown inside the Girls accordion on mobile.",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "boys_menu",
+      "label": "Boys Sub-menu",
+      "info": "Links shown inside the Boys accordion on mobile.",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "family_menu",
+      "label": "Family Sub-menu",
+      "info": "Links shown inside the Family accordion on mobile.",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Mega Menu  -  Girls"
+    },
+    {
+      "type": "text",
+      "id": "girls_title",
+      "label": "Girls Panel Title",
+      "default": "Girls"
+    },
+    {
+      "type": "textarea",
+      "id": "girls_desc",
+      "label": "Girls Panel Description",
+      "default": "Beautiful, playful clothing for every little girl."
+    },
+    {
+      "type": "text",
+      "id": "girls_cta",
+      "label": "Girls CTA Text",
+      "default": "Shop All Girls"
+    },
+    {
+      "type": "url",
+      "id": "girls_url",
+      "label": "Girls CTA URL"
+    },
+    {
+      "type": "header",
+      "content": "Mega Menu  -  Boys"
+    },
+    {
+      "type": "text",
+      "id": "boys_title",
+      "label": "Boys Panel Title",
+      "default": "Boys"
+    },
+    {
+      "type": "textarea",
+      "id": "boys_desc",
+      "label": "Boys Panel Description",
+      "default": "Comfortable, cool clothing for every little boy."
+    },
+    {
+      "type": "text",
+      "id": "boys_cta",
+      "label": "Boys CTA Text",
+      "default": "Shop All Boys"
+    },
+    {
+      "type": "url",
+      "id": "boys_url",
+      "label": "Boys CTA URL"
+    },
+    {
+      "type": "header",
+      "content": "Mega Menu  -  Family"
+    },
+    {
+      "type": "text",
+      "id": "family_title",
+      "label": "Family Panel Title",
+      "default": "Family"
+    },
+    {
+      "type": "textarea",
+      "id": "family_desc",
+      "label": "Family Panel Description",
+      "default": "Matching sets and gifts for the whole family."
+    },
+    {
+      "type": "text",
+      "id": "family_cta",
+      "label": "Family CTA Text",
+      "default": "Shop All Family"
+    },
+    {
+      "type": "url",
+      "id": "family_url",
+      "label": "Family CTA URL"
+    },
+    {
+      "type": "header",
+      "content": "Mega Menu  -  General"
+    },
+    {
+      "type": "text",
+      "id": "mega_eyebrow",
+      "label": "Mega Panel Eyebrow",
+      "default": "Explore"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Drawer"
+    },
+    {
+      "type": "text",
+      "id": "drawer_pages_heading",
+      "label": "Drawer Pages Heading",
+      "default": "Explore"
+    },
+    {
+      "type": "text",
+      "id": "page1_label",
+      "label": "Page Link 1 Label",
+      "default": "About Us"
+    },
+    {
+      "type": "url",
+      "id": "page1_url",
+      "label": "Page Link 1 URL"
+    },
+    {
+      "type": "text",
+      "id": "page2_label",
+      "label": "Page Link 2 Label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "page2_url",
+      "label": "Page Link 2 URL"
+    },
+    {
+      "type": "text",
+      "id": "page3_label",
+      "label": "Page Link 3 Label",
+      "default": "FAQs"
+    },
+    {
+      "type": "url",
+      "id": "page3_url",
+      "label": "Page Link 3 URL"
+    },
+    {
+      "type": "text",
+      "id": "page4_label",
+      "label": "Page Link 4 Label",
+      "default": "Returns & Exchanges"
+    },
+    {
+      "type": "url",
+      "id": "page4_url",
+      "label": "Page Link 4 URL"
+    },
+    {
+      "type": "header",
+      "content": "Search"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search Placeholder Text",
+      "default": "Search for baby essentials..."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_image",
+      "name": "Mega Menu Image",
+      "limit": 30,
+      "settings": [
+        {
+          "type": "text",
+          "id": "link_title",
+          "label": "Category Name (exact match)",
+          "info": "E.g. 'Tops & T-Shirts' or 'Matching Sets'"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Category Image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+<script>
+(function() {
+  const input = document.getElementById('header-search-input');
+  const results = document.getElementById('predictive-search-results');
+  if (!input || !results) return;
+
+  let debounceTimer;
+
+  input.addEventListener('input', function() {
+    clearTimeout(debounceTimer);
+    const q = this.value.trim();
+    if (q.length < 2) { results.hidden = true; input.setAttribute('aria-expanded','false'); return; }
+    debounceTimer = setTimeout(() => fetchPredictive(q), 300);
+  });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { results.hidden = true; input.setAttribute('aria-expanded','false'); }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.header-search-bar')) {
+      results.hidden = true; input.setAttribute('aria-expanded','false');
+    }
+  });
+
+  function fetchPredictive(q) {
+    const url = `${window.Shopify.routes.root}search/suggest.json?q=${encodeURIComponent(q)}&resources[type]=product,collection,page&resources[limit]=5&resources[options][fields]=title,product_type,variants.title`;
+    fetch(url)
+      .then(r => r.json())
+      .then(data => renderResults(data.resources.results, q))
+      .catch(() => {});
+  }
+
+  function renderResults(res, q) {
+    const products = res.products || [];
+    const collections = res.collections || [];
+    const pages = res.pages || [];
+    const all = [...products, ...collections, ...pages];
+
+    if (all.length === 0) { results.hidden = true; input.setAttribute('aria-expanded','false'); return; }
+
+    results.innerHTML = all.map((item, i) => {
+      const img = item.featured_image?.url
+        ? `<img src="${item.featured_image.url}&width=60" alt="${item.title}" width="40" height="40" loading="lazy" style="object-fit:cover;border-radius:4px;">`
+        : '';
+      return `<li class="predictive-search__item" role="option" id="predictive-option-${i}">
+        <a href="${item.url}" class="predictive-search__link">
+          <span class="predictive-search__img">${img}</span>
+          <span class="predictive-search__info">
+            <span class="predictive-search__title">${item.title}</span>
+            ${item.price ? `<span class="predictive-search__price">${formatMoney(item.price)}</span>` : ''}
+          </span>
+        </a>
+      </li>`;
+    }).join('');
+
+    results.hidden = false;
+    input.setAttribute('aria-expanded','true');
+  }
+
+  function formatMoney(cents) {
+    return (cents / 100).toLocaleString(undefined, { style:'currency', currency: window.Shopify.currency.active || 'USD' });
+  }
+})();
+</script>
+<style>
+.predictive-search { position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid var(--color-border,#e8ddd4); border-top:none; list-style:none; z-index:200; max-height:400px; overflow-y:auto; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+.predictive-search__item { border-bottom:1px solid var(--color-border,#e8ddd4); }
+.predictive-search__item:last-child { border:none; }
+.predictive-search__link { display:flex; align-items:center; gap:12px; padding:10px 16px; text-decoration:none; color:inherit; transition:background .15s; }
+.predictive-search__link:hover { background:#f9f3ee; }
+.predictive-search__img { flex-shrink:0; width:40px; height:40px; }
+.predictive-search__title { display:block; font-size:.9rem; }
+.predictive-search__price { display:block; font-size:.8rem; color:#888; margin-top:2px; }
+</style>

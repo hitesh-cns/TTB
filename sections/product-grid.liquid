@@ -1,0 +1,199 @@
+<section class="product-grid-section section-spacing">
+  <div class="container">
+
+    {% if section.blocks.size > 0 %}
+
+      {% for block in section.blocks %}
+        {% assign col = collections[block.settings.collection] %}
+
+        <div class="product-grid-block" {{ block.shopify_attributes }}>
+          <div class="section-header section-header--flex">
+            <div>
+              {% if block.settings.eyebrow != blank %}
+                <p class="section-eyebrow">{{ block.settings.eyebrow }}</p>
+              {% endif %}
+              {% if block.settings.heading != blank %}
+                <h2 class="section-heading">{{ block.settings.heading }}</h2>
+              {% elsif col != blank %}
+                <h2 class="section-heading">{{ col.title }}</h2>
+              {% endif %}
+            </div>
+            {% if block.settings.view_all_text != blank and col != blank %}
+              <a href="{{ col.url }}" class="view-all-link">
+                {{ block.settings.view_all_text }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            {% endif %}
+          </div>
+          <div class="product-grid" data-columns="{{ block.settings.columns }}">
+            {% if col != blank %}
+              {% for product in col.products limit: block.settings.products_count %}
+                {% render 'product-card', product: product %}
+              {% endfor %}
+            {% else %}
+              {% for i in (1..4) %}{% render 'product-card-placeholder', index: i %}{% endfor %}
+            {% endif %}
+          </div>
+        </div>
+
+        {% unless forloop.last %}<div class="product-grid-divider"></div>{% endunless %}
+      {% endfor %}
+
+    {% else %}
+
+      <div class="section-header section-header--flex">
+        <div>
+          {% if section.settings.eyebrow != blank %}<p class="section-eyebrow">{{ section.settings.eyebrow }}</p>{% endif %}
+          {% if section.settings.heading != blank %}<h2 class="section-heading">{{ section.settings.heading }}</h2>{% endif %}
+        </div>
+        {% if section.settings.view_all_text != blank and section.settings.collection != blank %}
+          <a href="{{ collections[section.settings.collection].url }}" class="view-all-link">
+            {{ section.settings.view_all_text }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        {% endif %}
+      </div>
+      <div class="product-grid" data-columns="{{ section.settings.columns }}">
+        {% assign col = collections[section.settings.collection] %}
+        {% if col != blank %}
+          {% for product in col.products limit: section.settings.products_count %}{% render 'product-card', product: product %}{% endfor %}
+        {% else %}
+          {% for i in (1..8) %}{% render 'product-card-placeholder', index: i %}{% endfor %}
+        {% endif %}
+      </div>
+
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow Text",
+          "info": "Small label above heading. Leave blank to hide."
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Section Heading",
+          "info": "Leave blank to use the collection title automatically."
+        },
+        {
+          "type": "text",
+          "id": "view_all_text",
+          "label": "View All Link Text",
+          "default": "View all"
+        },
+        {
+          "type": "range",
+          "id": "products_count",
+          "label": "Products to show",
+          "min": 4,
+          "max": 12,
+          "step": 4,
+          "default": 8
+        },
+        {
+          "type": "select",
+          "id": "columns",
+          "label": "Columns (desktop)",
+          "options": [
+            {
+              "value": "3",
+              "label": "3 columns"
+            },
+            {
+              "value": "4",
+              "label": "4 columns"
+            }
+          ],
+          "default": "4"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Add one Collection block per collection you want to display. Each block has its own heading, product count and layout. Up to 6 collections supported."
+    },
+    {
+      "type": "header",
+      "content": "Fallback (if no blocks added)"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "New Arrivals"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Crafted for Tiny Moments"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_count",
+      "label": "Products to show",
+      "min": 4,
+      "max": 12,
+      "step": 4,
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "options": [
+        {
+          "value": "3",
+          "label": "3 columns"
+        },
+        {
+          "value": "4",
+          "label": "4 columns"
+        }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View All Link Text",
+      "default": "View all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product grid",
+      "blocks": [
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

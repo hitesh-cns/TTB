@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f9f3ee">
+
+  <title>
+    {%- if template == 'index' -%}{{ shop.name }}{% if shop.description != blank %} — {{ shop.description }}{% endif %}
+    {%- elsif template == 'product' -%}{{ product.title }} | {{ shop.name }}
+    {%- elsif template == 'collection' -%}{{ collection.title }} | {{ shop.name }}
+    {%- elsif template == 'article' -%}{{ article.title }} | {{ blog.title }} | {{ shop.name }}
+    {%- elsif template == 'blog' -%}{{ blog.title }} | {{ shop.name }}
+    {%- elsif template == 'page' -%}{{ page.title }} | {{ shop.name }}
+    {%- elsif template == 'cart' -%}Your Cart | {{ shop.name }}
+    {%- elsif template contains 'customers' -%}Account | {{ shop.name }}
+    {%- else -%}{{ page_title }} | {{ shop.name }}
+    {%- endif -%}
+  </title>
+
+  {%- if page_description != blank -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- elsif template == 'product' -%}
+    <meta name="description" content="{{ product.description | strip_html | truncate: 155 | escape }}">
+  {%- elsif template == 'collection' -%}
+    <meta name="description" content="{{ collection.description | strip_html | truncate: 155 | default: collection.title | append: ' — Shop baby clothing at ' | append: shop.name | escape }}">
+  {%- elsif template == 'article' -%}
+    <meta name="description" content="{{ article.excerpt_or_content | strip_html | truncate: 155 | escape }}">
+  {%- else -%}
+    <meta name="description" content="{{ shop.description | escape }}">
+  {%- endif -%}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if template == 'cart' or template contains 'customers' or template == 'gift_card' -%}
+    <meta name="robots" content="noindex, nofollow">
+  {%- else -%}
+    <meta name="robots" content="index, follow">
+  {%- endif -%}
+
+  <!-- ========================================================
+    OPEN GRAPH — Facebook, WhatsApp, iMessage, LinkedIn
+    Controls how your pages look when shared as links.
+    Instagram reads og:image for product link previews in bio.
+
+    For product pages: shows product image, price, availability.
+    For other pages: shows the shop name and description.
+  ======================================================== -->
+  <meta property="og:site_name"   content="{{ shop.name }}">
+  <meta property="og:url"         content="{{ canonical_url }}">
+  <meta property="og:locale"      content="{{ request.locale.iso_code | replace: '-', '_' }}">
+
+  {%- if template == 'product' -%}
+    <meta property="og:type"        content="product">
+    <meta property="og:title"       content="{{ product.title | escape }}">
+    <meta property="og:description" content="{{ product.description | strip_html | truncate: 200 | escape }}">
+    {%- if product.featured_image -%}
+      <meta property="og:image"       content="https:{{ product.featured_image | image_url: width: 1200, height: 630, crop: 'center' }}">
+      <meta property="og:image:width"  content="1200">
+      <meta property="og:image:height" content="630">
+      <meta property="og:image:alt"    content="{{ product.featured_image.alt | default: product.title | escape }}">
+    {%- endif -%}
+    <!-- Product-specific tags — used by Facebook Shop and Google Shopping -->
+    <meta property="product:price:amount"   content="{{ product.price | money_without_currency }}">
+    <meta property="product:price:currency" content="{{ shop.currency }}">
+    <meta property="product:availability"   content="{% if product.available %}in stock{% else %}out of stock{% endif %}">
+    <meta property="product:brand"          content="{{ product.vendor | default: shop.name }}">
+    <meta property="product:condition"      content="new">
+
+  {%- elsif template == 'collection' -%}
+    <meta property="og:type"        content="website">
+    <meta property="og:title"       content="{{ collection.title }} | {{ shop.name }}">
+    <meta property="og:description" content="{{ collection.description | strip_html | truncate: 200 | default: 'Shop ' | append: collection.title | append: ' at ' | append: shop.name | escape }}">
+    {%- if collection.image -%}
+      <meta property="og:image" content="https:{{ collection.image | image_url: width: 1200, height: 630, crop: 'center' }}">
+      <meta property="og:image:width"  content="1200">
+      <meta property="og:image:height" content="630">
+    {%- endif -%}
+
+  {%- elsif template == 'article' -%}
+    <meta property="og:type"             content="article">
+    <meta property="og:title"            content="{{ article.title | escape }}">
+    <meta property="og:description"      content="{{ article.excerpt_or_content | strip_html | truncate: 200 | escape }}">
+    <meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}">
+    <meta property="article:modified_time"  content="{{ article.updated_at   | date: '%Y-%m-%dT%H:%M:%S%z' }}">
+    {%- if article.image -%}
+      <meta property="og:image" content="https:{{ article.image | image_url: width: 1200, height: 630, crop: 'center' }}">
+    {%- endif -%}
+
+  {%- else -%}
+    <meta property="og:type"        content="website">
+    <meta property="og:title"       content="{{ page_title | escape }}">
+    <meta property="og:description" content="{{ page_description | default: shop.description | strip_html | truncate: 200 | escape }}">
+    {%- if settings.og_image != blank -%}
+      <meta property="og:image" content="https:{{ settings.og_image | image_url: width: 1200, height: 630, crop: 'center' }}">
+    {%- endif -%}
+  {%- endif -%}
+
+  <!-- ========================================================
+    TWITTER / X CARD
+    Controls how links look when shared on X (Twitter).
+    summary_large_image shows a big image above the text.
+    Instagram also reads twitter:image as a fallback.
+  ======================================================== -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="{{ settings.twitter_handle | default: '' }}">
+  <meta name="twitter:title"       content="{{ page_title | escape }}">
+  <meta name="twitter:description" content="{{ page_description | default: shop.description | strip_html | truncate: 200 | escape }}">
+  {%- if template == 'product' and product.featured_image -%}
+    <meta name="twitter:image"     content="https:{{ product.featured_image | image_url: width: 1200, height: 630, crop: 'center' }}">
+    <meta name="twitter:label1"    content="Price">
+    <meta name="twitter:data1"     content="{{ product.price | money }}">
+    <meta name="twitter:label2"    content="Availability">
+    <meta name="twitter:data2"     content="{% if product.available %}In Stock{% else %}Sold Out{% endif %}">
+  {%- elsif template == 'collection' and collection.image -%}
+    <meta name="twitter:image"     content="https:{{ collection.image | image_url: width: 1200, height: 630, crop: 'center' }}">
+  {%- endif -%}
+
+  <!-- ========================================================
+    JSON-LD STRUCTURED DATA
+    Gives Google rich information about your products and store.
+    Products get: price, availability, rating stars in search results.
+    Store gets: a knowledge panel with address, social links.
+    Articles get: article markup for Google News.
+    Reference: https://schema.org
+  ======================================================== -->
+  {%- if template == 'product' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": {{ product.title | json }},
+      "url": {{ shop.url | append: product.url | json }},
+      "description": {{ product.description | strip_html | json }},
+      "brand": { "@type": "Brand", "name": {{ product.vendor | default: shop.name | json }} },
+      "sku": {{ product.selected_or_first_available_variant.sku | json }},
+      "image": [{% for img in product.images limit:5 %}"https:{{ img | image_url: width: 1200 }}"{% unless forloop.last %},{% endunless %}{% endfor %}],
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": {{ shop.currency | json }},
+        "lowPrice":  "{{ product.price_min | money_without_currency | remove: ',' }}",
+        "highPrice": "{{ product.price_max | money_without_currency | remove: ',' }}",
+        "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+        "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+      }
+    }
+    </script>
+
+  {%- elsif template == 'index' or template == 'page' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ClothingStore",
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | json }},
+      "description": {{ shop.description | json }},
+      "currenciesAccepted": {{ shop.currency | json }},
+      "paymentAccepted": "Credit Card, Debit Card",
+      "priceRange": "₹₹"
+    }
+    </script>
+
+  {%- elsif template == 'article' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": {{ article.title | json }},
+      "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
+      "dateModified": "{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
+      "author": { "@type": "Person", "name": {{ article.author | json }} },
+      "publisher": { "@type": "Organization", "name": {{ shop.name | json }} },
+      "description": {{ article.excerpt_or_content | strip_html | truncate: 200 | json }}
+    }
+    </script>
+
+  {%- endif -%}
+
+  <!-- ========================================================
+    BREADCRUMB JSON-LD
+    Helps Google show page path in search results, e.g.:
+  ======================================================== -->
+  {%- if template == 'product' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home",    "item": {{ shop.url | json }} },
+        { "@type": "ListItem", "position": 2, "name": {{ product.collections.first.title | default: 'Products' | json }}, "item": {{ shop.url | append: product.collections.first.url | json }} },
+        { "@type": "ListItem", "position": 3, "name": {{ product.title | json }} }
+      ]
+    }
+    </script>
+  {%- elsif template == 'collection' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home",       "item": {{ shop.url | json }} },
+        { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }} }
+      ]
+    }
+    </script>
+  {%- endif -%}
+
+  {{ content_for_header }}
+
+  <!-- ========================================================
+    GOOGLE ANALYTICS 4 (GA4)
+    Only loads if a Measurement ID is set in:
+    Theme Editor → Social Media & SEO → Google Analytics ID
+    Tracks: page views, product views, add-to-cart, purchases.
+  ======================================================== -->
+  {%- if settings.google_analytics_id != blank -%}
+<script>
+      gtag('js', new Date());
+      gtag('config', '{{ settings.google_analytics_id }}', { anonymize_ip: true });
+    </script>
+  {%- endif -%}
+      {%- assign font_heading = settings.font_heading -%}
+  {%- assign font_heading_bold = settings.font_heading | font_modify: 'weight', 'bold' -%}
+  {%- assign font_heading_italic = settings.font_heading | font_modify: 'style', 'italic' -%}
+  {%- assign font_heading_bold_italic = settings.font_heading | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' -%}
+  {%- assign font_body = settings.font_body -%}
+  {%- assign font_body_bold = settings.font_body | font_modify: 'weight', 'bold' -%}
+  {%- assign font_body_italic = settings.font_body | font_modify: 'style', 'italic' -%}
+  {{ font_heading | font_face: font_display: 'swap' }}
+  {{ font_heading_bold | font_face: font_display: 'swap' }}
+  {{ font_heading_italic | font_face: font_display: 'swap' }}
+  {{ font_heading_bold_italic | font_face: font_display: 'swap' }}
+  {{ font_body | font_face: font_display: 'swap' }}
+  {{ font_body_bold | font_face: font_display: 'swap' }}
+  {{ font_body_italic | font_face: font_display: 'swap' }}
+  <style>
+    :root {
+      --font-display: {{ settings.font_heading.family | json }}, Georgia, serif;
+      --font-body: {{ settings.font_body.family | json }}, 'Helvetica Neue', sans-serif;
+      --color-primary-bg: {{ settings.color_primary_bg }};
+      --color-primary-text: {{ settings.color_primary_text }};
+      --color-secondary-bg: {{ settings.color_secondary_bg }};
+      --color-secondary-text: {{ settings.color_secondary_text }};
+      --color-accent-bg: {{ settings.color_accent_bg }};
+      --color-accent-text: {{ settings.color_accent_text }};
+      --color-button-bg: {{ settings.color_button_bg }};
+      --color-button-text: {{ settings.color_button_text }};
+      --color-border: {{ settings.color_border }};
+    }
+    button.btn--primary, a.btn--primary {
+      background: var(--color-button-bg);
+      color: var(--color-button-text);
+    }
+  </style>
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  <script src="{{ 'discount-engine.js' | asset_url }}" defer></script>
+
+  {%- if settings.favicon -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32 }}">
+  {%- endif -%}
+</head>
+
+<body class="{% if customer %}customer-logged-in{% endif %} template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}{% if template == 'index' %} has-transparent-header{% endif %}">
+
+  {%- comment -%}
+    -- STICKY HEADER WRAPPER --
+    Both the announcement bar and header live inside this ONE div.
+    Only THIS div is sticky (position: sticky; top: 0).
+    The .site-header and .announcement-bar themselves are NOT sticky.
+    This is the correct pattern — nested sticky elements break each other.
+  {%- endcomment -%}
+  <div id="sticky-bar" class="sticky-bar">
+    {% section 'announcement-bar' %}
+    {% sections 'header-group' %}
+  </div>
+
+  <main id="MainContent" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% sections 'footer-group' %}
+
+  {%- comment -%}
+    All elements below are position:fixed or position:absolute —
+    they occupy zero layout height. Wrapped in a non-rendering
+    container to ensure Shopify's shopify-section wrappers never
+    add block space after the footer.
+  {%- endcomment -%}
+
+  {%- comment -%} Cart drawer — position:fixed, overlays page {%- endcomment -%}
+  <div id="cart-drawer" class="cart-drawer" aria-hidden="true">
+    {%- section 'cart-drawer' -%}
+  </div>
+  <div class="cart-overlay" id="cart-overlay"></div>
+
+  {%- comment -%} Popups — position:fixed, zero layout height {%- endcomment -%}
+  {%- section 'discount-popup' -%}
+  {%- section 'newsletter-popup' -%}
+
+  {%- comment -%} Back to top — position:fixed {%- endcomment -%}
+  <button id="back-to-top" aria-label="Back to top" title="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  {%- comment -%} Review photo lightbox — position:fixed {%- endcomment -%}
+  <div class="review-lightbox" id="review-lightbox" role="dialog" aria-modal="true" aria-label="Review photo">
+    <img src="" alt="Review photo" id="review-lightbox-img">
+    <button class="review-lightbox-close" id="review-lightbox-close" aria-label="Close photo">✕</button>
+  </div>
+
+  <script>
+    window.shopName    = {{ shop.name | json }};
+    window.cartUrl     = {{ routes.cart_url | json }};
+    window.moneyFormat = {{ shop.money_format | json }};
+  </script>
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  <script src="{{ 'animations.js' | asset_url }}" defer></script>
+  {%- if template == 'product' -%}
+    <script src="{{ 'product-page.js' | asset_url }}" defer></script>
+  {%- endif -%}
+  {%- if template contains 'collection' -%}
+    <script src="{{ 'collection-filters.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  {%- comment -%} PDP Gallery Fullscreen Lightbox {%- endcomment -%}
+  <div class="gallery-lightbox" id="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Product image fullscreen">
+    <button class="gallery-lightbox__close" id="gallery-lightbox-close" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="gallery-lightbox__prev" id="gallery-lightbox-prev" aria-label="Previous image">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <img src="" alt="Product image" class="gallery-lightbox__img" id="gallery-lightbox-img">
+    <button class="gallery-lightbox__next" id="gallery-lightbox-next" aria-label="Next image">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <span class="gallery-lightbox__counter" id="gallery-lightbox-counter"></span>
+  </div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<div class="product-card" data-product-id="{{ product.id }}">
+  <div class="product-card__image-wrap">
+    <!-- Scrollable image strip — all product images scroll horizontally -->
+    <div class="product-card__image-scroll">
+      {% if product.images.size > 0 %}
+        {% for image in product.images limit: 6 %}
+          <a href="{{ product.url }}" class="product-card__image-link">
+            <img
+              src="{{ image | image_url: width: 600 }}"
+              alt="{{ image.alt | default: product.title }}"
+              class="product-card__image"
+              loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+            >
+          </a>
+        {% endfor %}
+      {% else %}
+        <a href="{{ product.url }}" class="product-card__image-link">
+          <div class="product-card__placeholder">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+        </a>
+      {% endif %}
+    </div>
+    {% if product.images.size > 1 %}
+      <div class="product-card__scroll-dots" aria-hidden="true">
+        {% for image in product.images limit: 6 %}
+          <span class="scroll-dot {% if forloop.first %}is-active{% endif %}"></span>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if product.compare_at_price > product.price %}
+      <div class="product-card__badge product-card__badge--sale">Sale</div>
+    {% elsif product.tags contains 'new' %}
+      <div class="product-card__badge product-card__badge--new">New</div>
+    {% endif %}
+
+    {% comment %}Discount badge: Metafields Guru custom.badge_text takes priority,
+    auto-calculates % saving as fallback when compare_at_price is set.
+    Only shown when one of the two conditions is met.{% endcomment %}
+    {% assign disc_badge = product.metafields.custom.badge_text %}
+    {% if disc_badge != blank %}
+      <div class="product-card__badge product-card__badge--discount">{{ disc_badge }}</div>
+    {% elsif product.compare_at_price > product.price %}
+      {% assign disc_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
+      <div class="product-card__badge product-card__badge--discount">{{ disc_pct }}% OFF</div>
+    {% endif %}
+
+    <div class="product-card__actions">
+      <button
+        class="btn-quick-add"
+        data-product-id="{{ product.id }}"
+        data-variant-id="{{ product.first_available_variant.id }}"
+        aria-label="Quick add {{ product.title }}"
+      >
+        {% if product.variants.size > 1 %}
+          Choose Options
+        {% else %}
+          Quick Add
+        {% endif %}
+      </button>
+    </div>
+  </div>
+
+  <div class="product-card__info">
+    <div class="product-card__title-row">
+      <h3 class="product-card__title">
+        <a href="{{ product.url }}">{{ product.title }}</a>
+      </h3>
+      <div class="product-card__price">
+        {% if product.compare_at_price > product.price %}
+          <span class="price price--sale">{{ product.price | money }}</span>
+          <span class="price price--compare">{{ product.compare_at_price | money }}</span>
+        {% else %}
+          <span class="price">{{ product.price | money }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if product.metafields.reviews.rating_count > 0 %}
+      <div class="product-card__rating">
+        {% assign rating = product.metafields.reviews.rating.value %}
+        {% for i in (1..5) %}
+          <span class="star {% if i <= rating %}star--filled{% endif %}">★</span>
+        {% endfor %}
+        <span class="rating-count">({{ product.metafields.reviews.rating_count }})</span>
+      </div>
+    {% endif %}
+
+    {% if product.variants.size > 1 %}
+      <div class="product-card__variants">
+        {% assign option = product.options_with_values | first %}
+        {% if option %}
+          {% for value in option.values limit: 4 %}
+            <button class="variant-swatch" title="{{ value }}">
+              {% if option.name == 'Color' or option.name == 'Colour' %}
+                <span class="swatch-color" style="background-color: {{ value | handleize }};"></span>
+              {% else %}
+                <span class="swatch-label">{{ value | truncate: 3, '' }}</span>
+              {% endif %}
+            </button>
+          {% endfor %}
+          {% if option.values.size > 4 %}
+            <span class="variant-more">+{{ option.values.size | minus: 4 }}</span>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>

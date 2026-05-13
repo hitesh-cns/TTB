@@ -1,0 +1,149 @@
+{% comment %}
+  -- BXGY Eligible Products --
+  We read the 'discount' metafield (set via Metafields Guru app)
+  on each cart item's product. If its value is "BXGY", that item
+  counts toward the bundle discount tiers.
+
+  Namespace: custom  |  Key: discount  |  Value: "BXGY"
+  In Metafields Guru: set on the product, namespace=custom, key=discount
+
+  This JSON list is read by theme.js to decide which items to count.
+{% endcomment %}
+<script>
+  window.bxgyProductIds = [
+    {% for item in cart.items %}
+      {% if item.product.metafields.custom.discount == 'BXGY' %}
+        {{ item.product_id }}{% unless forloop.last %},{% endunless %}
+      {% endif %}
+    {% endfor %}
+  ];
+</script>
+
+<div class="cart-drawer__inner">
+
+  <!-- Header -->
+  <div class="cart-drawer__header">
+    <h2 class="cart-drawer__title">{{ section.settings.title | default: "Your Cart" }}</h2>
+    <button class="cart-drawer__close" id="cart-drawer-close" aria-label="Close cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- = MULTI-TIER DISCOUNT BAR =
+       Shows 3 milestone icons (2/3/4+ items) that light up as
+       the cart reaches each tier. Progress bar fills between them.
+       Updated live by theme.js updateDiscountUI(). -->
+  <div class="cart-drawer__discount-bar" id="cart-discount-bar">
+    <p class="cart-discount-message" id="cart-discount-message"></p>
+
+    <!-- Milestone track with icons -->
+    <div class="discount-tier-track">
+      <div class="discount-tier-progress-bg">
+        <div class="discount-tier-progress-fill" id="cart-discount-fill"></div>
+      </div>
+      <!-- Tier 1: 2 items = 5% off -->
+      <div class="discount-tier-node" id="tier-node-1" data-tier="1">
+        <div class="discount-tier-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        </div>
+        <span class="discount-tier-label">5% off<br><em>2 items</em></span>
+      </div>
+      <!-- Tier 2: 3 items = 10% off -->
+      <div class="discount-tier-node" id="tier-node-2" data-tier="2">
+        <div class="discount-tier-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        </div>
+        <span class="discount-tier-label">10% off<br><em>3 items</em></span>
+      </div>
+      <!-- Tier 3: 5 items = 20% off -->
+      <div class="discount-tier-node" id="tier-node-3" data-tier="3">
+        <div class="discount-tier-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        </div>
+        <span class="discount-tier-label">20% off<br><em>5 items</em></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart items — populated by JS. Empty state hidden by default. -->
+  <div class="cart-drawer__items" id="cart-drawer-items">
+    <div class="cart-empty" id="cart-empty" style="display:none;">
+      <div class="cart-empty__icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </div>
+      <p>{{ section.settings.empty_text | default: "Your cart is empty" }}</p>
+      <a href="/collections/all" class="btn btn--primary btn--sm">{{ section.settings.empty_cta | default: "Start Shopping" }}</a>
+    </div>
+  </div>
+
+  <!-- Footer — hidden when cart is empty -->
+  <div class="cart-drawer__footer" id="cart-drawer-footer" style="display:none;">
+    <div class="cart-subtotal">
+      <span>{{ section.settings.subtotal_label | default: "Subtotal" }}</span>
+      <span id="cart-subtotal-price"></span>
+    </div>
+    <div class="cart-discount-applied" id="cart-discount-applied" style="display:none;">
+      <span class="discount-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Bundle discount: <span id="cart-discount-label"></span>
+      </span>
+    </div>
+    {% if section.settings.shipping_message != blank %}
+      <p class="cart-shipping-note">{{ section.settings.shipping_message }}</p>
+    {% endif %}
+    <a href="{{ routes.cart_url }}/checkout" class="btn btn--primary btn--full" id="checkout-btn">{{ section.settings.checkout_btn | default: "Proceed to Checkout" }}</a>
+    <a href="{{ routes.cart_url }}" class="btn btn--ghost btn--full">{{ section.settings.view_cart_text | default: "View Full Cart" }}</a>
+  </div>
+
+</div>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtotal_label",
+      "label": "Subtotal Label",
+      "default": "Subtotal"
+    },
+    {
+      "type": "text",
+      "id": "checkout_btn",
+      "label": "Checkout Btn",
+      "default": "Proceed to Checkout"
+    },
+    {
+      "type": "text",
+      "id": "empty_cta",
+      "label": "Empty Cta",
+      "default": "Start Shopping"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Drawer Title",
+      "default": "Your Cart"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Empty Cart Message",
+      "default": "Your cart is empty"
+    },
+    {
+      "type": "text",
+      "id": "view_cart_text",
+      "label": "View Full Cart Button Text",
+      "default": "View Full Cart"
+    },
+    {
+      "type": "text",
+      "id": "shipping_message",
+      "label": "Shipping / Checkout Note",
+      "default": "Free shipping on orders over \u20b91500 \u00b7 Taxes calculated at checkout",
+      "info": "Appears below the checkout button. Leave blank to hide."
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,62 @@
+{%- assign picked_up_variant = product_variant -%}
+<div class="store-availability" data-variant-id="{{ picked_up_variant.id }}">
+  {%- assign pick_up_availabilities = picked_up_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+  {%- if pick_up_availabilities.size > 0 -%}
+    <div class="store-availability__intro">
+      {%- assign closest = pick_up_availabilities | first -%}
+      {%- if closest.available -%}
+        <svg class="store-availability__icon store-availability__icon--available" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Pickup available at <strong>{{ closest.location.name }}</strong></span>
+      {%- else -%}
+        <svg class="store-availability__icon store-availability__icon--unavailable" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <span>Pickup unavailable at <strong>{{ closest.location.name }}</strong></span>
+      {%- endif -%}
+    </div>
+    <button class="store-availability__toggle link" type="button" aria-expanded="false" aria-controls="store-availability-list-{{ picked_up_variant.id }}">
+      Check availability at other stores
+    </button>
+    <ul class="store-availability__list" id="store-availability-list-{{ picked_up_variant.id }}" hidden>
+      {%- for availability in pick_up_availabilities -%}
+        <li class="store-availability__item {% if availability.available %}store-availability__item--available{% else %}store-availability__item--unavailable{% endif %}">
+          <span class="store-availability__location">{{ availability.location.name }}</span>
+          <span class="store-availability__status">
+            {%- if availability.available -%}
+              Available — {{ availability.pick_up_time }}
+            {%- else -%}
+              Unavailable
+            {%- endif -%}
+          </span>
+          {%- if availability.location.address -%}
+            <address class="store-availability__address">
+              {{ availability.location.address | format_address }}
+            </address>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>
+
+<style>
+.store-availability { margin: 16px 0; font-size: .875rem; }
+.store-availability__intro { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.store-availability__icon--available { color: #27ae60; }
+.store-availability__icon--unavailable { color: #c0392b; }
+.store-availability__toggle { font-size: .8rem; text-decoration: underline; cursor: pointer; background: none; border: none; padding: 0; color: inherit; }
+.store-availability__list { list-style: none; margin-top: 12px; border-top: 1px solid var(--color-border, #e8ddd4); padding-top: 12px; }
+.store-availability__item { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 1px solid var(--color-border, #e8ddd4); }
+.store-availability__item--available .store-availability__status { color: #27ae60; }
+.store-availability__item--unavailable .store-availability__status { color: #c0392b; }
+.store-availability__address { font-style: normal; color: #888; font-size: .8rem; margin-top: 2px; }
+</style>
+<script>
+  document.querySelectorAll('.store-availability__toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const list = document.getElementById(btn.getAttribute('aria-controls'));
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', !expanded);
+      list.hidden = expanded;
+      btn.textContent = expanded ? 'Check availability at other stores' : 'Hide store list';
+    });
+  });
+</script>

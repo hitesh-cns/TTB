@@ -1,0 +1,103 @@
+{% assign meta_products = product.metafields.custom.similar_products.value %}
+{% assign use_meta = false %}
+{% if meta_products != blank and meta_products.size > 0 %}
+  {% assign use_meta = true %}
+{% endif %}
+
+<section class="similar-products section-spacing" id="similar-products">
+  <div class="container">
+    <div class="section-header section-header--flex">
+      <div>
+        <p class="section-eyebrow">{{ section.settings.eyebrow | default: 'You May Also Love' }}</p>
+        <h2 class="section-heading">{{ section.settings.heading | default: 'Similar Pieces' }}</h2>
+      </div>
+    </div>
+
+    <div class="similar-carousel-wrap">
+      <div class="similar-carousel" id="similar-track">
+
+        {% if use_meta %}
+          {% comment %} -- Metafield-sourced products -- {% endcomment %}
+          {% for p in meta_products limit: section.settings.products_count %}
+            {% unless p.id == product.id %}
+              {% render 'similar-card', p: p %}
+            {% endunless %}
+          {% endfor %}
+
+        {% else %}
+          {% comment %} -- Fallback: products from same collection -- {% endcomment %}
+          {% assign similar_collection = collections[section.settings.collection] | default: product.collections.first %}
+          {% assign shown = 0 %}
+          {% if similar_collection %}
+            {% for p in similar_collection.products %}
+              {% unless p.id == product.id %}
+                {% if shown < section.settings.products_count %}
+                  {% assign shown = shown | plus: 1 %}
+                  {% render 'similar-card', p: p %}
+                {% endif %}
+              {% endunless %}
+            {% endfor %}
+          {% else %}
+            {% for i in (1..4) %}
+              <div class="similar-card similar-card--placeholder">
+                <div class="similar-card__image-wrap">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+                <div class="similar-card__info"><h4 class="similar-card__title">Baby Garment</h4><span class="price">₹0</span></div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+
+      </div>
+
+      <div class="similar-controls">
+        <button class="carousel-btn carousel-btn--prev" id="similar-prev" aria-label="Previous">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="carousel-dots" id="similar-dots"></div>
+        <button class="carousel-btn carousel-btn--next" id="similar-next" aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Similar products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "You May Also Love"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Similar Pieces"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Fallback Collection",
+      "info": "Used only when the product has no 'similar_products' metafield. Defaults to the product's first collection."
+    },
+    {
+      "type": "range",
+      "id": "products_count",
+      "label": "Max Products",
+      "min": 4,
+      "max": 12,
+      "step": 2,
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Similar products"
+    }
+  ]
+}
+{% endschema %}

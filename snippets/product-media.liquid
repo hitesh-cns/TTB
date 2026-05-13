@@ -1,0 +1,78 @@
+{%- comment -%}
+  Renders a single product media item: image, video, external_video, or model.
+  Usage: {% render 'product-media', media: media, loop: false, lazy: true %}
+{%- endcomment -%}
+
+{%- liquid
+  assign media_type = media.media_type
+  assign lazy_load = lazy | default: true
+  assign loading = lazy_load | ternary: 'lazy', 'eager'
+-%}
+
+{%- case media_type -%}
+
+  {%- when 'image' -%}
+    {%- assign focal_x = media.preview_image.presentation.focal_point | split: ' ' | first | default: '50%' -%}
+    {%- assign focal_y = media.preview_image.presentation.focal_point | split: ' ' | last  | default: '50%' -%}
+    {{
+      media.preview_image
+      | image_url: width: 1200
+      | image_tag:
+        loading: loading,
+        widths: '400, 700, 1000, 1200',
+        sizes: '(min-width: 1024px) 50vw, 100vw',
+        alt: media.alt | default: product.title,
+        class: 'gallery-image',
+        style: 'object-position: ' | append: focal_x | append: ' ' | append: focal_y,
+        data-zoom: media.preview_image | image_url: width: 2000
+    }}
+
+  {%- when 'video' -%}
+    <div class="gallery-media gallery-media--video">
+      {{
+        media
+        | video_tag:
+          autoplay: false,
+          loop: loop,
+          muted: true,
+          controls: true,
+          class: 'gallery-video',
+          loading: loading
+      }}
+    </div>
+
+  {%- when 'external_video' -%}
+    <div class="gallery-media gallery-media--external-video">
+      {%- if media.host == 'youtube' -%}
+        <iframe
+          src="https://www.youtube.com/embed/{{ media.external_id }}?enablejsapi=1&rel=0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          class="gallery-external-video"
+          title="{{ media.alt | default: product.title | escape }}"
+          loading="{{ loading }}">
+        </iframe>
+      {%- elsif media.host == 'vimeo' -%}
+        <iframe
+          src="https://player.vimeo.com/video/{{ media.external_id }}"
+          allow="autoplay; fullscreen"
+          allowfullscreen
+          class="gallery-external-video"
+          title="{{ media.alt | default: product.title | escape }}"
+          loading="{{ loading }}">
+        </iframe>
+      {%- endif -%}
+    </div>
+
+  {%- when 'model' -%}
+    <div class="gallery-media gallery-media--model">
+      {{
+        media
+        | model_viewer_tag:
+          reveal: 'interaction',
+          toggleable: true,
+          class: 'gallery-model'
+      }}
+    </div>
+
+{%- endcase -%}

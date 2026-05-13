@@ -1,0 +1,57 @@
+{% comment %}Reusable similar product card — accepts variable p{% endcomment %}
+<div class="similar-card">
+  <div class="similar-card__image-wrap">
+    <a href="{{ p.url }}" class="similar-card__link">
+      {% if p.featured_image %}
+        <img src="{{ p.featured_image | image_url: width: 600 }}" alt="{{ p.title | escape }}"
+             class="similar-card__img similar-card__img--primary" loading="lazy">
+        {% if p.images[1] %}
+          <img src="{{ p.images[1] | image_url: width: 600 }}" alt="{{ p.title | escape }}"
+               class="similar-card__img similar-card__img--secondary" loading="lazy">
+        {% endif %}
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </a>
+    {% if p.compare_at_price > p.price %}
+      <div class="product-card__badge product-card__badge--sale">Sale</div>
+    {% elsif p.tags contains 'new' %}
+      <div class="product-card__badge product-card__badge--new">New</div>
+    {% endif %}
+
+    {% assign disc_badge = p.metafields.custom.badge_text %}
+    {% if disc_badge != blank %}
+      <div class="product-card__badge product-card__badge--discount">{{ disc_badge }}</div>
+    {% elsif p.compare_at_price > p.price %}
+      {% assign disc_pct = p.compare_at_price | minus: p.price | times: 100 | divided_by: p.compare_at_price %}
+      <div class="product-card__badge product-card__badge--discount">{{ disc_pct }}% OFF</div>
+    {% endif %}
+    <div class="similar-card__quick">
+      <button class="btn-quick-add" data-product-id="{{ p.id }}" data-variant-id="{{ p.first_available_variant.id }}">Quick Add</button>
+    </div>
+  </div>
+  <div class="similar-card__info">
+    <h4 class="similar-card__title"><a href="{{ p.url }}">{{ p.title }}</a></h4>
+    <div class="similar-card__price-row">
+      {% if p.compare_at_price > p.price %}
+        <span class="price price--sale">{{ p.price | money }}</span>
+        <span class="price price--compare">{{ p.compare_at_price | money }}</span>
+      {% else %}
+        <span class="price">{{ p.price | money }}</span>
+      {% endif %}
+    </div>
+    {% if p.variants.size > 1 %}
+      <div class="similar-card__swatches">
+        {% assign opt = p.options_with_values | first %}
+        {% if opt %}
+          {% if opt.name == 'Color' or opt.name == 'Colour' %}
+            {% for val in opt.values limit: 4 %}
+              <span class="mini-swatch" style="background:{{ val | handleize }};" title="{{ val }}"></span>
+            {% endfor %}
+            {% if opt.values.size > 4 %}<span class="mini-swatch-more">+{{ opt.values.size | minus: 4 }}</span>{% endif %}
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,178 @@
+<div class="auth-split-page">
+
+  <!-- Left: decorative brand panel (same as login) -->
+  <div class="auth-split-panel">
+    {% if section.settings.panel_image != blank %}
+      <img src="{{ section.settings.panel_image | image_url: width: 900 }}"
+           alt="{{ shop.name }}"
+           class="auth-split-panel__img">
+      <div class="auth-split-panel__overlay"></div>
+    {% else %}
+      <div class="auth-split-panel__gradient"></div>
+    {% endif %}
+
+    <div class="auth-split-panel__content">
+      <a href="{{ routes.root_url }}" class="auth-split-panel__logo">
+        {% if section.settings.panel_logo != blank %}
+          <img src="{{ section.settings.panel_logo | image_url: width: 300 }}"
+               alt="{{ shop.name }}" class="auth-split-panel__logo-img">
+        {% else %}
+          <span class="auth-split-panel__logo-text">{{ shop.name }}</span>
+        {% endif %}
+      </a>
+
+      <div class="auth-split-panel__tagline">
+        <h2 class="auth-split-panel__heading">
+          {{ section.settings.panel_heading | default: 'Join the family' }}
+        </h2>
+        <p class="auth-split-panel__sub">
+          {{ section.settings.panel_sub | default: 'Create an account for faster checkout, order tracking and member-only offers.' }}
+        </p>
+      </div>
+
+      <!-- Benefits list -->
+      <ul class="auth-split-panel__benefits">
+        {% if section.settings.benefit_1 != blank %}
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ section.settings.benefit_1 }}
+          </li>
+        {% endif %}
+        {% if section.settings.benefit_2 != blank %}
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ section.settings.benefit_2 }}
+          </li>
+        {% endif %}
+        {% if section.settings.benefit_3 != blank %}
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ section.settings.benefit_3 }}
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right: registration form -->
+  <div class="auth-split-form">
+    <div class="auth-split-form__inner">
+
+      <div class="auth-brand">
+        <p class="section-eyebrow">{{ section.settings.eyebrow | default: 'New Here?' }}</p>
+        <h1 class="auth-heading">{{ section.settings.heading | default: 'Create Account' }}</h1>
+        <p class="auth-sub">{{ section.settings.sub | default: 'Already have an account?' }}
+          <a href="{{ routes.account_login_url }}" class="auth-inline-link">
+            {{ section.settings.login_link | default: 'Sign in' }}
+          </a>
+        </p>
+      </div>
+
+      {% form 'create_customer', class: 'auth-form' %}
+        {% if form.errors %}
+          <div class="auth-error" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>{{ form.errors | default_errors }}</div>
+          </div>
+        {% endif %}
+
+        <div class="auth-row">
+          <div class="auth-field">
+            <label class="auth-label" for="reg-first">First Name</label>
+            <input class="auth-input" type="text" name="customer[first_name]" id="reg-first"
+                   autocomplete="given-name" required placeholder="Priya">
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="reg-last">Last Name</label>
+            <input class="auth-input" type="text" name="customer[last_name]" id="reg-last"
+                   autocomplete="family-name" required placeholder="Sharma">
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label" for="reg-email">Email Address</label>
+          <input class="auth-input" type="email" name="customer[email]" id="reg-email"
+                 autocomplete="email" autocapitalize="off" spellcheck="false"
+                 required placeholder="you@email.com">
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label" for="reg-password">Password</label>
+          <div class="auth-input-wrap">
+            <input class="auth-input" type="password" name="customer[password]" id="reg-password"
+                   autocomplete="new-password" minlength="5" required placeholder="Minimum 5 characters">
+            <button type="button" class="auth-eye" id="reg-eye" aria-label="Show/hide password">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <p class="auth-hint">At least 5 characters</p>
+        </div>
+
+        <label class="auth-checkbox">
+          <input type="checkbox" name="customer[accepts_marketing]" value="1" checked>
+          <span>{{ section.settings.marketing_text | default: 'Send me new arrivals, styling tips and exclusive member offers' }}</span>
+        </label>
+
+        <button type="submit" class="btn btn--primary btn--full" style="margin-top:4px;">
+          {{ section.settings.submit_text | default: 'Create Account' }}
+        </button>
+      {% endform %}
+
+      <div class="auth-divider"><span>or</span></div>
+
+      <a href="{{ routes.account_login_url }}" class="btn btn--ghost btn--full">
+        {{ section.settings.login_text | default: 'Sign In Instead' }}
+      </a>
+
+      <p class="auth-terms">
+        By creating an account you agree to our
+        <a href="{{ shop.url }}/policies/privacy-policy">Privacy Policy</a>
+        and
+        <a href="{{ shop.url }}/policies/terms-of-service">Terms of Service</a>.
+      </p>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var eye = document.getElementById('reg-eye');
+  var pwd = document.getElementById('reg-password');
+  if (eye && pwd) {
+    eye.addEventListener('click', function () {
+      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Customer Register",
+  "settings": [
+    { "type": "header",       "content": "Left Panel" },
+    { "type": "image_picker", "id": "panel_image",   "label": "Panel Background Image" },
+    { "type": "image_picker", "id": "panel_logo",    "label": "Logo on Panel",
+      "info": "White version of your logo. Leave blank to use shop name text." },
+    { "type": "text",         "id": "panel_heading", "label": "Panel Heading",
+      "default": "Join the family" },
+    { "type": "textarea",     "id": "panel_sub",     "label": "Panel Sub-text",
+      "default": "Create an account for faster checkout, order tracking and member-only offers." },
+    { "type": "header",       "content": "Benefits List (shown on panel)" },
+    { "type": "text",         "id": "benefit_1", "label": "Benefit 1", "default": "Faster checkout  -  saved addresses" },
+    { "type": "text",         "id": "benefit_2", "label": "Benefit 2", "default": "Full order history and tracking" },
+    { "type": "text",         "id": "benefit_3", "label": "Benefit 3", "default": "Exclusive member offers and early access" },
+    { "type": "header",       "content": "Form" },
+    { "type": "text",         "id": "eyebrow",    "label": "Eyebrow",   "default": "New Here?" },
+    { "type": "text",         "id": "heading",    "label": "Heading",   "default": "Create Account" },
+    { "type": "text",         "id": "sub",        "label": "Sub-text",  "default": "Already have an account?" },
+    { "type": "text",         "id": "login_link", "label": "Login Link Text", "default": "Sign in" },
+    { "type": "text",         "id": "submit_text","label": "Submit Button",   "default": "Create Account" },
+    { "type": "text",         "id": "login_text", "label": "Sign In Button",  "default": "Sign In Instead" },
+    { "type": "text",         "id": "marketing_text", "label": "Marketing Checkbox Text",
+      "default": "Send me new arrivals, styling tips and exclusive member offers" }
+  ]
+}
+{% endschema %}

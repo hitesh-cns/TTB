@@ -1,0 +1,220 @@
+<section class="search-page" data-section-id="{{ section.id }}">
+  <div class="container">
+
+    <div class="search-page__header">
+      <h1 class="search-page__title">{{ 'search.title' | t }}</h1>
+    </div>
+
+    <form class="search-page__form" action="{{ routes.search_url }}" method="get" role="search">
+      <input type="hidden" name="type" value="product,article,page">
+      <div class="search-page__input-wrap">
+        <input
+          class="search-page__input"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'search.placeholder' | t }}"
+          aria-label="{{ 'search.submit' | t }}"
+          autocomplete="off"
+        >
+        <button class="search-page__btn btn btn--primary" type="submit">
+          {{ 'search.submit' | t }}
+        </button>
+      </div>
+    </form>
+
+    {%- if search.performed -%}
+      {%- if search.results_count == 0 -%}
+        <p class="search-page__no-results">
+          {{ 'search.no_results' | t: terms: search.terms }}
+        </p>
+        <p class="search-page__no-results-tip">{{ 'search.no_results_suggestion' | t }}</p>
+      {%- else -%}
+        <p class="search-page__count">
+          {{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}
+        </p>
+
+
+        {%- comment -%} ── FACETED SEARCH FILTERS (required on search page) ────── {%- endcomment -%}
+        {%- if search.filters != empty -%}
+          <div class="search-page__filters">
+            <form id="search-filters-form" class="search-filters">
+              {%- for filter in search.filters -%}
+                <details class="search-filter" {% if filter.active_values.size > 0 %}open{% endif %}>
+                  <summary class="search-filter__heading">
+                    {{ filter.label }}
+                    {%- if filter.active_values.size > 0 -%}
+                      <span class="search-filter__count">{{ filter.active_values.size }}</span>
+                    {%- endif -%}
+                  </summary>
+                  <div class="search-filter__body">
+                    {%- case filter.type -%}
+                      {%- when 'boolean', 'list' -%}
+                        {%- for value in filter.values -%}
+                          <label class="search-filter__option">
+                            <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"
+                              {% if value.active %}checked{% endif %}
+                              {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                              onchange="document.getElementById('search-filters-form').submit()">
+                            <span>{{ value.label }}</span>
+                            <span class="search-filter__option-count">({{ value.count }})</span>
+                          </label>
+                        {%- endfor -%}
+                      {%- when 'price_range' -%}
+                        {%- assign min_price = filter.min_value.value | default: 0 | money_without_currency -%}
+                        {%- assign max_price = filter.max_value.value | default: filter.range_max | money_without_currency -%}
+                        <div class="search-filter__price-range">
+                          <label>Min <input type="number" name="{{ filter.min_value.param_name }}" value="{{ min_price }}" min="0" max="{{ filter.range_max | money_without_currency }}" class="search-filter__price-input"></label>
+                          <label>Max <input type="number" name="{{ filter.max_value.param_name }}" value="{{ max_price }}" min="0" max="{{ filter.range_max | money_without_currency }}" class="search-filter__price-input"></label>
+                          <button type="submit" class="btn btn--outline btn--sm">Apply</button>
+                        </div>
+                    {%- endcase -%}
+
+                    {%- if filter.active_values.size > 0 -%}
+                      <a href="{{ filter.url_to_remove }}" class="search-filter__clear">Clear</a>
+                    {%- endif -%}
+                  </div>
+                </details>
+              {%- endfor -%}
+
+              {%- assign active_filter_count = 0 -%}
+              {%- for filter in search.filters -%}
+                {%- assign active_filter_count = active_filter_count | plus: filter.active_values.size -%}
+              {%- endfor -%}
+              {%- if active_filter_count > 0 -%}
+                <a href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&type=product,article,page" class="search-filter__clear-all">
+                  Clear all filters ({{ active_filter_count }})
+                </a>
+              {%- endif -%}
+            </form>
+          </div>
+        {%- endif -%}
+        {%- assign product_results = search.results | where: 'object_type', 'product' -%}
+        {%- assign article_results = search.results | where: 'object_type', 'article' -%}
+        {%- assign page_results    = search.results | where: 'object_type', 'page' -%}
+
+        {%- if product_results.size > 0 -%}
+          <h2 class="search-page__section-title">{{ 'product.add_to_cart' | t | replace: 'Add to Cart', 'Products' }}</h2>
+          <div class="search-page__grid product-grid">
+            {%- for product in product_results -%}
+              {%- render 'product-card', product: product -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- if article_results.size > 0 -%}
+          <h2 class="search-page__section-title">Articles</h2>
+          <div class="search-page__articles">
+            {%- for article in article_results -%}
+              <a href="{{ article.url }}" class="search-article-card">
+                {%- if article.image -%}
+                  {{ article.image | image_url: width: 200 | image_tag: loading: 'lazy', alt: article.image.alt | default: article.title, class: 'search-article-card__img' }}
+                {%- endif -%}
+                <div class="search-article-card__body">
+                  <p class="search-article-card__blog">{{ article.blog.title }}</p>
+                  <h3 class="search-article-card__title">{{ article.title }}</h3>
+                  <p class="search-article-card__excerpt">{{ article.excerpt_or_content | strip_html | truncate: 100 }}</p>
+                </div>
+              </a>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- if page_results.size > 0 -%}
+          <h2 class="search-page__section-title">Pages</h2>
+          <div class="search-page__pages">
+            {%- for page in page_results -%}
+              <a href="{{ page.url }}" class="search-page-card">
+                <h3 class="search-page-card__title">{{ page.title }}</h3>
+                <p class="search-page-card__excerpt">{{ page.content | strip_html | truncate: 100 }}</p>
+              </a>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- if paginate.pages > 1 -%}
+          <div class="search-page__pagination pagination">
+            {{ paginate | default_pagination }}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search results",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Search results"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .search-page { padding: 60px 24px 80px; }
+  .search-page__header { text-align: center; margin-bottom: 40px; }
+  .search-page__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    margin-bottom: 8px;
+  }
+  .search-page__form { max-width: 600px; margin: 0 auto 48px; }
+  .search-page__input-wrap { display: flex; gap: 12px; }
+  .search-page__input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    border-radius: 4px;
+  }
+  .search-page__input:focus { outline: 2px solid currentColor; outline-offset: 2px; }
+  .search-page__count { margin-bottom: 32px; color: #666; }
+  .search-page__no-results { font-size: 1.125rem; margin-bottom: 8px; }
+  .search-page__no-results-tip { color: #888; }
+  .search-page__pagination { margin-top: 48px; text-align: center; }
+
+  .search-page__section-title { font-family: var(--font-display); font-size: 1.25rem; margin: 40px 0 20px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border, #e8ddd4); }
+  .search-page__articles, .search-page__pages { display: grid; gap: 16px; margin-bottom: 32px; }
+  .search-article-card { display: flex; gap: 16px; text-decoration: none; color: inherit; padding: 16px 0; border-bottom: 1px solid var(--color-border, #e8ddd4); }
+  .search-article-card__img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+  .search-article-card__blog { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: #888; margin-bottom: 4px; }
+  .search-article-card__title { font-family: var(--font-display); font-size: 1rem; margin-bottom: 4px; }
+  .search-article-card__excerpt { font-size: .875rem; color: #666; }
+  .search-page-card { display: block; padding: 16px; border: 1px solid var(--color-border, #e8ddd4); border-radius: 6px; text-decoration: none; color: inherit; transition: background .15s; }
+  .search-page-card:hover { background: #f9f3ee; }
+  .search-page-card__title { font-family: var(--font-display); font-size: 1rem; margin-bottom: 6px; }
+  .search-page-card__excerpt { font-size: .875rem; color: #666; }
+
+  .search-page__filters { margin-bottom: 32px; }
+  .search-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+  .search-filter { border: 1px solid var(--color-border, #e8ddd4); border-radius: 6px; min-width: 180px; }
+  .search-filter__heading { padding: 10px 14px; cursor: pointer; font-size: .875rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; list-style: none; user-select: none; }
+  .search-filter__heading::-webkit-details-marker { display: none; }
+  .search-filter__count { background: var(--color-accent-bg, #c8a882); color: #fff; border-radius: 99px; padding: 1px 7px; font-size: .7rem; }
+  .search-filter__body { padding: 8px 14px 12px; border-top: 1px solid var(--color-border, #e8ddd4); }
+  .search-filter__option { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: .875rem; cursor: pointer; }
+  .search-filter__option input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--color-button-bg, #2c1f18); cursor: pointer; }
+  .search-filter__option-count { color: #888; font-size: .8rem; margin-left: auto; }
+  .search-filter__option input:disabled + span { opacity: .4; }
+  .search-filter__price-range { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .search-filter__price-input { width: 80px; padding: 6px 8px; border: 1px solid var(--color-border, #e8ddd4); border-radius: 4px; font-size: .875rem; }
+  .search-filter__clear { display: inline-block; margin-top: 8px; font-size: .8rem; text-decoration: underline; color: #888; }
+  .search-filter__clear-all { font-size: .85rem; text-decoration: underline; color: var(--color-accent-bg, #c8a882); align-self: center; }
+
+</style>

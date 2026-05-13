@@ -1,0 +1,393 @@
+{% assign bxgy_qty = 0 %}
+{% for item in cart.items %}
+  {% if item.product.metafields.custom.discount == 'BXGY' %}
+    {% assign bxgy_qty = bxgy_qty | plus: item.quantity %}
+  {% endif %}
+{% endfor %}
+
+{% assign current_pct = 0 %}
+{% assign current_code = '' %}
+{% assign next_qty = 2 %}
+{% assign next_pct = 5 %}
+
+{% if bxgy_qty >= 5 %}{% assign current_pct = 20 %}{% assign current_code = 'BUNDLE20' %}{% assign next_qty = 0 %}{% assign next_pct = 0 %}
+{% elsif bxgy_qty >= 3 %}{% assign current_pct = 10 %}{% assign current_code = 'BUNDLE10' %}{% assign next_qty = 5 %}{% assign next_pct = 20 %}
+{% elsif bxgy_qty >= 2 %}{% assign current_pct = 5 %}{% assign current_code = 'BUNDLE5' %}{% assign next_qty = 3 %}{% assign next_pct = 10 %}
+{% elsif bxgy_qty >= 1 %}{% assign next_qty = 2 %}{% assign next_pct = 5 %}
+{% endif %}
+
+{% assign potential_saving = 0 %}
+{% if next_pct > 0 %}
+  {% assign potential_saving = cart.total_price | times: next_pct | divided_by: 100 %}
+{% endif %}
+
+<div class="cart-page">
+  <div class="container">
+
+    <nav class="product-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a><span aria-hidden="true">›</span><span>Cart</span>
+    </nav>
+    <div class="cart-page__top-row">
+      <h1 class="cart-page__title">{{ section.settings.title | default: "Your Cart" }}
+        <span class="cart-page__count">({{ cart.item_count }} item{{ cart.item_count | pluralize: '', 's' }})</span>
+      </h1>
+      <a href="/collections/all" class="cart-page__continue-link">← Continue Shopping</a>
+    </div>
+
+    {% if cart.item_count > 0 %}
+
+      {% comment %} = DISCOUNT BANNER = {% endcomment %}
+      <div class="cpd-banner">
+        <div class="cpd-banner__left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <div>
+            <p class="cpd-banner__title">{{ section.settings.bundle_label | default: "Bundle &amp; Save" }}</p>
+            {% if current_pct > 0 and next_pct == 0 %}
+              <p class="cpd-banner__sub">🎉 Maximum {{ current_pct }}% discount unlocked! Apply code <strong>{{ current_code }}</strong> at checkout.</p>
+            {% elsif current_pct > 0 %}
+              {% assign need = next_qty | minus: bxgy_qty %}
+              <p class="cpd-banner__sub">You have <strong>{{ current_pct }}% off</strong> (code <strong>{{ current_code }}</strong>). Add <strong>{{ need }}</strong> more BXGY item{{ need | pluralize: '', 's' }} to unlock <strong>{{ next_pct }}% off</strong> — you'd save an extra <strong>{{ potential_saving | money }}</strong>.</p>
+            {% elsif bxgy_qty > 0 %}
+              {% assign need = next_qty | minus: bxgy_qty %}
+              <p class="cpd-banner__sub">Add <strong>{{ need }}</strong> more BXGY item{{ need | pluralize: '', 's' }} to unlock <strong>{{ next_pct }}% off</strong> — you'd save <strong>{{ potential_saving | money }}</strong>.</p>
+            {% else %}
+              <p class="cpd-banner__sub">Add <strong>2</strong> BXGY products to unlock <strong>5% off</strong>. Buy more, save more — up to 20% off.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        {% comment %} Three milestone nodes {% endcomment %}
+        <div class="cpd-milestones">
+          <div class="cpd-milestone {% if bxgy_qty >= 2 %}is-done{% endif %}">
+            <div class="cpd-milestone__icon">
+              {% if bxgy_qty >= 2 %}
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              {% else %}
+                <span>2</span>
+              {% endif %}
+            </div>
+            <span>5% off</span>
+          </div>
+          <div class="cpd-milestone-line {% if bxgy_qty >= 3 %}is-done{% endif %}"></div>
+          <div class="cpd-milestone {% if bxgy_qty >= 3 %}is-done{% endif %}">
+            <div class="cpd-milestone__icon">
+              {% if bxgy_qty >= 3 %}
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              {% else %}
+                <span>3</span>
+              {% endif %}
+            </div>
+            <span>10% off</span>
+          </div>
+          <div class="cpd-milestone-line {% if bxgy_qty >= 5 %}is-done{% endif %}"></div>
+          <div class="cpd-milestone {% if bxgy_qty >= 5 %}is-done{% endif %}">
+            <div class="cpd-milestone__icon">
+              {% if bxgy_qty >= 5 %}
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              {% else %}
+                <span>5</span>
+              {% endif %}
+            </div>
+            <span>20% off</span>
+          </div>
+        </div>
+      </div>
+
+      {% comment %} = MAIN LAYOUT: TABLE + SUMMARY = {% endcomment %}
+      <div class="cart-page__layout">
+
+        {% comment %} -- Items table -- {% endcomment %}
+        <div class="cart-page__table-wrap">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th class="ct-col-img" scope="col" aria-hidden="true"></th>
+                <th class="ct-col-product" scope="col">Product</th>
+                <th class="ct-col-price" scope="col">Unit Price</th>
+                <th class="ct-col-qty" scope="col">Quantity</th>
+                <th class="ct-col-total" scope="col">Total</th>
+                <th class="ct-col-remove" scope="col" aria-label="Remove"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in cart.items %}
+                <tr class="ct-row" data-key="{{ item.key }}">
+
+                  <td class="ct-col-img">
+                    <a href="{{ item.url }}">
+                      {% if item.image %}
+                        <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title | escape }}"
+                             class="ct-img" width="80" height="80" loading="lazy">
+                      {% endif %}
+                    </a>
+                    {% if item.product.metafields.custom.discount == 'BXGY' %}
+                      <span class="ct-bxgy-badge">BXGY</span>
+                    {% endif %}
+                  </td>
+
+                  <td class="ct-col-product">
+                    <a href="{{ item.url }}" class="ct-product-title">{{ item.product.title }}</a>
+                    {% unless item.variant.title == 'Default Title' %}
+                      <p class="ct-variant">{{ item.variant.title }}</p>
+                    {% endunless %}
+                    {% if item.product.metafields.custom.discount == 'BXGY' %}
+                      <span class="ct-eligible">Bundle eligible</span>
+                    {% endif %}
+                  </td>
+
+                  <td class="ct-col-price">
+                    <span class="ct-price">{{ item.price | money }}</span>
+                  </td>
+
+                  <td class="ct-col-qty">
+                    <div class="ct-qty-control">
+                      <button class="ct-qty-btn" data-key="{{ item.key }}" data-qty="{{ item.quantity | minus: 1 }}" aria-label="Decrease">−</button>
+                      <input type="number" class="ct-qty-input" value="{{ item.quantity }}"
+                             min="0" data-key="{{ item.key }}" aria-label="Quantity">
+                      <button class="ct-qty-btn" data-key="{{ item.key }}" data-qty="{{ item.quantity | plus: 1 }}" aria-label="Increase">+</button>
+                    </div>
+                  </td>
+
+                  <td class="ct-col-total">
+                    <span class="ct-line-total">{{ item.final_line_price | money }}</span>
+                    {%- if item.unit_price_measurement -%}
+                      <span class="cart-item__unit-price">{{ item.unit_price | money }}/{{ item.unit_price_measurement.reference_unit }}</span>
+                    {%- endif -%}
+                    {%- if item.selling_plan_allocation -%}
+                      <span class="cart-item__selling-plan">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                    {%- endif -%}
+                  </td>
+
+                  <td class="ct-col-remove">
+                    <button class="ct-remove-btn" data-key="{{ item.key }}" aria-label="Remove {{ item.product.title | escape }}">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </td>
+
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% comment %} -- Order summary -- {% endcomment %}
+        <div class="cart-page__summary">
+          <h2 class="cart-page__summary-title">{{ section.settings.summary_title | default: "Order Summary" }}</h2>
+
+          {% if current_pct > 0 %}
+            <div class="cps-discount-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Bundle {{ current_pct }}% off — use code <strong>{{ current_code }}</strong>
+            </div>
+          {% endif %}
+
+          {% if next_pct > 0 %}
+            {% assign need = next_qty | minus: bxgy_qty %}
+            {% if need > 0 %}
+              <div class="cps-upsell">
+                💡 Add <strong>{{ need }}</strong> more BXGY item{{ need | pluralize: '', 's' }} and save an extra <strong>{{ potential_saving | money }}</strong>
+              </div>
+            {% endif %}
+          {% endif %}
+
+          <div class="cps-rows">
+            <div class="cps-row">
+              <span>Subtotal ({{ cart.item_count }} items)</span>
+              <span>{{ cart.total_price | money }}</span>
+            </div>
+            {% if cart.total_discount > 0 %}
+              <div class="cps-row cps-row--saving">
+                <span>Discount applied</span>
+                <span>−{{ cart.total_discount | money }}</span>
+              </div>
+            {% endif %}
+            <div class="cps-row cps-row--muted">
+              <span>Shipping</span>
+              {%- if cart.taxes_included -%}
+                <span>Tax included</span>
+              {%- else -%}
+                <span>Calculated at checkout</span>
+              {%- endif -%}
+            </div>
+            <div class="cps-row cps-row--muted">
+              <span>Tax</span>
+              <span>Calculated at checkout</span>
+            </div>
+          </div>
+
+          <div class="cps-total">
+            <span>Estimated Total</span>
+            <span>{{ cart.total_price | money }}</span>
+          </div>
+
+          <div class="cps-code">
+            <label for="cpc-code-input" class="cps-code__label">Have a discount code?</label>
+            <div class="cps-code__row">
+              <input type="text" id="cpc-code-input" class="cps-code__input" placeholder="e.g. BUNDLE10">
+              <button class="btn btn--outline cps-code__apply" id="cpc-code-apply">Apply</button>
+            </div>
+          </div>
+
+
+          {%- comment -%} ── CART NOTE (required) ─────────────────────────────────── {%- endcomment -%}
+          {%- if section.settings.show_cart_note -%}
+            <div class="cart-note">
+              <label for="cart-note" class="cart-note__label">{{ section.settings.note_label | default: 'Order notes' }}</label>
+              <textarea
+                id="cart-note"
+                name="note"
+                class="cart-note__input"
+                rows="3"
+                placeholder="{{ section.settings.note_placeholder | default: 'Special instructions for your order…' }}"
+              >{{ cart.note }}</textarea>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} ── ACCELERATED CHECKOUT (required) ─────────────────────── {%- endcomment -%}
+          <div class="cart-dynamic-checkout">
+            {{- cart | payment_button -}}
+          </div>
+
+          <a href="{{ routes.cart_url }}/checkout" class="btn btn--primary btn--full cps-checkout">
+            Proceed to Checkout
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+
+          <div class="cps-trust">
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>{{ section.settings.secure_label | default: "Secure Checkout" }}</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>All cards accepted</span>
+            <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>{{ section.settings.returns_label | default: "Free Returns" }}</span>
+          </div>
+        </div>
+
+      </div>
+
+    {% else %}
+
+      <div class="cart-page__empty">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <h2>{{ section.settings.empty_heading | default: "Your cart is empty" }}</h2>
+        <p>Add some beautiful pieces for your little one.</p>
+        <a href="/collections/all" class="btn btn--primary">Start Shopping</a>
+      </div>
+
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  async function updateItem(key, qty) {
+    const res = await fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: key, quantity: qty })
+    });
+    if (res.ok) window.location.reload();
+  }
+
+  document.querySelectorAll('.ct-qty-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qty = parseInt(btn.dataset.qty, 10);
+      updateItem(btn.dataset.key, Math.max(0, qty));
+    });
+  });
+
+  document.querySelectorAll('.ct-qty-input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      updateItem(inp.dataset.key, Math.max(0, parseInt(inp.value, 10) || 0));
+    });
+  });
+
+  document.querySelectorAll('.ct-remove-btn').forEach(btn => {
+    btn.addEventListener('click', () => updateItem(btn.dataset.key, 0));
+  });
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Cart page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Page Title",
+      "default": "Your Cart"
+    },
+    {
+      "type": "text",
+      "id": "summary_title",
+      "label": "Order Summary Title",
+      "default": "Order Summary"
+    },
+    {
+      "type": "text",
+      "id": "bundle_label",
+      "label": "Bundle Banner Label",
+      "default": "Bundle & Save"
+    },
+    {
+      "type": "text",
+      "id": "secure_label",
+      "label": "Secure Checkout Label",
+      "default": "Secure Checkout"
+    },
+    {
+      "type": "text",
+      "id": "returns_label",
+      "label": "Free Returns Label",
+      "default": "Free Returns"
+    },
+    {
+      "type": "text",
+      "id": "empty_heading",
+      "label": "Empty Cart Heading",
+      "default": "Your cart is empty"
+    },
+    {
+      "type": "text",
+      "id": "empty_sub",
+      "label": "Empty Cart Sub-text",
+      "default": "Looks like you haven't added anything yet."
+    },
+    {
+      "type": "text",
+      "id": "empty_cta",
+      "label": "Empty Cart Button Text",
+      "default": "Start Shopping"
+    },
+    {
+      "type": "url",
+      "id": "empty_url",
+      "label": "Empty Cart Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Cart note"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart_note",
+      "label": "Show order notes field",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "note_label",
+      "label": "Note label",
+      "default": "Order notes"
+    },
+    {
+      "type": "text",
+      "id": "note_placeholder",
+      "label": "Note placeholder",
+      "default": "Special instructions for your order\u2026"
+    }
+  ]
+}
+{% endschema %}

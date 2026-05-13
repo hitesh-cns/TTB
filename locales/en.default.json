@@ -1,0 +1,203 @@
+{
+  "general": {
+    "close": "Close",
+    "search": "Search",
+    "loading": "Loading...",
+    "required": "Required",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "or": "or"
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "open_cart": "Open cart",
+    "close_cart": "Close cart",
+    "open_search": "Open search",
+    "close_search": "Close search",
+    "cart_count": "{{ count }} items in cart",
+    "zoom_image": "Zoom image",
+    "next_slide": "Next slide",
+    "previous_slide": "Previous slide",
+    "play_slideshow": "Play slideshow",
+    "pause_slideshow": "Pause slideshow"
+  },
+  "header": {
+    "search_placeholder": "Search products…",
+    "account": "Account",
+    "cart": "Cart",
+    "menu": "Menu"
+  },
+  "footer": {
+    "copyright": "All rights reserved."
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "empty_cta": "Continue Shopping",
+    "subtotal": "Subtotal",
+    "checkout": "Proceed to Checkout",
+    "view_cart": "View Full Cart",
+    "remove": "Remove item",
+    "quantity": "Quantity",
+    "taxes_note": "Taxes and shipping calculated at checkout",
+    "update": "Update"
+  },
+  "product": {
+    "add_to_cart": "Add to Cart",
+    "sold_out": "Sold Out",
+    "unavailable": "Unavailable",
+    "quantity": "Quantity",
+    "size": "Size",
+    "color": "Colour",
+    "sku": "SKU",
+    "share": "Share",
+    "new_badge": "New",
+    "sale_badge": "Sale",
+    "from_price_html": "From {{ price }}",
+    "unit_price_separator": "per"
+  },
+  "collection": {
+    "filter": "Filter",
+    "sort": "Sort by",
+    "clear_filters": "Clear all",
+    "apply_filters": "Apply",
+    "no_results": "No products found.",
+    "product_count": "{{ count }} products",
+    "sort_options": {
+      "featured": "Featured",
+      "best_selling": "Best selling",
+      "title_asc": "A–Z",
+      "title_desc": "Z–A",
+      "price_asc": "Price: Low to High",
+      "price_desc": "Price: High to Low",
+      "created_asc": "Oldest first",
+      "created_desc": "Newest first"
+    }
+  },
+  "blog": {
+    "read_more": "Read more",
+    "posted_by": "By {{ author }}",
+    "on": "on",
+    "tags": "Tags",
+    "share": "Share this article",
+    "comment_count": "{{ count }} comments",
+    "no_comments": "No comments yet.",
+    "comment_form": {
+      "title": "Leave a comment",
+      "name": "Name",
+      "email": "Email",
+      "body": "Comment",
+      "submit": "Post comment",
+      "success": "Your comment has been submitted and is awaiting approval."
+    }
+  },
+  "account": {
+    "login": {
+      "title": "Sign In",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "forgot_password": "Forgot password?",
+      "create_account": "Create account",
+      "guest_continue": "Continue as guest",
+      "error": "Incorrect email or password."
+    },
+    "register": {
+      "title": "Create Account",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create account",
+      "have_account": "Already have an account?"
+    },
+    "reset_password": {
+      "title": "Reset Password",
+      "email": "Email",
+      "submit": "Submit",
+      "success": "We've sent you an email with a link to reset your password.",
+      "back_to_login": "Back to sign in"
+    },
+    "orders": {
+      "title": "Orders",
+      "none": "You haven't placed any orders yet.",
+      "order_number": "Order {{ number }}",
+      "date": "Date",
+      "status": "Status",
+      "total": "Total",
+      "view": "View order"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "add": "Add new address",
+      "edit": "Edit",
+      "delete": "Delete",
+      "default": "Default",
+      "set_default": "Set as default",
+      "none": "You haven't saved any addresses yet.",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "company": "Company (optional)",
+      "address1": "Address",
+      "address2": "Apartment, suite, etc. (optional)",
+      "city": "City",
+      "country": "Country",
+      "province": "State / Province",
+      "zip": "Postcode / ZIP",
+      "phone": "Phone (optional)",
+      "submit": "Save address",
+      "cancel": "Cancel"
+    }
+  },
+  "newsletter": {
+    "label": "Email address",
+    "submit": "Subscribe",
+    "success": "Thank you for subscribing!",
+    "already_subscribed": "This email is already subscribed."
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search…",
+    "submit": "Search",
+    "results_count": "{{ count }} results for \"{{ terms }}\"",
+    "no_results": "No results for \"{{ terms }}\".",
+    "no_results_suggestion": "Try checking your spelling or using more general terms."
+  },
+  "404": {
+    "title": "Page Not Found",
+    "body": "The page you were looking for doesn't exist.",
+    "cta": "Continue shopping"
+  },
+  "password": {
+    "title": "Opening soon",
+    "subtext": "Enter the password to get early access.",
+    "label": "Password",
+    "submit": "Enter",
+    "error": "Incorrect password. Please try again."
+  },
+  "gift_cards": {
+    "issued": "Your gift card",
+    "remaining_html": "{{ balance }} remaining",
+    "copy": "Copy to clipboard",
+    "copied": "Copied!"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "write": "Write a review",
+    "submit": "Submit Review",
+    "cancel": "Cancel",
+    "empty": "No reviews yet. Be the first to share your experience!",
+    "verified": "Verified Purchase",
+    "helpful": "Was this helpful?",
+    "helpful_yes": "Yes",
+    "helpful_no": "No",
+    "load_more": "Load more reviews",
+    "photo_label": "Add a photo (optional)",
+    "rating": "Rating",
+    "rating_label": "{{ rating }} out of 5 stars"
+  }
+}

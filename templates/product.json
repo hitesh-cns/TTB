@@ -1,0 +1,31 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-hero",
+      "settings": {}
+    },
+    "pair-with": {
+      "type": "pair-with",
+      "settings": {}
+    },
+    "similar-products": {
+      "type": "similar-products",
+      "settings": {}
+    },
+    "reviews": {
+      "type": "product-reviews",
+      "settings": {}
+    },
+    "complementary": {
+      "type": "complementary-products",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "pair-with",
+    "similar-products",
+    "reviews",
+    "complementary"
+  ]
+}

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ 'gift_cards.issued' | t }} — {{ shop.name }}</title>
+  {{ settings.font_heading | font_face: font_display: 'swap' }}
+  {{ settings.font_body | font_face: font_display: 'swap' }}
+  <style>
+    :root {
+      --font-display: {{ settings.font_heading.family | json }}, Georgia, serif;
+      --font-body: {{ settings.font_body.family | json }}, 'Helvetica Neue', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: #f9f3ee; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+    .gc { background: #fff; border-radius: 12px; max-width: 520px; width: 100%; padding: 48px 40px; text-align: center; box-shadow: 0 4px 32px rgba(0,0,0,.08); }
+    .gc__logo { margin-bottom: 32px; }
+    .gc__logo img { max-height: 48px; }
+    .gc__shop { font-family: var(--font-display); font-size: 1.5rem; }
+    .gc__title { font-family: var(--font-display); font-size: clamp(1.25rem,3vw,1.875rem); margin-bottom: 8px; }
+    .gc__balance { font-size: 2.5rem; font-family: var(--font-display); font-weight: 600; margin: 24px 0 8px; }
+    .gc__remaining { color: #888; margin-bottom: 32px; font-size: .9rem; }
+    .gc__code-wrap { background: #f5f0eb; border-radius: 8px; padding: 20px; margin-bottom: 24px; cursor: pointer; position: relative; }
+    .gc__code { font-family: monospace; font-size: 1.25rem; letter-spacing: .2em; font-weight: 600; word-break: break-all; }
+    .gc__copy-msg { font-size: .8rem; color: #888; margin-top: 6px; }
+    .gc__qr { margin: 24px auto; }
+    .gc__qr img { width: 120px; height: 120px; }
+    .gc__apple-wallet { margin: 16px 0; }
+    .gc__apple-wallet a img { height: 44px; }
+    .gc__expiry { color: #888; font-size: .875rem; margin-top: 24px; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  </style>
+</head>
+<body>
+  <div class="gc">
+    <div class="gc__logo">
+      {%- if settings.logo -%}
+        {{ settings.logo | image_url: width: 200 | image_tag: alt: shop.name, loading: 'eager' }}
+      {%- else -%}
+        <p class="gc__shop">{{ shop.name }}</p>
+      {%- endif -%}
+    </div>
+
+    <h1 class="gc__title">{{ 'gift_cards.issued' | t }}</h1>
+
+    <p class="gc__balance">{{ gift_card.initial_value | money_without_trailing_zeros }}</p>
+
+    {%- if gift_card.balance != gift_card.initial_value -%}
+      <p class="gc__remaining">{{ 'gift_cards.remaining_html' | t: balance: gift_card.balance | money }}</p>
+    {%- endif -%}
+
+    <div class="gc__code-wrap" onclick="copyCode()" id="gc-code-wrap">
+      <p class="gc__code" id="gc-code">{{ gift_card.code | format_code }}</p>
+      <p class="gc__copy-msg" id="gc-copy-msg">{{ 'gift_cards.copy' | t }}</p>
+    </div>
+
+    <div class="gc__qr">
+      {{ gift_card.qr_identifier | qr_code: 120, 120 }}
+    </div>
+
+    {%- if gift_card.pass_url -%}
+      <div class="gc__apple-wallet">
+        <a href="{{ gift_card.pass_url }}">
+          <img src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" alt="Add to Apple Wallet" width="120" height="40">
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if gift_card.expires_on -%}
+      <p class="gc__expiry">Expires: {{ gift_card.expires_on | date: '%B %d, %Y' }}</p>
+    {%- endif -%}
+  </div>
+
+  <script>
+    function copyCode() {
+      const code = document.getElementById('gc-code').innerText.replace(/\s/g, '');
+      navigator.clipboard.writeText(code).then(() => {
+        document.getElementById('gc-copy-msg').textContent = '{{ 'gift_cards.copied' | t }}';
+        setTimeout(() => { document.getElementById('gc-copy-msg').textContent = '{{ 'gift_cards.copy' | t }}'; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
+  <div class="localization-selectors">
+
+    {%- if localization.available_countries.size > 1 -%}
+      {%- form 'localization', id: 'country-form', class: 'localization-form' -%}
+        <div class="localization-form__select-wrap">
+          <label class="visually-hidden" for="country-selector">{{ 'general.country' | default: 'Country/region' }}</label>
+          <select id="country-selector" name="country_code" class="localization-form__select"
+            onchange="this.form.submit()">
+            {%- for country in localization.available_countries -%}
+              <option value="{{ country.iso_code }}"
+                {%- if country.iso_code == localization.country.iso_code %} selected{%- endif -%}>
+                {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+              </option>
+            {%- endfor -%}
+          </select>
+          <svg class="localization-form__caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <input type="hidden" name="return_to" value="{{ request.path }}">
+      {%- endform -%}
+    {%- endif -%}
+
+    {%- if localization.available_languages.size > 1 -%}
+      {%- form 'localization', id: 'language-form', class: 'localization-form' -%}
+        <div class="localization-form__select-wrap">
+          <label class="visually-hidden" for="language-selector">{{ 'general.language' | default: 'Language' }}</label>
+          <select id="language-selector" name="locale_code" class="localization-form__select"
+            onchange="this.form.submit()">
+            {%- for language in localization.available_languages -%}
+              <option value="{{ language.iso_code }}"
+                {%- if language.iso_code == localization.language.iso_code %} selected{%- endif -%}>
+                {{ language.endonym_name | capitalize }}
+              </option>
+            {%- endfor -%}
+          </select>
+          <svg class="localization-form__caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <input type="hidden" name="return_to" value="{{ request.path }}">
+      {%- endform -%}
+    {%- endif -%}
+
+  </div>
+{%- endif -%}
+
+<style>
+.localization-selectors { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+.localization-form__select-wrap { position: relative; display: inline-flex; align-items: center; }
+.localization-form__select {
+  appearance: none; -webkit-appearance: none;
+  background: transparent;
+  border: 1px solid var(--color-border, #e8ddd4);
+  border-radius: 4px;
+  padding: 6px 28px 6px 10px;
+  font-size: .85rem;
+  font-family: var(--font-body);
+  color: inherit;
+  cursor: pointer;
+}
+.localization-form__select:focus { outline: 2px solid currentColor; outline-offset: 2px; }
+.localization-form__caret { position: absolute; right: 8px; pointer-events: none; }
+</style>
