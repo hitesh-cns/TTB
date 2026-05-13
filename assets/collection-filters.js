@@ -253,16 +253,14 @@
     window.location.href = url.toString();
   });
 
-  // -- Mobile sidebar toggle (open) --
+  // -- Filter panel toggle --
   function openSidebar() {
     sidebar && sidebar.classList.add('is-mobile-open');
     mobileToggle && mobileToggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
   }
   function closeSidebar() {
     sidebar && sidebar.classList.remove('is-mobile-open');
     mobileToggle && mobileToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
   }
   mobileToggle && mobileToggle.addEventListener('click', openSidebar);
 
