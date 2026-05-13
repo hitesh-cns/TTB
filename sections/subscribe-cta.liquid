@@ -1,0 +1,83 @@
+<section class="subscribe-section" id="subscribe">
+  <div class="subscribe-section__inner">
+    <h2 class="subscribe-section__heading">{{ section.settings.heading }}</h2>
+
+    {% form 'customer', id: 'subscribe-form' %}
+      <div class="subscribe-section__form">
+        <div>
+          <label class="subscribe-section__label" for="subscribe-email">{{ section.settings.label }}</label>
+          <input
+            class="subscribe-section__input"
+            type="email"
+            id="subscribe-email"
+            name="contact[email]"
+            placeholder="{{ section.settings.placeholder }}"
+            required
+            autocomplete="email"
+          >
+          <input type="hidden" name="contact[tags]" value="newsletter">
+        </div>
+        <button class="subscribe-section__btn" type="submit">
+          {{ section.settings.button_text }}
+        </button>
+      </div>
+
+      {% if form.posted_successfully? %}
+        <p style="margin-top: 16px; color: var(--sage); font-size: 14px;">
+          {{ section.settings.success_message }}
+        </p>
+      {% endif %}
+
+      {% if form.errors %}
+        <p style="margin-top: 16px; color: var(--price-sale); font-size: 14px;">
+          {{ form.errors.translated_fields['email'] | capitalize }}
+          {{ form.errors.messages['email'] }}
+        </p>
+      {% endif %}
+    {% endform %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Subscribe CTA",
+  "class": "subscribe-cta-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Save 20% on Your Purchase Today."
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Input label",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder text",
+      "default": "Enter your email"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thanks for subscribing! Check your inbox for your discount code."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Subscribe CTA"
+    }
+  ]
+}
+{% endschema %}

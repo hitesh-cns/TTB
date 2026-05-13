@@ -1,0 +1,135 @@
+{% comment %}
+  ============================================================
+  SECTION: PAGE FAQ
+  ============================================================
+  FAQ Page — Used by the /pages/faq URL.
+  Questions and answers are added as blocks in the Theme Editor.
+  ADD QUESTIONS: Theme Editor → FAQ → Add block → FAQ Item
+  EDIT: Theme Editor → Pages → FAQs
+  ============================================================
+{% endcomment %}
+<div class="be-page">
+
+  <div class="be-page__hero">
+    <div class="container">
+      <p class="section-eyebrow">{{ section.settings.eyebrow | default: 'Got Questions?' }}</p>
+      <h1 class="be-page__title">{{ section.settings.heading | default: 'Frequently Asked Questions' }}</h1>
+      <p class="be-page__sub">{{ section.settings.subheading | default: "Can't find your answer? Reach us at " }}<a href="mailto:{{ section.settings.email | default: 'hello@yourstore.com' }}" class="be-page__link">{{ section.settings.email | default: 'hello@yourstore.com' }}</a></p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="faq-layout">
+
+      <!-- Category navigation -->
+      <nav class="faq-cats" aria-label="FAQ categories">
+        {% assign cats = '' %}
+        {% for block in section.blocks %}
+          {% if block.type == 'question' %}
+            {% assign cat = block.settings.category %}
+            {% unless cats contains cat %}
+              {% assign cats = cats | append: cat | append: '|' %}
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+        {% assign cat_list = cats | split: '|' %}
+        {% for cat in cat_list %}
+          {% if cat != '' %}
+            <button class="faq-cat-btn {% if forloop.first %}is-active{% endif %}"
+                    data-cat="{{ cat | handleize }}" type="button">{{ cat }}</button>
+          {% endif %}
+        {% endfor %}
+      </nav>
+
+      <!-- Questions -->
+      <div class="faq-list">
+        {% assign current_cat = '' %}
+        {% for block in section.blocks %}
+          {% if block.type == 'question' %}
+            {% assign cat = block.settings.category %}
+            {% if cat != current_cat %}
+              {% if current_cat != '' %}</div>{% endif %}
+              {% assign current_cat = cat %}
+              <div class="faq-group" data-cat="{{ cat | handleize }}" {% unless forloop.first %}style="display:none;"{% endunless %}>
+              <h2 class="faq-group__title">{{ cat }}</h2>
+            {% endif %}
+
+            <details class="faq-item" {{ block.shopify_attributes }}>
+              <summary class="faq-item__q">
+                <span>{{ block.settings.question }}</span>
+                <span class="faq-item__icon" aria-hidden="true">
+                  <svg class="faq-plus" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <svg class="faq-minus" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </span>
+              </summary>
+              <div class="faq-item__a rte">{{ block.settings.answer }}</div>
+            </details>
+
+            {% if forloop.last %}</div>{% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- Still need help CTA -->
+    <div class="faq-cta">
+      <p>Still have questions?</p>
+      <a href="/pages/contact" class="btn btn--ghost">Contact Us</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const catBtns = document.querySelectorAll('.faq-cat-btn');
+  const groups  = document.querySelectorAll('.faq-group');
+
+  catBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat;
+      catBtns.forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      groups.forEach(g => { g.style.display = g.dataset.cat === cat ? 'block' : 'none'; });
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ Page",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Got Questions?" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently Asked Questions" },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "email", "label": "Support Email", "default": "hello@yourstore.com" }
+  ],
+  "blocks": [{
+    "type": "question",
+    "name": "FAQ Item",
+    "settings": [
+      { "type": "select", "id": "category", "label": "Category", "options": [
+        { "value": "Ordering & Shipping", "label": "Ordering & Shipping" },
+        { "value": "Returns & Exchanges", "label": "Returns & Exchanges" },
+        { "value": "Products & Sizing", "label": "Products & Sizing" },
+        { "value": "Care & Safety", "label": "Care & Safety" },
+        { "value": "Payments & Discounts", "label": "Payments & Discounts" }
+      ], "default": "Ordering & Shipping" },
+      { "type": "text", "id": "question", "label": "Question", "default": "How long does delivery take?" },
+      { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>We ship within 1-2 business days. Standard delivery takes 3-7 business days depending on your location.</p>" }
+    ]
+  }],
+  "presets": [{ "name": "FAQ Page", "blocks": [
+    { "type": "question", "settings": { "category": "Ordering & Shipping", "question": "How long does delivery take?", "answer": "<p>We dispatch within 1-2 business days. Standard delivery across India takes 3-7 business days. Expedited options are available at checkout.</p>" } },
+    { "type": "question", "settings": { "category": "Ordering & Shipping", "question": "Do you offer free shipping?", "answer": "<p>Yes  -  free shipping on all orders above ₹999. Orders below this threshold have a flat ₹79 shipping fee.</p>" } },
+    { "type": "question", "settings": { "category": "Ordering & Shipping", "question": "Can I track my order?", "answer": "<p>Absolutely. Once your order ships you'll receive an email with a tracking link. You can also view it in My Account -> My Orders.</p>" } },
+    { "type": "question", "settings": { "category": "Returns & Exchanges", "question": "What is your return policy?", "answer": "<p>We accept returns within 15 days of delivery. Items must be unworn, unwashed and in original packaging. See our full <a href='/pages/returns'>Return Policy</a>.</p>" } },
+    { "type": "question", "settings": { "category": "Returns & Exchanges", "question": "How do I exchange for a different size?", "answer": "<p>Contact us at hello@yourstore.com with your order number and the size you need. We'll arrange a pickup and send the replacement once the original is received.</p>" } },
+    { "type": "question", "settings": { "category": "Products & Sizing", "question": "What sizes do you carry?", "answer": "<p>We carry Newborn (0-1M), 0-3M, 3-6M, 6-12M, 12-18M, 18-24M, 2-3Y, and 3-4Y. Each product page has a full size guide with measurements.</p>" } },
+    { "type": "question", "settings": { "category": "Care & Safety", "question": "Are your fabrics safe for newborns?", "answer": "<p>Yes. All our fabrics are OEKO-TEX certified, free from harmful dyes and chemicals, and dermatologist tested for sensitive skin.</p>" } },
+    { "type": "question", "settings": { "category": "Payments & Discounts", "question": "How do bundle discounts work?", "answer": "<p>Buy 2 BXGY items = 5% off, 3 items = 10% off, 5+ items = 20% off. The discount code is automatically suggested in your cart  -  just apply it at checkout.</p>" } }
+  ]}]
+}
+{% endschema %}

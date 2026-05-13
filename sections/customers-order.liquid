@@ -1,0 +1,138 @@
+{% comment %}
+  ============================================================
+  SECTION: CUSTOMERS ORDER
+  ============================================================
+  Customer Order — Individual order detail pages (/account/orders/*).
+  Shows full order breakdown, line items, totals and shipping info.
+  EDIT: Theme Editor → Customer pages → Customer Order
+  ============================================================
+{% endcomment %}
+{% if customer %}
+
+<div class="acct-page">
+  <div class="container">
+    <div class="acct-layout">
+
+      {% render 'account-nav' %}
+
+      <div class="acct-content">
+        <nav class="product-breadcrumb">
+          <a href="/account">My Orders</a>
+          <span>›</span>
+          <span>Order #{{ order.name }}</span>
+        </nav>
+
+        <div class="acct-content__header">
+          <h1 class="acct-heading">Order #{{ order.name }}</h1>
+          <span class="order-badge order-badge--{{ order.financial_status }}">
+            {{ order.financial_status | replace: '_', ' ' | capitalize }}
+          </span>
+        </div>
+        <p class="acct-sub">Placed on {{ order.created_at | date: '%d %B %Y at %H:%M' }}</p>
+
+        <!-- Order items table -->
+        <div class="orders-table-wrap" style="margin-top: 28px;">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for line in order.line_items %}
+                <tr class="order-row">
+                  <td>
+                    <div class="order-line-product">
+                      {% if line.image %}
+                        <img src="{{ line.image | img_url: '100x' }}" alt="{{ line.title }}" class="order-line-img">
+                      {% endif %}
+                      <div>
+                        <p class="order-line-title">{{ line.product.title }}</p>
+                        {% unless line.variant.title == 'Default Title' %}
+                          <p class="order-line-variant">{{ line.variant.title }}</p>
+                        {% endunless %}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="order-sku">{{ line.sku | default: '—' }}</td>
+                  <td>{{ line.quantity }}</td>
+                  <td>{{ line.price | money }}</td>
+                  <td>{{ line.final_line_price | money }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totals + addresses -->
+        <div class="order-detail-grid">
+          <div class="order-summary-box">
+            <h3 class="order-box-title">Order Summary</h3>
+            <div class="order-summary-rows">
+              <div class="order-summary-row"><span>Subtotal</span><span>{{ order.subtotal_price | money }}</span></div>
+              {% for discount in order.discounts %}
+                <div class="order-summary-row order-summary-row--discount"><span>Discount ({{ discount.code }})</span><span>−{{ discount.amount | money }}</span></div>
+              {% endfor %}
+              {% for shipping_method in order.shipping_methods %}
+                <div class="order-summary-row"><span>Shipping ({{ shipping_method.title }})</span><span>{{ shipping_method.price | money }}</span></div>
+              {% endfor %}
+              {% for tax_line in order.tax_lines %}
+                <div class="order-summary-row"><span>{{ tax_line.title }} ({{ tax_line.rate | times: 100 }}%)</span><span>{{ tax_line.price | money }}</span></div>
+              {% endfor %}
+            </div>
+            <div class="order-summary-total">
+              <span>Total</span>
+              <span>{{ order.total_price | money }}</span>
+            </div>
+          </div>
+
+          <div>
+            {% if order.shipping_address %}
+              <div class="order-summary-box">
+                <h3 class="order-box-title">Shipping Address</h3>
+                <p>{{ order.shipping_address.first_name }} {{ order.shipping_address.last_name }}</p>
+                <p>{{ order.shipping_address.address1 }}</p>
+                {% if order.shipping_address.address2 != blank %}<p>{{ order.shipping_address.address2 }}</p>{% endif %}
+                <p>{{ order.shipping_address.city }}, {{ order.shipping_address.province }} {{ order.shipping_address.zip }}</p>
+                <p>{{ order.shipping_address.country }}</p>
+              </div>
+            {% endif %}
+
+            {% if order.fulfillments.size > 0 %}
+              <div class="order-summary-box" style="margin-top:16px;">
+                <h3 class="order-box-title">Tracking</h3>
+                {% for fulfillment in order.fulfillments %}
+                  {% if fulfillment.tracking_url %}
+                    <a href="{{ fulfillment.tracking_url }}" target="_blank" class="btn btn--ghost btn--sm" style="margin-top:8px;">
+                      Track Shipment → {{ fulfillment.tracking_number }}
+                    </a>
+                  {% else %}
+                    <p>No tracking information yet.</p>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+  <div class="auth-page">
+    <div class="auth-card" style="text-align:center;">
+      <p class="section-eyebrow">Order Details</p>
+      <h1 class="auth-heading" style="font-size:28px;">Please Sign In</h1>
+      <p class="auth-sub">You need to be logged in to view order details.</p>
+      <a href="/account/login" class="btn btn--primary" style="margin-top:20px;display:inline-block;">Sign In</a>
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}{ "name": "Customer Order", "settings": [] }{% endschema %}

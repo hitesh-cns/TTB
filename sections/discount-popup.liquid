@@ -1,0 +1,36 @@
+{% comment %}
+  ============================================================
+  SECTION: DISCOUNT POPUP
+  ============================================================
+  Discount Popup — The small notification in the corner showing bundle progress.
+  Appears when the cart has BXGY-eligible items and the next tier is within reach.
+  Driven by discount-engine.js which watches cart changes.
+  EDIT: Theme Editor → Discount Popup
+  ============================================================
+{% endcomment %}
+<div class="discount-popup" id="discount-popup" aria-hidden="true">
+  <div class="discount-popup__inner">
+    <button class="discount-popup__close" id="discount-popup-close" aria-label="Close">✕</button>
+    <div class="discount-popup__icon">{{ section.settings.icon | default: '🎁' }}</div>
+    <h3 class="discount-popup__heading" id="discount-popup-heading">{{ section.settings.heading | default: "You're almost there!" }}</h3>
+    <p class="discount-popup__text" id="discount-popup-text">Add 1 more item to get 5% off your order</p>
+    <div class="discount-popup__progress">
+      <div class="discount-popup__fill" id="discount-popup-fill"></div>
+    </div>
+    <a href="{{ section.settings.cta_url | default: '/collections/all' }}" class="btn btn--primary btn--sm">
+      {{ section.settings.cta_text | default: 'Add More Items' }}
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Discount Popup",
+  "settings": [
+    { "type": "text",  "id": "heading",  "label": "Heading",     "default": "You're almost there!" },
+    { "type": "text",  "id": "icon",     "label": "Icon (emoji)", "default": "🎁" },
+    { "type": "text",  "id": "cta_text", "label": "Button Text",  "default": "Add More Items" },
+    { "type": "url",   "id": "cta_url",  "label": "Button URL" }
+  ]
+}
+{% endschema %}

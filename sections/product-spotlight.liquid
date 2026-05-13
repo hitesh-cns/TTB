@@ -1,0 +1,125 @@
+{% comment %}
+  ============================================================
+  SECTION: PRODUCT SPOTLIGHT
+  ============================================================
+  Highlights a single product with a large image, full details,
+  and an add-to-cart button. Great for featuring a hero product
+  or new arrival prominently on the home page.
+  EDIT: Theme Editor → Add section → Product Spotlight
+  ============================================================
+{% endcomment %}
+
+{%- assign sp = all_products[section.settings.product] -%}
+
+{%- if sp != blank -%}
+  <section class="spotlight-section section-spacing spotlight-section--{{ section.settings.layout | default: 'image-left' }}"
+           style="background:{{ section.settings.bg_color | default: 'transparent' }};">
+    <div class="container">
+      <div class="spotlight-grid">
+
+        <!-- Product image -->
+        <div class="spotlight-image-col">
+          {%- if section.settings.custom_image != blank -%}
+            <img src="{{ section.settings.custom_image | img_url: '1000x' }}" alt="{{ sp.title }}" loading="lazy" class="spotlight-img">
+          {%- elsif sp.featured_image -%}
+            <img src="{{ sp.featured_image | img_url: '1000x' }}" alt="{{ sp.featured_image.alt | default: sp.title }}" loading="lazy" class="spotlight-img">
+          {%- endif -%}
+          {%- if section.settings.badge_text != blank -%}
+            <span class="spotlight-badge" style="background:{{ section.settings.badge_color | default: '#b8922a' }};">
+              {{ section.settings.badge_text }}
+            </span>
+          {%- endif -%}
+        </div>
+
+        <!-- Product info -->
+        <div class="spotlight-text-col">
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="section-eyebrow">{{ section.settings.eyebrow }}</p>
+          {%- endif -%}
+
+          <h2 class="spotlight-title">{{ section.settings.heading | default: sp.title }}</h2>
+
+          <div class="spotlight-price">
+            {%- if sp.compare_at_price > sp.price -%}
+              <span class="price--compare">{{ sp.compare_at_price | money }}</span>
+            {%- endif -%}
+            <span class="price--main">{{ sp.price | money }}</span>
+          </div>
+
+          {%- if section.settings.description != blank -%}
+            <div class="spotlight-desc rte">{{ section.settings.description }}</div>
+          {%- elsif sp.description != blank -%}
+            <div class="spotlight-desc rte">{{ sp.description | truncatewords: 60 }}</div>
+          {%- endif -%}
+
+          {%- if section.settings.feature_1 != blank or section.settings.feature_2 != blank or section.settings.feature_3 != blank -%}
+            <ul class="spotlight-features">
+              {%- if section.settings.feature_1 != blank -%}<li>{{ section.settings.feature_1 }}</li>{%- endif -%}
+              {%- if section.settings.feature_2 != blank -%}<li>{{ section.settings.feature_2 }}</li>{%- endif -%}
+              {%- if section.settings.feature_3 != blank -%}<li>{{ section.settings.feature_3 }}</li>{%- endif -%}
+              {%- if section.settings.feature_4 != blank -%}<li>{{ section.settings.feature_4 }}</li>{%- endif -%}
+            </ul>
+          {%- endif -%}
+
+          <div class="spotlight-actions">
+            {%- if sp.available -%}
+              <form action="/cart/add" method="post">
+                <input type="hidden" name="id" value="{{ sp.selected_or_first_available_variant.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn--primary spotlight-atc">
+                  {{ section.settings.atc_text | default: 'Add to Cart' }}
+                </button>
+              </form>
+            {%- else -%}
+              <button class="btn btn--primary" disabled>Sold Out</button>
+            {%- endif -%}
+            <a href="{{ sp.url }}" class="btn btn--ghost">
+              {{ section.settings.view_text | default: 'View Details' }}
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+{%- else -%}
+  <div class="container" style="padding:40px 0;text-align:center;color:var(--espresso-lt);">
+    <p>Select a product in Theme Editor → Product Spotlight.</p>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product Spotlight",
+  "tag": "section",
+  "settings": [
+    { "type": "product",      "id": "product",      "label": "Product to Feature" },
+    { "type": "header",       "content": "Layout" },
+    { "type": "select",       "id": "layout",       "label": "Image Position",
+      "options": [
+        {"value":"image-left", "label":"Image Left / Text Right"},
+        {"value":"image-right","label":"Image Right / Text Left"}
+      ], "default": "image-left" },
+    { "type": "color",        "id": "bg_color",     "label": "Background Colour" },
+    { "type": "header",       "content": "Content" },
+    { "type": "image_picker", "id": "custom_image", "label": "Custom Image",
+      "info": "Overrides the product's own image." },
+    { "type": "text",         "id": "badge_text",   "label": "Badge Text (e.g. 'Best Seller')" },
+    { "type": "color",        "id": "badge_color",  "label": "Badge Colour", "default": "#b8922a" },
+    { "type": "text",         "id": "eyebrow",      "label": "Eyebrow Text" },
+    { "type": "text",         "id": "heading",      "label": "Override Product Title",
+      "info": "Leave blank to use the product title." },
+    { "type": "richtext",     "id": "description",  "label": "Override Description",
+      "info": "Leave blank to use the product description." },
+    { "type": "header",       "content": "Feature Bullets (optional)" },
+    { "type": "text",         "id": "feature_1",    "label": "Feature 1" },
+    { "type": "text",         "id": "feature_2",    "label": "Feature 2" },
+    { "type": "text",         "id": "feature_3",    "label": "Feature 3" },
+    { "type": "text",         "id": "feature_4",    "label": "Feature 4" },
+    { "type": "header",       "content": "Buttons" },
+    { "type": "text",         "id": "atc_text",     "label": "Add to Cart Button Text", "default": "Add to Cart" },
+    { "type": "text",         "id": "view_text",    "label": "View Details Button Text", "default": "View Details" }
+  ],
+  "presets": [{ "name": "Product Spotlight" }]
+}
+{% endschema %}

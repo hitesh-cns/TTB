@@ -1,0 +1,397 @@
+{% comment %}
+  ============================================================
+  SECTION: FOOTER
+  ============================================================
+  Footer — Shown at the bottom of every page.
+  Contains: Trust strip, brand description, social links, newsletter signup,
+            4 navigation columns, contact details, bottom bar with copyright.
+  EDIT: Theme Editor → Footer
+  NOTE: Navigation column headings (Shop, Help, Company, etc.) are in Theme Editor settings.
+  ============================================================
+{% endcomment %}
+<!-- -- Trust Strip -- -->
+<div class="footer-trust">
+  <div class="container">
+    <div class="footer-trust__grid">
+      {% assign icon_id = section.settings.trust1_icon | default: 'shield' %}
+      <div class="footer-trust__item">
+        {%- comment -%}
+    Trust badge icon renderer.
+    icon_id is the value from section.settings.trustN_icon
+    Renders the matching SVG or falls back to the shield.
+  {%- endcomment -%}
+  {%- case icon_id -%}
+    {%- when 'shield' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    {%- when 'truck' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    {%- when 'refresh' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+    {%- when 'phone' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 14 15.82l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    {%- when 'card' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    {%- when 'leaf' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+    {%- when 'star' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    {%- when 'heart' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    {%- when 'lock' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    {%- when 'award' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    {%- when 'globe' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    {%- when 'check' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="20 6 9 17 4 12"/></svg>
+  {%- else -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  {%- endcase -%}
+        <div>
+          <p class="footer-trust__label">{{ section.settings.trust1_label | default: '100% Safe & Certified' }}</p>
+          <p class="footer-trust__sub">{{ section.settings.trust1_sub | default: 'OEKO-TEX certified fabrics' }}</p>
+        </div>
+      </div>
+      {% assign icon_id = section.settings.trust2_icon | default: 'truck' %}
+      <div class="footer-trust__item">
+        {%- comment -%}
+    Trust badge icon renderer.
+    icon_id is the value from section.settings.trustN_icon
+    Renders the matching SVG or falls back to the shield.
+  {%- endcomment -%}
+  {%- case icon_id -%}
+    {%- when 'shield' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    {%- when 'truck' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    {%- when 'refresh' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+    {%- when 'phone' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 14 15.82l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    {%- when 'card' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    {%- when 'leaf' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+    {%- when 'star' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    {%- when 'heart' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    {%- when 'lock' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    {%- when 'award' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    {%- when 'globe' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    {%- when 'check' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="20 6 9 17 4 12"/></svg>
+  {%- else -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  {%- endcase -%}
+        <div>
+          <p class="footer-trust__label">{{ section.settings.trust2_label | default: 'Free Shipping' }}</p>
+          <p class="footer-trust__sub">{{ section.settings.trust2_sub | default: 'On orders above ₹1500' }}</p>
+        </div>
+      </div>
+      {% assign icon_id = section.settings.trust3_icon | default: 'refresh' %}
+      <div class="footer-trust__item">
+        {%- comment -%}
+    Trust badge icon renderer.
+    icon_id is the value from section.settings.trustN_icon
+    Renders the matching SVG or falls back to the shield.
+  {%- endcomment -%}
+  {%- case icon_id -%}
+    {%- when 'shield' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    {%- when 'truck' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    {%- when 'refresh' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+    {%- when 'phone' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 14 15.82l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    {%- when 'card' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    {%- when 'leaf' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+    {%- when 'star' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    {%- when 'heart' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    {%- when 'lock' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    {%- when 'award' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    {%- when 'globe' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    {%- when 'check' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="20 6 9 17 4 12"/></svg>
+  {%- else -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  {%- endcase -%}
+        <div>
+          <p class="footer-trust__label">{{ section.settings.trust3_label | default: 'Easy Returns' }}</p>
+          <p class="footer-trust__sub">{{ section.settings.trust3_sub | default: '15-day hassle-free returns' }}</p>
+        </div>
+      </div>
+      {% assign icon_id = section.settings.trust4_icon | default: 'phone' %}
+      <div class="footer-trust__item">
+        {%- comment -%}
+    Trust badge icon renderer.
+    icon_id is the value from section.settings.trustN_icon
+    Renders the matching SVG or falls back to the shield.
+  {%- endcomment -%}
+  {%- case icon_id -%}
+    {%- when 'shield' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    {%- when 'truck' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    {%- when 'refresh' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+    {%- when 'phone' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 14 15.82l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    {%- when 'card' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    {%- when 'leaf' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+    {%- when 'star' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    {%- when 'heart' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    {%- when 'lock' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    {%- when 'award' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    {%- when 'globe' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    {%- when 'check' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="20 6 9 17 4 12"/></svg>
+  {%- else -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  {%- endcase -%}
+        <div>
+          <p class="footer-trust__label">{{ section.settings.trust4_label | default: '24h Support' }}</p>
+          <p class="footer-trust__sub">{{ section.settings.trust4_sub | default: 'Mon – Sat, 9am – 6pm IST' }}</p>
+        </div>
+      </div>
+      {% assign icon_id = section.settings.trust5_icon | default: 'card' %}
+      <div class="footer-trust__item">
+        {%- comment -%}
+    Trust badge icon renderer.
+    icon_id is the value from section.settings.trustN_icon
+    Renders the matching SVG or falls back to the shield.
+  {%- endcomment -%}
+  {%- case icon_id -%}
+    {%- when 'shield' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    {%- when 'truck' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    {%- when 'refresh' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+    {%- when 'phone' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 14 15.82l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    {%- when 'card' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    {%- when 'leaf' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+    {%- when 'star' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    {%- when 'heart' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    {%- when 'lock' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    {%- when 'award' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    {%- when 'globe' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    {%- when 'check' -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><polyline points="20 6 9 17 4 12"/></svg>
+  {%- else -%}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  {%- endcase -%}
+        <div>
+          <p class="footer-trust__label">{{ section.settings.trust5_label | default: 'Secure Checkout' }}</p>
+          <p class="footer-trust__sub">{{ section.settings.trust5_sub | default: '256-bit SSL encrypted' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+
+  <!-- -- Main footer body -- -->
+  <div class="footer-body container">
+
+    <!-- Brand + newsletter column -->
+    <div class="footer-brand-col">
+      {% if section.settings.logo != blank %}
+        <img src="{{ section.settings.logo | img_url: '200x' }}" alt="{{ shop.name }}" class="footer-logo">
+      {% else %}
+        <p class="footer-brand-name">{{ shop.name }}</p>
+      {% endif %}
+
+      <p class="footer-brand-desc">
+        {{ section.settings.brand_desc | default: 'Thoughtfully designed clothing for your little ones. Made with certified organic fabrics and a whole lot of love.' }}
+      </p>
+
+      <div class="footer-social">
+        {% if section.settings.instagram != blank %}
+          <a href="{{ section.settings.instagram }}" class="footer-social__link" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        {% endif %}
+        {% if section.settings.facebook != blank %}
+          <a href="{{ section.settings.facebook }}" class="footer-social__link" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        {% endif %}
+        {% if section.settings.whatsapp != blank %}
+          <a href="https://wa.me/{{ section.settings.whatsapp | remove: '+' | remove: ' ' | remove: '-' }}" class="footer-social__link" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          </a>
+        {% endif %}
+        {% if section.settings.pinterest != blank %}
+          <a href="{{ section.settings.pinterest }}" class="footer-social__link" target="_blank" rel="noopener" aria-label="Pinterest">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.03-2.83.2-.78 1.3-5.51 1.3-5.51s-.33-.67-.33-1.65c0-1.55.9-2.71 2.01-2.71.95 0 1.41.71 1.41 1.57 0 .96-.61 2.39-.93 3.72-.26 1.11.56 2.01 1.65 2.01 1.97 0 3.3-2.55 3.3-5.57 0-2.3-1.57-3.91-3.82-3.91-2.6 0-4.12 1.95-4.12 3.96 0 .78.3 1.62.68 2.08.07.09.08.17.06.26-.07.29-.23.93-.26 1.06-.04.17-.14.2-.31.12-1.17-.55-1.9-2.26-1.9-3.64 0-2.97 2.15-5.69 6.2-5.69 3.25 0 5.78 2.32 5.78 5.41 0 3.23-2.03 5.82-4.85 5.82-.95 0-1.84-.49-2.14-1.07l-.58 2.19c-.21.81-.78 1.83-1.17 2.44.88.27 1.81.42 2.78.42 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="footer-newsletter">
+        <p class="footer-newsletter__label">{{ section.settings.newsletter_label | default: "Get exclusive offers" }}</p>
+        {% form 'customer', class: 'footer-nl-form' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="footer-nl-wrap">
+            <input type="email" name="contact[email]" placeholder="{{ section.settings.newsletter_placeholder | default: 'your@email.com' }}" class="footer-nl-input" required>
+            <button type="submit" class="footer-nl-btn" aria-label="Subscribe">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+          {% if form.posted_successfully? %}<p class="footer-nl-success">{{ section.settings.newsletter_success | default: "✦ Welcome to the family!" }}</p>{% endif %}
+        {% endform %}
+      </div>
+    </div>
+
+    <!-- -- HARDCODED NAV COLUMNS --
+         These columns are always visible. Add/edit using the fields below.
+         They replace the empty block-driven approach. -->
+    <div class="footer-nav-cols">
+
+      <!-- Column 1: Shop — driven by the "Footer Shop Menu" link list in Theme Editor -->
+      <div class="footer-nav-col">
+        <h4 class="footer-col-title">{{ section.settings.col1_heading | default: "Shop" }}</h4>
+        <ul class="footer-col-list">
+          {% if section.settings.col1_menu != blank and linklists[section.settings.col1_menu] != blank %}
+            {% for link in linklists[section.settings.col1_menu].links %}
+              <li><a href="{{ link.url }}" class="footer-col-link">{{ link.title }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li><a href="/collections/all"          class="footer-col-link">All Products</a></li>
+            <li><a href="/collections/girls"        class="footer-col-link">Girls</a></li>
+            <li><a href="/collections/boys"         class="footer-col-link">Boys</a></li>
+            <li><a href="/collections/family"       class="footer-col-link">Family</a></li>
+            <li><a href="/collections/new-arrivals" class="footer-col-link">New Arrivals</a></li>
+            <li><a href="/collections/sale"         class="footer-col-link">Sale</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Column 2: Help / Customer Service -->
+      <div class="footer-nav-col">
+        <h4 class="footer-col-title">{{ section.settings.col2_heading | default: "Help" }}</h4>
+        <ul class="footer-col-list">
+          {%- comment -%}
+            We try common handles first, then fall back to /pages/handle.
+            In Shopify Admin, make sure your page handles are:
+            contact, faq, returns, about
+            (Shopify Admin → Pages → click page → URL handle field)
+          {%- endcomment -%}
+          {%- assign pg_contact = pages['contact'] | default: pages['contact-us'] -%}
+          {%- assign pg_faq = pages['faq'] | default: pages['faqs'] -%}
+          {%- assign pg_returns = pages['returns'] | default: pages['returns-exchanges'] -%}
+          {% if section.settings.col2_menu != blank and linklists[section.settings.col2_menu] != blank %}
+            {% for link in linklists[section.settings.col2_menu].links %}
+              <li><a href="{{ link.url }}" class="footer-col-link">{{ link.title }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li><a href="{{ pg_contact.url | default: '/pages/contact' }}" class="footer-col-link">Contact Us</a></li>
+            <li><a href="{{ pg_faq.url | default: '/pages/faq' }}" class="footer-col-link">FAQs</a></li>
+            <li><a href="{{ pg_returns.url | default: '/pages/returns' }}" class="footer-col-link">Returns &amp; Exchanges</a></li>
+            <li><a href="{{ shop.url }}/policies/shipping-policy" class="footer-col-link">Shipping Policy</a></li>
+            <li><a href="{{ shop.url }}/policies/privacy-policy" class="footer-col-link">Privacy Policy</a></li>
+            <li><a href="{{ shop.url }}/policies/terms-of-service" class="footer-col-link">Terms of Service</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Column 3: Company -->
+      <div class="footer-nav-col">
+        <h4 class="footer-col-title">{{ section.settings.col3_heading | default: "Company" }}</h4>
+        <ul class="footer-col-list">
+          {%- assign pg_about = pages['about'] | default: pages['about-us'] -%}
+          <li><a href="{{ pg_about.url | default: '/pages/about' }}" class="footer-col-link">About Us</a></li>
+          <li><a href="/blogs/news" class="footer-col-link">Blog</a></li>
+          <li><a href="{{ pg_contact.url | default: '/pages/contact' }}" class="footer-col-link">Get in Touch</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Account -->
+      <div class="footer-nav-col">
+        <h4 class="footer-col-title">{{ section.settings.col4_heading | default: "My Account" }}</h4>
+        <ul class="footer-col-list">
+          {% if customer %}
+            <li><a href="/account" class="footer-col-link">My Orders</a></li>
+            <li><a href="/account/addresses" class="footer-col-link">Saved Addresses</a></li>
+            <li><a href="{{ routes.account_logout_url }}" class="footer-col-link">Sign Out</a></li>
+          {% else %}
+            <li><a href="/account/login" class="footer-col-link">Sign In</a></li>
+            <li><a href="/account/register" class="footer-col-link">Create Account</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Contact column -->
+    <div class="footer-contact-col">
+      <h4 class="footer-col-title">{{ section.settings.col5_heading | default: "Get in Touch" }}</h4>
+      {% if section.settings.contact_email != blank %}
+        <a href="mailto:{{ section.settings.contact_email }}" class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          {{ section.settings.contact_email }}
+        </a>
+      {% else %}
+        <a href="/pages/contact" class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Contact Us
+        </a>
+      {% endif %}
+      {% if section.settings.contact_phone != blank %}
+        <a href="tel:{{ section.settings.contact_phone }}" class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.38 2 2 0 0 1 3.11 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 14 15.82l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          {{ section.settings.contact_phone }}
+        </a>
+      {% endif %}
+      {% if section.settings.contact_address != blank %}
+        <p class="footer-contact-item footer-contact-item--addr">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{ section.settings.contact_address }}
+        </p>
+      {% endif %}
+      <p class="footer-contact-hours">{{ section.settings.contact_hours | default: 'Mon – Sat · 9am – 6pm IST' }}</p>
+    </div>
+
+  </div>
+
+  <!-- -- Bottom bar -- -->
+  <div class="footer-bottom">
+    <div class="container footer-bottom__inner">
+      <p class="footer-copyright">{{ section.settings.copyright_text | default: "©" }} {{ 'now' | date: '%Y' }} {{ shop.name }}{{ section.settings.copyright_suffix | default: ". All rights reserved." }}</p>
+      <div class="footer-legal-links">
+        <a href="{{ shop.url }}/policies/privacy-policy" class="footer-legal-link">Privacy Policy</a>
+        <a href="{{ shop.url }}/policies/terms-of-service" class="footer-legal-link">Terms of Service</a>
+        <a href="{{ shop.url }}/policies/shipping-policy" class="footer-legal-link">Shipping Policy</a>
+        {%- assign pg_returns = pages['returns'] | default: pages['returns-exchanges'] -%}
+        <a href="{{ pg_returns.url | default: '/pages/returns' }}" class="footer-legal-link">Returns</a>
+      </div>
+      <div class="footer-payments">
+        {{ shop.enabled_payment_types | payment_type_svg_tag: class: 'payment-icon' }}
+      </div>
+    </div>
+  </div>
+
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "header", "content": "Trust Strip" },
+    { "type": "select", "id": "trust1_icon", "label": "Badge 1  -  Icon", "options": [{"value":"shield","label":"🛡 Shield"},{"value":"truck","label":"🚚 Truck"},{"value":"refresh","label":"↩ Returns"},{"value":"phone","label":"📞 Phone"},{"value":"card","label":"💳 Card"},{"value":"leaf","label":"🌿 Leaf"},{"value":"star","label":"★ Star"},{"value":"heart","label":"♥ Heart"},{"value":"lock","label":"🔒 Lock"},{"value":"award","label":"🏆 Award"},{"value":"globe","label":"🌐 Globe"},{"value":"check","label":"✓ Check"}], "default": "shield" },
+    { "type": "text", "id": "trust1_label", "label": "Badge 1  -  Label", "default": "100% Safe & Certified" },
+    { "type": "text", "id": "trust1_sub",   "label": "Badge 1  -  Sub-text", "default": "OEKO-TEX certified fabrics" },
+    { "type": "select", "id": "trust2_icon", "label": "Badge 2  -  Icon", "options": [{"value":"shield","label":"🛡 Shield"},{"value":"truck","label":"🚚 Truck"},{"value":"refresh","label":"↩ Returns"},{"value":"phone","label":"📞 Phone"},{"value":"card","label":"💳 Card"},{"value":"leaf","label":"🌿 Leaf"},{"value":"star","label":"★ Star"},{"value":"heart","label":"♥ Heart"},{"value":"lock","label":"🔒 Lock"},{"value":"award","label":"🏆 Award"},{"value":"globe","label":"🌐 Globe"},{"value":"check","label":"✓ Check"}], "default": "truck" },
+    { "type": "text", "id": "trust2_label", "label": "Badge 2  -  Label", "default": "Free Shipping" },
+    { "type": "text", "id": "trust2_sub",   "label": "Badge 2  -  Sub-text", "default": "On orders above ₹1500" },
+    { "type": "select", "id": "trust3_icon", "label": "Badge 3  -  Icon", "options": [{"value":"shield","label":"🛡 Shield"},{"value":"truck","label":"🚚 Truck"},{"value":"refresh","label":"↩ Returns"},{"value":"phone","label":"📞 Phone"},{"value":"card","label":"💳 Card"},{"value":"leaf","label":"🌿 Leaf"},{"value":"star","label":"★ Star"},{"value":"heart","label":"♥ Heart"},{"value":"lock","label":"🔒 Lock"},{"value":"award","label":"🏆 Award"},{"value":"globe","label":"🌐 Globe"},{"value":"check","label":"✓ Check"}], "default": "refresh" },
+    { "type": "text", "id": "trust3_label", "label": "Badge 3  -  Label", "default": "Easy Returns" },
+    { "type": "text", "id": "trust3_sub",   "label": "Badge 3  -  Sub-text", "default": "15-day hassle-free returns" },
+    { "type": "select", "id": "trust4_icon", "label": "Badge 4  -  Icon", "options": [{"value":"shield","label":"🛡 Shield"},{"value":"truck","label":"🚚 Truck"},{"value":"refresh","label":"↩ Returns"},{"value":"phone","label":"📞 Phone"},{"value":"card","label":"💳 Card"},{"value":"leaf","label":"🌿 Leaf"},{"value":"star","label":"★ Star"},{"value":"heart","label":"♥ Heart"},{"value":"lock","label":"🔒 Lock"},{"value":"award","label":"🏆 Award"},{"value":"globe","label":"🌐 Globe"},{"value":"check","label":"✓ Check"}], "default": "phone" },
+    { "type": "text", "id": "trust4_label", "label": "Badge 4  -  Label", "default": "24h Support" },
+    { "type": "text", "id": "trust4_sub",   "label": "Badge 4  -  Sub-text", "default": "Mon - Sat, 9am - 6pm IST" },
+    { "type": "select", "id": "trust5_icon", "label": "Badge 5  -  Icon", "options": [{"value":"shield","label":"🛡 Shield"},{"value":"truck","label":"🚚 Truck"},{"value":"refresh","label":"↩ Returns"},{"value":"phone","label":"📞 Phone"},{"value":"card","label":"💳 Card"},{"value":"leaf","label":"🌿 Leaf"},{"value":"star","label":"★ Star"},{"value":"heart","label":"♥ Heart"},{"value":"lock","label":"🔒 Lock"},{"value":"award","label":"🏆 Award"},{"value":"globe","label":"🌐 Globe"},{"value":"check","label":"✓ Check"}], "default": "card" },
+    { "type": "text", "id": "trust5_label", "label": "Badge 5  -  Label", "default": "Secure Checkout" },
+    { "type": "text", "id": "trust5_sub",   "label": "Badge 5  -  Sub-text", "default": "256-bit SSL encrypted" },
+    { "type": "header", "content": "Brand" },
+    { "type": "image_picker", "id": "logo", "label": "Footer Logo" },
+    { "type": "textarea", "id": "brand_desc", "label": "Brand Description", "default": "Thoughtfully designed clothing for your little ones. Made with certified organic fabrics and a whole lot of love." },
+    { "type": "text", "id": "contact_email", "label": "Email", "default": "hello@yourstore.com" },
+    { "type": "text", "id": "contact_phone", "label": "Phone / WhatsApp" },
+    { "type": "text", "id": "contact_address", "label": "Address" },
+    { "type": "text", "id": "contact_hours", "label": "Business Hours", "default": "Mon - Sat · 9am - 6pm IST" },
+    { "type": "text", "id": "instagram", "label": "Instagram URL" },
+    { "type": "text", "id": "pinterest", "label": "Pinterest URL" },
+    { "type": "text", "id": "facebook", "label": "Facebook URL" },
+    { "type": "text", "id": "whatsapp", "label": "WhatsApp Number", "info": "Include country code, e.g. +91 98765 43210" },
+    { "type": "header",   "content": "Footer Newsletter" },
+    { "type": "text",     "id": "newsletter_label",       "label": "Newsletter Label",        "default": "Get exclusive offers" },
+    { "type": "text",     "id": "newsletter_placeholder", "label": "Email Placeholder",       "default": "your@email.com" },
+    { "type": "text",     "id": "newsletter_success",     "label": "Success Message",         "default": "✦ Welcome to the family!" },
+    { "type": "header",    "content": "Navigation Columns  -  Menus" },
+    { "type": "paragraph",  "content": "Connect a Shopify Navigation menu to each column. Create menus in Online Store -> Navigation. If left blank, the default links are shown." },
+    { "type": "link_list",  "id": "col1_menu", "label": "Column 1 Menu (Shop)",    "info": "Create a 'Footer Shop' menu in Navigation." },
+    { "type": "link_list",  "id": "col2_menu", "label": "Column 2 Menu (Help)",    "info": "Create a 'Footer Help' menu in Navigation." },
+    { "type": "header",     "content": "Column Headings" },
+    { "type": "text",     "id": "col1_heading", "label": "Column 1 Heading", "default": "Shop" },
+    { "type": "text",     "id": "col2_heading", "label": "Column 2 Heading", "default": "Help" },
+    { "type": "text",     "id": "col3_heading", "label": "Column 3 Heading", "default": "Company" },
+    { "type": "text",     "id": "col4_heading", "label": "Column 4 Heading", "default": "My Account" },
+    { "type": "text",     "id": "col5_heading", "label": "Column 5 Heading (Contact)", "default": "Get in Touch" },
+    { "type": "header",   "content": "Bottom Bar" },
+    { "type": "text",     "id": "copyright_suffix", "label": "Copyright Suffix", "default": ". All rights reserved." }
+  ],
+  "blocks": [{
+    "type": "nav_group", "name": "Extra Navigation Column",
+    "settings": [
+      { "type": "text", "id": "heading", "label": "Column Title", "default": "Shop" },
+      { "type": "link_list", "id": "menu", "label": "Menu" }
+    ]
+  }],
+  "presets": [{ "name": "Footer" }]
+}
+{% endschema %}

@@ -1,0 +1,161 @@
+{% comment %}
+  ============================================================
+  SECTION: IMAGE WITH TEXT (50/50 Split)
+  ============================================================
+  A two-column section: one side is an image, the other is
+  rich text content with an optional CTA button.
+
+  Layout options:
+  - Image Left  / Text Right  (default)
+  - Image Right / Text Left
+  - 50/50, 40/60 or 60/40 split
+
+  Can be added anywhere on the home page or any page template.
+  EDIT: Theme Editor → Add section → Image with Text
+  ============================================================
+{% endcomment %}
+
+{%- assign img_side  = section.settings.image_position | default: 'left' -%}
+{%- assign split     = section.settings.split          | default: '50' -%}
+{%- assign text_side = '100' | minus: split | append: '' -%}
+
+<section class="iwt-section section-spacing
+  iwt-section--img-{{ img_side }}
+  iwt-section--split-{{ split }}"
+  style="--iwt-img-w:{{ split }}%;--iwt-txt-w:{{ text_side }}%;">
+
+  <div class="iwt-inner{% if section.settings.full_width %} iwt-inner--full{% else %} container{% endif %}">
+
+    <!-- Image column -->
+    <div class="iwt-image-col">
+      {%- if section.settings.image != blank -%}
+        <div class="iwt-image-wrap iwt-image-wrap--{{ section.settings.image_style | default: 'cover' }}">
+          <img
+            src="{{ section.settings.image | img_url: '1200x' }}"
+            srcset="{{ section.settings.image | img_url: '600x' }} 600w,
+                    {{ section.settings.image | img_url: '900x' }} 900w,
+                    {{ section.settings.image | img_url: '1200x' }} 1200w"
+            sizes="{{ split }}vw"
+            alt="{{ section.settings.image.alt | default: section.settings.heading }}"
+            loading="lazy"
+            class="iwt-image"
+          >
+        </div>
+      {%- else -%}
+        <div class="iwt-image-placeholder">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Text column -->
+    <div class="iwt-text-col iwt-text-col--{{ section.settings.text_valign | default: 'center' }}
+                             iwt-text-col--align-{{ section.settings.text_align | default: 'left' }}"
+         style="{% if section.settings.text_bg != blank %}background:{{ section.settings.text_bg }};{% endif %}
+                padding: {{ section.settings.text_padding | default: 48 }}px;">
+
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="section-eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="iwt-heading" style="font-size:clamp(24px,{{ section.settings.heading_size | default: 3 }}vw,52px);">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="iwt-text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.cta_text != blank -%}
+        <div class="iwt-cta" style="margin-top:{{ section.settings.cta_top_margin | default: 32 }}px;">
+          <a href="{{ section.settings.cta_url | default: '#' }}"
+             class="btn btn--{{ section.settings.cta_style | default: 'primary' }}">
+            {{ section.settings.cta_text }}
+          </a>
+          {%- if section.settings.cta_2_text != blank -%}
+            <a href="{{ section.settings.cta_2_url | default: '#' }}"
+               class="btn btn--{{ section.settings.cta_2_style | default: 'ghost' }}" style="margin-left:12px;">
+              {{ section.settings.cta_2_text }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with Text",
+  "tag": "section",
+  "settings": [
+    { "type": "header",       "content": "Image" },
+    { "type": "image_picker", "id": "image",          "label": "Image" },
+    { "type": "select",       "id": "image_position",  "label": "Image Side",
+      "options": [
+        { "value": "left",  "label": "Image Left  / Text Right" },
+        { "value": "right", "label": "Image Right / Text Left"  }
+      ], "default": "left" },
+    { "type": "select",       "id": "split", "label": "Image Width",
+      "options": [
+        { "value": "40", "label": "40% image / 60% text" },
+        { "value": "50", "label": "50% / 50% (equal split)" },
+        { "value": "60", "label": "60% image / 40% text" }
+      ], "default": "50" },
+    { "type": "select",       "id": "image_style", "label": "Image Display",
+      "options": [
+        { "value": "cover",   "label": "Fill (crop to fit)" },
+        { "value": "contain", "label": "Fit (show full image)" },
+        { "value": "natural", "label": "Natural (no crop)" }
+      ], "default": "cover" },
+    { "type": "header",       "content": "Text Content" },
+    { "type": "text",         "id": "eyebrow",  "label": "Eyebrow Text" },
+    { "type": "text",         "id": "heading",  "label": "Heading" },
+    { "type": "range",        "id": "heading_size", "label": "Heading Size (vw)", "min": 2, "max": 5, "step": 0.5, "default": 3 },
+    { "type": "richtext",     "id": "text",     "label": "Body Text" },
+    { "type": "select",       "id": "text_align","label": "Text Alignment",
+      "options": [
+        { "value": "left",   "label": "Left"   },
+        { "value": "center", "label": "Centre" },
+        { "value": "right",  "label": "Right"  }
+      ], "default": "left" },
+    { "type": "select",       "id": "text_valign","label": "Vertical Alignment",
+      "options": [
+        { "value": "top",    "label": "Top"    },
+        { "value": "center", "label": "Middle" },
+        { "value": "bottom", "label": "Bottom" }
+      ], "default": "center" },
+    { "type": "color",        "id": "text_bg",  "label": "Text Panel Background",
+      "info": "Optional background colour for the text side only." },
+    { "type": "range",        "id": "text_padding", "label": "Text Padding (px)",
+      "min": 16, "max": 96, "step": 8, "default": 48 },
+    { "type": "header",       "content": "Button 1" },
+    { "type": "text",         "id": "cta_text",  "label": "Button Text" },
+    { "type": "url",          "id": "cta_url",   "label": "Button URL" },
+    { "type": "select",       "id": "cta_style", "label": "Button Style",
+      "options": [
+        { "value": "primary", "label": "Primary (dark fill)" },
+        { "value": "ghost",   "label": "Ghost (outline)"     },
+        { "value": "outline", "label": "Outline (light)"     }
+      ], "default": "primary" },
+    { "type": "header",       "content": "Button 2 (optional)" },
+    { "type": "text",         "id": "cta_2_text",  "label": "Button 2 Text" },
+    { "type": "url",          "id": "cta_2_url",   "label": "Button 2 URL" },
+    { "type": "select",       "id": "cta_2_style", "label": "Button 2 Style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "ghost",   "label": "Ghost"   },
+        { "value": "outline", "label": "Outline" }
+      ], "default": "ghost" },
+    { "type": "range",        "id": "cta_top_margin","label": "Space Above Buttons (px)",
+      "min": 16, "max": 64, "step": 8, "default": 32 },
+    { "type": "header",       "content": "Layout" },
+    { "type": "checkbox",     "id": "full_width", "label": "Full Width (no container margin)", "default": false }
+  ],
+  "presets": [{ "name": "Image with Text" }]
+}
+{% endschema %}

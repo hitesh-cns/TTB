@@ -1,0 +1,126 @@
+[
+  {
+    "name": "Social Media & SEO",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social Media"
+      },
+      {
+        "type": "text",
+        "id": "twitter_handle",
+        "label": "Twitter / X Handle",
+        "placeholder": "@thetinybosses",
+        "info": "Used in Twitter Card meta tags for shared links."
+      },
+      {
+        "type": "image_picker",
+        "id": "og_image",
+        "label": "Default Share Image",
+        "info": "Used when sharing non-product pages (home, about, etc.) on social media. Recommended: 1200\u00d7630px."
+      },
+      {
+        "type": "header",
+        "content": "Google"
+      },
+      {
+        "type": "text",
+        "id": "google_analytics_id",
+        "label": "Google Analytics ID",
+        "placeholder": "G-XXXXXXXXXX",
+        "info": "Your GA4 Measurement ID. Leave blank to disable."
+      }
+    ]
+  },
+  {
+    "name": "Product Pages",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Gallery Layout"
+      },
+      {
+        "type": "paragraph",
+        "content": "This sets the default gallery mode for ALL product pages. Individual products can override it via Theme Editor \u2192 Product Hero \u2192 Gallery Mode."
+      },
+      {
+        "type": "select",
+        "id": "global_gallery_mode",
+        "label": "Default Gallery Mode (all PDPs)",
+        "options": [
+          {
+            "value": "slideshow",
+            "label": "Slideshow \u2014 thumbnails + one image at a time"
+          },
+          {
+            "value": "scroll",
+            "label": "Scroll Stack \u2014 all images stacked, scroll through"
+          },
+          {
+            "value": "grid",
+            "label": "Grid (H&M style) \u2014 1st image full width, rest in 2-col grid"
+          }
+        ],
+        "default": "slideshow",
+        "info": "Grid mode mimics the H&M PDP: the first image is full-width, remaining images display as side-by-side pairs in a 2-column grid. No thumbnail strip is shown. The product info panel stays sticky as you scroll through images."
+      },
+      {
+        "type": "header",
+        "content": "Grid Mode Settings"
+      },
+      {
+        "type": "paragraph",
+        "content": "These settings only apply when Default Gallery Mode is set to Grid."
+      },
+      {
+        "type": "select",
+        "id": "grid_first_image_ratio",
+        "label": "First Image Aspect Ratio",
+        "options": [
+          {
+            "value": "3/4",
+            "label": "3:4 Portrait (default)"
+          },
+          {
+            "value": "4/5",
+            "label": "4:5 Tall portrait"
+          },
+          {
+            "value": "1/1",
+            "label": "1:1 Square"
+          }
+        ],
+        "default": "3/4"
+      },
+      {
+        "type": "select",
+        "id": "grid_secondary_ratio",
+        "label": "Secondary Images Aspect Ratio",
+        "options": [
+          {
+            "value": "1/1",
+            "label": "1:1 Square (default)"
+          },
+          {
+            "value": "3/4",
+            "label": "3:4 Portrait"
+          },
+          {
+            "value": "4/5",
+            "label": "4:5 Tall portrait"
+          }
+        ],
+        "default": "1/1"
+      },
+      {
+        "type": "range",
+        "id": "grid_gap",
+        "label": "Gap Between Images (px)",
+        "min": 0,
+        "max": 20,
+        "step": 2,
+        "default": 4
+      }
+    ]
+  }
+]

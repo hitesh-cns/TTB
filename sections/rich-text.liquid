@@ -1,0 +1,55 @@
+{% comment %}
+  ============================================================
+  SECTION: RICH TEXT / CONTENT BLOCK
+  ============================================================
+  A flexible text section with eyebrow, heading, body copy and
+  optional CTA. Can be narrow (editorial) or full width.
+  EDIT: Theme Editor → Add section → Rich Text
+  ============================================================
+{% endcomment %}
+<section class="rich-text-section section-spacing" style="background:{{ section.settings.bg_color | default: 'transparent' }};">
+  <div class="container">
+    <div class="rich-text-inner rich-text-inner--{{ section.settings.align | default: 'center' }}"
+         style="max-width:{{ section.settings.max_width | default: 720 }}px;">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="section-eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="section-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="rich-text-body rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+      {%- if section.settings.cta_text != blank -%}
+        <div class="rich-text-cta">
+          <a href="{{ section.settings.cta_url | default: '#' }}" class="btn btn--{{ section.settings.cta_style | default: 'primary' }}">
+            {{ section.settings.cta_text }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Rich Text",
+  "tag": "section",
+  "settings": [
+    { "type": "text",     "id": "eyebrow",  "label": "Eyebrow" },
+    { "type": "text",     "id": "heading",  "label": "Heading" },
+    { "type": "richtext", "id": "text",     "label": "Body Text" },
+    { "type": "select",   "id": "align",    "label": "Alignment",
+      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Centre"},{"value":"right","label":"Right"}],
+      "default": "center" },
+    { "type": "range",    "id": "max_width","label": "Max Content Width (px)", "min": 480, "max": 1200, "step": 40, "default": 720 },
+    { "type": "color",    "id": "bg_color", "label": "Background Colour" },
+    { "type": "header",   "content": "Button" },
+    { "type": "text",     "id": "cta_text", "label": "Button Text" },
+    { "type": "url",      "id": "cta_url",  "label": "Button URL" },
+    { "type": "select",   "id": "cta_style","label": "Button Style",
+      "options": [{"value":"primary","label":"Primary"},{"value":"ghost","label":"Ghost"},{"value":"outline","label":"Outline"}],
+      "default": "primary" }
+  ],
+  "presets": [{ "name": "Rich Text" }]
+}
+{% endschema %}

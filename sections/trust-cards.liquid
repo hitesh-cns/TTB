@@ -1,0 +1,102 @@
+<section class="trust-cards-section">
+  <div class="trust-cards__grid">
+    {% for block in section.blocks %}
+      <div class="trust-card" {{ block.shopify_attributes }}>
+        <div class="trust-card__icon">
+          {% case block.settings.icon %}
+            {% when 'shipping' %}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            {% when 'returns' %}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            {% when 'support' %}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            {% when 'secure' %}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+          {% endcase %}
+        </div>
+        <h3 class="trust-card__title">{{ block.settings.title }}</h3>
+        <p class="trust-card__desc">{{ block.settings.description }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust cards",
+  "class": "trust-cards-section-wrapper",
+  "max_blocks": 4,
+  "settings": [],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Trust card",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "shipping", "label": "Shipping" },
+            { "value": "returns", "label": "Returns / Guarantee" },
+            { "value": "support", "label": "Customer Support" },
+            { "value": "secure", "label": "Safe Checkout" }
+          ],
+          "default": "shipping"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Ship It Free"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Free delivery on all qualifying orders, straight to your door."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust cards",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "icon": "shipping",
+            "title": "Ship It Free",
+            "description": "Free delivery on all qualifying orders, straight to your door."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon": "returns",
+            "title": "Money-Back Guarantee",
+            "description": "Return your item for a full refund if it doesn't meet your expectations."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon": "support",
+            "title": "24/7 Customer Support",
+            "description": "Our team is available 24/7 to address your inquiries."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon": "secure",
+            "title": "Safe Checkout",
+            "description": "Your payment details are always protected with advanced security."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

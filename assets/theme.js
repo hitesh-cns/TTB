@@ -1,0 +1,819 @@
+/* ==============================================
+   BABY ELEGANCE THEME — theme.js
+   ============================================== */
+
+(function () {
+  'use strict';
+
+  /* ---- Header Scroll ---- */
+  const header = document.getElementById('site-header');
+  if (header) {
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 40);
+    }, { passive: true });
+  }
+
+  /* ---- Mobile Menu ---- */
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (mobileToggle && mobileMenu) {
+    mobileToggle.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('is-open');
+      mobileToggle.setAttribute('aria-expanded', open);
+    });
+  }
+
+  /* ---- Search Overlay ---- */
+  const searchToggle = document.querySelector('.search-toggle');
+  const searchOverlay = document.getElementById('search-overlay');
+  const searchClose = document.getElementById('search-close');
+  if (searchToggle && searchOverlay) {
+    searchToggle.addEventListener('click', () => searchOverlay.classList.add('is-open'));
+    searchClose && searchClose.addEventListener('click', () => searchOverlay.classList.remove('is-open'));
+    searchOverlay.addEventListener('click', (e) => {
+      if (e.target === searchOverlay) searchOverlay.classList.remove('is-open');
+    });
+  }
+
+  /* ---- Cart Drawer ---- */
+  const cartToggle = document.getElementById('cart-toggle');
+  const cartDrawer = document.getElementById('cart-drawer');
+  const cartOverlay = document.getElementById('cart-overlay');
+  const cartClose = document.getElementById('cart-drawer-close');
+
+  function openCart() {
+    cartDrawer && cartDrawer.setAttribute('aria-hidden', 'false');
+    cartOverlay && cartOverlay.classList.add('is-visible');
+    document.body.style.overflow = 'hidden';
+    fetchCart();
+  }
+
+  function closeCart() {
+    cartDrawer && cartDrawer.setAttribute('aria-hidden', 'true');
+    cartOverlay && cartOverlay.classList.remove('is-visible');
+    document.body.style.overflow = '';
+  }
+
+  cartToggle && cartToggle.addEventListener('click', openCart);
+  cartClose && cartClose.addEventListener('click', closeCart);
+  cartOverlay && cartOverlay.addEventListener('click', closeCart);
+
+  /* ---- Cart API ---- */
+  async function fetchCart() {
+    try {
+      const res = await fetch('/cart.js');
+      const cart = await res.json();
+      renderCart(cart);
+      updateDiscountUI(cart);
+    } catch (e) { console.error('Cart fetch error:', e); }
+  }
+
+  function renderCart(cart) {
+    const itemsEl  = document.getElementById('cart-drawer-items');
+    const emptyEl  = document.getElementById('cart-empty');
+    const footer   = document.getElementById('cart-drawer-footer');
+    const countEl  = document.getElementById('cart-count');
+    const subtotalEl = document.getElementById('cart-subtotal-price');
+
+    if (countEl) countEl.textContent = cart.item_count;
+
+    // Remove all existing cart-item elements first
+    itemsEl && itemsEl.querySelectorAll('.cart-item').forEach(el => el.remove());
+
+    if (!cart.item_count) {
+      // Cart is empty: show empty state, hide footer
+      if (emptyEl)  { emptyEl.style.display  = 'flex'; }
+      if (footer)   { footer.style.display   = 'none'; }
+      return;
+    }
+
+    // Cart has items: hide empty state, show footer
+    if (emptyEl)  { emptyEl.style.display  = 'none'; }
+    if (footer)   { footer.style.display   = 'flex'; }
+    if (subtotalEl) subtotalEl.textContent = formatMoney(cart.total_price);
+
+    // Render each cart item BEFORE the emptyEl node
+    cart.items.forEach(item => {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'cart-item';
+      itemEl.dataset.key = item.key;
+      itemEl.innerHTML = `
+        <div class="cart-item__image">
+          ${item.image ? `<img src="${item.image}" alt="${escHtml(item.product_title)}" loading="lazy">` : ''}
+        </div>
+        <div class="cart-item__info">
+          <p class="cart-item__title">${escHtml(item.product_title)}</p>
+          ${item.variant_title && item.variant_title !== 'Default Title' ? `<p class="cart-item__variant">${escHtml(item.variant_title)}</p>` : ''}
+          <div class="cart-item__controls">
+            <div class="cart-item__qty">
+              <button class="qty-btn qty-btn--minus" data-key="${item.key}" data-qty="${item.quantity - 1}" aria-label="Remove one">−</button>
+              <span class="qty-value">${item.quantity}</span>
+              <button class="qty-btn qty-btn--plus" data-key="${item.key}" data-qty="${item.quantity + 1}" aria-label="Add one">+</button>
+            </div>
+            <span class="cart-item__price">${formatMoney(item.final_line_price)}</span>
+          </div>
+        </div>
+      `;
+      // Insert before emptyEl so empty state stays at the bottom of the DOM
+      if (emptyEl && emptyEl.parentNode === itemsEl) {
+        itemsEl.insertBefore(itemEl, emptyEl);
+      } else {
+        itemsEl && itemsEl.appendChild(itemEl);
+      }
+    });
+
+    // Attach quantity button handlers
+    itemsEl && itemsEl.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const key = btn.dataset.key;
+        const qty = Math.max(0, parseInt(btn.dataset.qty, 10));
+        await updateCartItem(key, qty);
+      });
+    });
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function updateCartItem(key, quantity) {
+    try {
+      const res = await fetch('/cart/change.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: key, quantity })
+      });
+      const cart = await res.json();
+      renderCart(cart);
+      updateDiscountUI(cart);
+    } catch (e) { console.error('Update error:', e); }
+  }
+
+  /* ---- Quick Add ---- */
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.btn-quick-add');
+    if (!btn) return;
+    const variantId = btn.dataset.variantId;
+    if (!variantId) return;
+
+    btn.textContent = 'Adding...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: variantId, quantity: 1 })
+      });
+      if (res.ok) {
+        btn.textContent = 'Added ✓';
+        await fetchCart();
+        openCart();
+        setTimeout(() => { btn.textContent = 'Quick Add'; btn.disabled = false; }, 2000);
+      }
+    } catch (e) {
+      btn.textContent = 'Quick Add';
+      btn.disabled = false;
+    }
+  });
+
+  /* ---- Discount Engine ----
+     Only items with metafield custom.discount = "BXGY" count toward
+     bundle tiers. Eligible product IDs are injected into the page as
+     window.bxgyProductIds by cart-drawer.liquid using Liquid.
+     If the list is empty or not defined, ALL items count (fallback). */
+  const DISCOUNT_TIERS = [
+    { qty: 2, pct: 5,  label: '5% off',  code: 'BUNDLE5'  },
+    { qty: 3, pct: 10, label: '10% off', code: 'BUNDLE10' },
+    { qty: 5, pct: 20, label: '20% off', code: 'BUNDLE20' },
+  ];
+
+  function getBxgyCount(cart) {
+    const eligible = window.bxgyProductIds;
+    // If metafield list is not set or empty, count all items (graceful fallback)
+    if (!eligible || eligible.length === 0) return cart.item_count;
+    let count = 0;
+    (cart.items || []).forEach(item => {
+      if (eligible.includes(item.product_id)) count += item.quantity;
+    });
+    return count;
+  }
+
+  function getCurrentTier(qty) {
+    let tier = null;
+    for (const t of DISCOUNT_TIERS) { if (qty >= t.qty) tier = t; }
+    return tier;
+  }
+
+  function getNextTier(qty) {
+    for (const t of DISCOUNT_TIERS) { if (qty < t.qty) return t; }
+    return null;
+  }
+
+  // Maps the 3 tier nodes in the cart drawer to their unlock quantities
+  const TIER_NODES = [
+    { id: 'tier-node-1', unlockAt: 2  },  // 5% off at 2 items
+    { id: 'tier-node-2', unlockAt: 3  },  // 10% off at 3 items
+    { id: 'tier-node-3', unlockAt: 5  },  // 20% off at 5 items
+  ];
+
+  function updateDiscountUI(cart) {
+    // Use BXGY-eligible count for tier calculation, not total item_count
+    const qty = getBxgyCount(cart);
+    const currentTier = getCurrentTier(qty);
+    const nextTier = getNextTier(qty);
+
+    // -- Tier node icons — light up when threshold is reached --
+    TIER_NODES.forEach(node => {
+      const el = document.getElementById(node.id);
+      if (el) el.classList.toggle('is-unlocked', qty >= node.unlockAt);
+    });
+
+    // -- Progress bar message (fill% set after PBN block above) --
+    const msgEl  = document.getElementById('cart-discount-message');
+    const fillEl = document.getElementById('cart-discount-fill');
+    if (msgEl) {
+      if (currentTier && !nextTier) {
+        msgEl.innerHTML = `🎉 <strong>${currentTier.label}</strong> applied to your order!`;
+      } else if (nextTier) {
+        const need = nextTier.qty - qty;
+        const verb = currentTier ? 'unlock' : 'get';
+        msgEl.innerHTML = `Add <strong>${need}</strong> more item${need !== 1 ? 's' : ''} to ${verb} <strong>${nextTier.label}</strong>`;
+      } else {
+        msgEl.innerHTML = '';
+      }
+    }
+
+    // -- Discount applied badge --
+    const appliedEl = document.getElementById('cart-discount-applied');
+    const labelEl   = document.getElementById('cart-discount-label');
+    if (appliedEl && labelEl) {
+      if (currentTier) {
+        appliedEl.style.display = 'block';
+        labelEl.textContent = currentTier.label;
+      } else {
+        appliedEl.style.display = 'none';
+      }
+    }
+
+    // -- Pre-fill discount code in checkout URL --
+    // Shopify accepts /checkout?discount=CODE and auto-applies it at checkout.
+    // This way the customer sees the discount already applied when they land
+    // on the checkout page — no manual entry required.
+    //
+    // For TRUE automatic discounts (no code at all), create Automatic Discounts
+    // in Shopify Admin → Discounts → Create → Automatic discount.
+    // --
+    const checkoutBtns = document.querySelectorAll(
+      '#checkout-btn, .cart-page__checkout-btn, .cps-checkout'
+    );
+    checkoutBtns.forEach(btn => {
+      if (currentTier && currentTier.code) {
+        btn.href = `/checkout?discount=${currentTier.code}`;
+        btn.setAttribute('aria-label', `Checkout with ${currentTier.label} applied`);
+      } else {
+        btn.href = '/checkout';
+        btn.removeAttribute('aria-label');
+      }
+    });
+
+    // -- PDP bundle nudge tier pills — light up with cart progress --
+    const PBN_TIERS = [
+      { id: 'pbn-tier-1', threshold: 2 },
+      { id: 'pbn-tier-2', threshold: 3 },
+      { id: 'pbn-tier-3', threshold: 5 },
+    ];
+    PBN_TIERS.forEach(t => {
+      const el = document.getElementById(t.id);
+      if (el) el.classList.toggle('is-active', qty >= t.threshold);
+    });
+
+    // -- Progress bar fill: maps qty to 0-100% across the 3 nodes --
+    // Node positions: 0%=node1(2items), 50%=node2(3items), 100%=node3(5items)
+    if (fillEl) {
+      let fillPct = 0;
+      if (qty >= 5)      fillPct = 100;
+      else if (qty >= 3) fillPct = 50 + ((qty - 3) / (5 - 3)) * 50;
+      else if (qty >= 2) fillPct = ((qty - 2) / (3 - 2)) * 50;
+      else               fillPct = (qty / 2) * 8; // tiny pre-tier-1 hint
+      fillEl.style.width = Math.min(100, fillPct) + '%';
+    }
+
+    // Section progress bar
+    const progText = document.getElementById('discount-progress-text');
+    const progFill = document.getElementById('discount-progress-fill');
+    if (progText && progFill) {
+      if (!qty) {
+        progText.textContent = 'Add items to unlock savings';
+        progFill.style.width = '0%';
+      } else if (currentTier && !nextTier) {
+        progText.textContent = `Maximum discount unlocked — ${currentTier.label} applied!`;
+        progFill.style.width = '100%';
+      } else if (nextTier) {
+        const need = nextTier.qty - qty;
+        progText.textContent = `${qty} in cart — add ${need} more for ${nextTier.label}`;
+        progFill.style.width = `${(qty / nextTier.qty) * 100}%`;
+      }
+    }
+
+    // Show popup when close to a tier
+    if (nextTier && (nextTier.qty - qty) === 1) {
+      showDiscountPopup(nextTier, cart.total_price);
+    }
+  }
+
+  /* ---- Discount Popup ---- */
+  const discountPopup = document.getElementById('discount-popup');
+  const discountPopupClose = document.getElementById('discount-popup-close');
+  let popupTimeout;
+
+  function showDiscountPopup(tier, totalPrice) {
+    const headingEl = document.getElementById('discount-popup-heading');
+    const textEl = document.getElementById('discount-popup-text');
+    const fillEl = document.getElementById('discount-popup-fill');
+
+    if (headingEl) headingEl.textContent = `You're so close!`;
+    if (textEl) textEl.textContent = `Add 1 more item to unlock ${tier.label} on your order`;
+    if (fillEl) fillEl.style.width = `${((tier.qty - 1) / tier.qty) * 100}%`;
+
+    if (discountPopup) {
+      discountPopup.setAttribute('aria-hidden', 'false');
+      clearTimeout(popupTimeout);
+      popupTimeout = setTimeout(() => {
+        discountPopup && discountPopup.setAttribute('aria-hidden', 'true');
+      }, 6000);
+    }
+  }
+
+  discountPopupClose && discountPopupClose.addEventListener('click', () => {
+    discountPopup.setAttribute('aria-hidden', 'true');
+  });
+
+  /* ---- Generic Carousel ---- */
+  function initCarousel({ trackId, prevId, nextId, dotsId, slidesPerView = 1 }) {
+    const track = document.getElementById(trackId);
+    const prevBtn = document.getElementById(prevId);
+    const nextBtn = document.getElementById(nextId);
+    const dotsContainer = document.getElementById(dotsId);
+    if (!track) return;
+
+    const slides = Array.from(track.children);
+    if (!slides.length) return;
+
+    let current = 0;
+    let autoplayInterval;
+    let isDragging = false;
+    let startX = 0;
+    let dragDelta = 0;
+
+    function totalSlides() {
+      return Math.ceil(slides.length / slidesPerView);
+    }
+
+    function goTo(index) {
+      const total = totalSlides();
+      current = ((index % total) + total) % total;
+      const slideWidth = slides[0].offsetWidth + parseInt(getComputedStyle(track).gap || 0);
+      track.style.transform = `translateX(-${current * slideWidth * slidesPerView}px)`;
+      updateDots();
+    }
+
+    function buildDots() {
+      if (!dotsContainer) return;
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < totalSlides(); i++) {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot';
+        dot.setAttribute('aria-label', `Slide ${i + 1}`);
+        dot.addEventListener('click', () => goTo(i));
+        dotsContainer.appendChild(dot);
+      }
+      updateDots();
+    }
+
+    function updateDots() {
+      if (!dotsContainer) return;
+      dotsContainer.querySelectorAll('.carousel-dot').forEach((d, i) => {
+        d.classList.toggle('is-active', i === current);
+      });
+    }
+
+    function startAutoplay() {
+      autoplayInterval = setInterval(() => goTo(current + 1), 5000);
+    }
+
+    function stopAutoplay() {
+      clearInterval(autoplayInterval);
+    }
+
+    prevBtn && prevBtn.addEventListener('click', () => { goTo(current - 1); stopAutoplay(); startAutoplay(); });
+    nextBtn && nextBtn.addEventListener('click', () => { goTo(current + 1); stopAutoplay(); startAutoplay(); });
+
+    // Touch/drag
+    track.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; stopAutoplay(); }, { passive: true });
+    track.addEventListener('touchend', (e) => {
+      const delta = e.changedTouches[0].clientX - startX;
+      if (Math.abs(delta) > 40) { delta < 0 ? goTo(current + 1) : goTo(current - 1); }
+      startAutoplay();
+    }, { passive: true });
+
+    buildDots();
+    startAutoplay();
+
+    window.addEventListener('resize', () => {
+      buildDots();
+      goTo(current);
+    });
+  }
+
+  /* ---- Init Carousels ---- */
+  initCarousel({
+    trackId: 'discount-track',
+    prevId: 'discount-prev',
+    nextId: 'discount-next',
+    dotsId: 'discount-dots',
+    slidesPerView: 1
+  });
+
+  initCarousel({
+    trackId: 'testimonials-track',
+    prevId: 'testimonials-prev',
+    nextId: 'testimonials-next',
+    dotsId: 'testimonials-dots',
+    slidesPerView: 1
+  });
+
+  /* ---- Utilities ---- */
+  // ============================================================
+  // FORMAT MONEY — uses shop currency from Shopify Markets
+  // ============================================================
+  // window.moneyFormat is set in layout/theme.liquid from
+  // {{ shop.money_format }}, which Shopify automatically
+  // localises when you have Markets / multi-currency enabled.
+  // Format string looks like: "₹{{amount}}" or "${{amount}}"
+  // ============================================================
+  function formatMoney(cents) {
+    const amount = (cents / 100).toFixed(2);
+    const fmt = window.moneyFormat || '{{amount}}';
+
+    // Shopify format tokens: {{amount}}, {{amount_no_decimals}},
+    // {{amount_with_comma_separator}}, {{amount_no_decimals_with_comma_separator}}
+    return fmt
+      .replace('{{amount_no_decimals_with_comma_separator}}', Math.round(cents / 100).toLocaleString('en-IN'))
+      .replace('{{amount_with_comma_separator}}', (cents / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }))
+      .replace('{{amount_no_decimals}}', Math.round(cents / 100).toString())
+      .replace('{{amount}}', amount);
+  }
+
+  /* ---- Animate on Scroll ---- */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.product-card, .collection-card, .testimonial-card, .discount-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+
+  document.addEventListener('is-visible', () => {}, true);
+
+  const styleObserver = new MutationObserver(() => {});
+
+  // Manual visibility toggle
+  const visibleStyle = document.createElement('style');
+  visibleStyle.textContent = `.is-visible { opacity: 1 !important; transform: translateY(0) !important; }`;
+  document.head.appendChild(visibleStyle);
+
+  /* ---- Initial Cart Load ---- */
+  fetchCart();
+
+})();
+
+/* ================================================================
+   GLOBAL UI — Search, Mobile Drawer, Back-to-Top, Lightbox
+   ================================================================
+   This block wires up all the interactive header + page elements.
+   It runs once on every page.
+   ================================================================ */
+(function () {
+  'use strict';
+
+  /* -- Measure #sticky-bar height so sidebar top-offset is correct -- */
+  function setStickyBarHeight() {
+    const bar = document.getElementById('sticky-bar');
+    if (bar) {
+      document.documentElement.style.setProperty(
+        '--sticky-bar-height', bar.offsetHeight + 'px'
+      );
+    }
+  }
+  setStickyBarHeight();
+  window.addEventListener('resize', setStickyBarHeight, { passive: true });
+
+  /* ============================================================
+     SCROLL STATE — Sticky-bar shadow + Transparent header
+     ============================================================
+     Two things happen on scroll:
+     1. Shadow appears on sticky-bar after 4px (all pages)
+     2. On the home page (body.has-transparent-header):
+        - CSS starts header transparent
+        - Once user scrolls past the hero section, body gets
+          class "header-scrolled" which triggers the CSS
+          transition to the solid ivory background
+     ============================================================ */
+  const stickyBar = document.getElementById('sticky-bar');
+
+  function updateHeaderOnScroll() {
+    const scrollY = window.scrollY;
+
+    // 1. Sticky-bar shadow (all pages)
+    if (stickyBar) {
+      stickyBar.classList.toggle('is-scrolled', scrollY > 4);
+    }
+
+    // 2. Transparent header state (home page only)
+    if (document.body.classList.contains('has-transparent-header')) {
+      // Threshold: when hero bottom reaches the top of the viewport
+      // Use 1px buffer so the transition fires just as hero exits
+      const hero = document.getElementById('hero-section');
+      const stickyH = stickyBar ? stickyBar.offsetHeight : 0;
+      let threshold = 80; // fallback
+      if (hero) {
+        // hero.offsetHeight already includes the padding-top we added
+        // so scrolling past it means the image is fully gone
+        threshold = hero.offsetHeight - stickyH;
+      }
+      document.body.classList.toggle('header-scrolled', scrollY >= threshold);
+    }
+  }
+
+  window.addEventListener('scroll', updateHeaderOnScroll, { passive: true });
+  // Run once immediately in case the page loads mid-scroll (e.g. back navigation)
+  updateHeaderOnScroll();
+
+  /* -- SEARCH BAR --
+     Clicking the search icon reveals a 100px bar below the header.
+     The search icon itself always stays visible; a small filled dot
+     appears on top of it to indicate the bar is open.
+     Pressing Escape or clicking the icon again closes the bar.
+  -- */
+  const searchToggle = document.getElementById('search-toggle');
+  const searchBar    = document.getElementById('header-search-bar');
+  const searchInput  = document.getElementById('header-search-input');
+  const searchClear  = document.getElementById('header-search-clear');
+
+  /* Add indicator dot to the search button */
+  if (searchToggle) {
+    const dot = document.createElement('span');
+    dot.className = 'search-open-dot';
+    dot.setAttribute('aria-hidden', 'true');
+    searchToggle.appendChild(dot);
+  }
+
+  function openSearch() {
+    searchBar && searchBar.classList.add('is-open');
+    searchBar && searchBar.setAttribute('aria-hidden', 'false');
+    searchToggle && searchToggle.setAttribute('aria-expanded', 'true');
+    searchToggle && searchToggle.classList.add('is-open');
+
+    // Focus immediately — must be synchronous within the click handler so iOS
+    // recognises it as a user gesture and opens the virtual keyboard.
+    // A setTimeout (even 0ms) would break the gesture chain on mobile browsers.
+    if (searchInput) {
+      searchInput.focus({ preventScroll: true });
+      // Belt-and-suspenders for older iOS: also trigger focus after the CSS
+      // transition frame in case the element wasn't yet layout-visible.
+      requestAnimationFrame(() => searchInput.focus({ preventScroll: true }));
+    }
+  }
+  function closeSearch() {
+    searchBar && searchBar.classList.remove('is-open');
+    searchBar && searchBar.setAttribute('aria-hidden', 'true');
+    searchToggle && searchToggle.setAttribute('aria-expanded', 'false');
+    searchToggle && searchToggle.classList.remove('is-open');
+  }
+
+  searchToggle && searchToggle.addEventListener('click', () => {
+    searchBar && searchBar.classList.contains('is-open') ? closeSearch() : openSearch();
+  });
+  searchClear && searchClear.addEventListener('click', () => {
+    if (searchInput) { searchInput.value = ''; searchInput.focus(); }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
+
+  /* -- MOBILE DRAWER --
+     The 3-line hamburger opens a panel from the LEFT side.
+     Tap the × or the dark overlay to close it.
+  -- */
+  const mobileToggle  = document.getElementById('mobile-menu-toggle');
+  const drawer        = document.getElementById('mobile-drawer');
+  const drawerOverlay = document.getElementById('mobile-drawer-overlay');
+  const drawerClose   = document.getElementById('mobile-drawer-close');
+
+  function openDrawer() {
+    drawer && drawer.setAttribute('aria-hidden', 'false');
+    drawerOverlay && drawerOverlay.classList.add('is-visible');
+    mobileToggle && mobileToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    drawer && drawer.setAttribute('aria-hidden', 'true');
+    drawerOverlay && drawerOverlay.classList.remove('is-visible');
+    mobileToggle && mobileToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  mobileToggle  && mobileToggle.addEventListener('click', openDrawer);
+  drawerClose   && drawerClose.addEventListener('click', closeDrawer);
+  drawerOverlay && drawerOverlay.addEventListener('click', closeDrawer);
+
+  /* Sub-menus inside the drawer accordion */
+  document.querySelectorAll('.mobile-nav-group__trigger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const grp = btn.closest('.mobile-nav-group');
+      grp && grp.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', grp.classList.contains('is-open'));
+    });
+  });
+
+  /* -- BACK TO TOP --
+     Shows in the bottom-right corner once the user has scrolled
+     past 70% of the page height.
+  -- */
+  const btt = document.getElementById('back-to-top');
+  if (btt) {
+    const onScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      btt.classList.toggle('is-visible', total > 0 && window.scrollY / total >= 0.7);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  /* -- REVIEW LIGHTBOX --
+     Clicking a .review-image-thumb opens it full-screen.
+  -- */
+  const lightbox      = document.getElementById('review-lightbox');
+  const lightboxImg   = document.getElementById('review-lightbox-img');
+  const lightboxClose = document.getElementById('review-lightbox-close');
+
+  document.addEventListener('click', e => {
+    const thumb = e.target.closest('.review-image-thumb');
+    if (thumb && lightbox && lightboxImg) {
+      const img = thumb.querySelector('img');
+      if (img) {
+        lightboxImg.src = img.src.replace('300x300', '1200x');
+        lightbox.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  });
+  const closeLightbox = () => {
+    lightbox && lightbox.classList.remove('is-open');
+    document.body.style.overflow = '';
+  };
+  lightboxClose && lightboxClose.addEventListener('click', closeLightbox);
+  lightbox && lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+})();
+
+/* ================================================================
+   SCROLLABLE PRODUCT IMAGE DOTS
+   ================================================================
+   Watches each scrollable image strip and updates the dot
+   indicators as the user swipes/scrolls through images.
+   Uses IntersectionObserver for smooth, performant updates.
+   ================================================================ */
+(function () {
+  'use strict';
+
+  function initImageScrollDots(scrollEl, dotsEl) {
+    if (!scrollEl || !dotsEl) return;
+    const images = Array.from(scrollEl.querySelectorAll('.product-card__image-link, .cpc-image-link'));
+    const dots   = Array.from(dotsEl.querySelectorAll('.scroll-dot'));
+    if (!images.length || !dots.length) return;
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const idx = images.indexOf(entry.target);
+          if (idx === -1) return;
+          dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+        }
+      });
+    }, { root: scrollEl, threshold: 0.6 });
+
+    images.forEach(img => observer.observe(img));
+  }
+
+  /* Wire up all product cards on the current page */
+  function initAllCards() {
+    /* Homepage / snippet cards */
+    document.querySelectorAll('.product-card__image-wrap').forEach(wrap => {
+      const scroll = wrap.querySelector('.product-card__image-scroll');
+      const dots   = wrap.querySelector('.product-card__scroll-dots');
+      initImageScrollDots(scroll, dots);
+    });
+
+    /* Collection page cards */
+    document.querySelectorAll('.cpc-image-wrap').forEach(wrap => {
+      const scroll = wrap.querySelector('.cpc-image-scroll');
+      const dots   = wrap.querySelector('.cpc-scroll-dots');
+      initImageScrollDots(scroll, dots);
+    });
+  }
+
+  /* Run on load and again after any dynamic content changes */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAllCards);
+  } else {
+    initAllCards();
+  }
+
+})();
+
+/* ================================================================
+   COLLECTION PAGE — Colour Swatch Selection + Add to Cart
+   ================================================================
+   When a customer clicks a colour swatch on a collection card:
+   1. The swatch gets a selected ring (is-selected class)
+   2. The Add to Cart button's data-variant-id updates to that
+      colour's first variant
+   3. Clicking Add to Cart adds the selected variant to the cart
+      and opens the drawer
+   ================================================================ */
+(function () {
+  'use strict';
+
+  // -- Colour swatch selection --
+  document.addEventListener('click', e => {
+    const swatch = e.target.closest('.cpc-color-swatch');
+    if (!swatch) return;
+
+    const info = swatch.closest('.cpc-info');
+    if (!info) return;
+
+    // Deselect all swatches in this card
+    info.querySelectorAll('.cpc-color-swatch').forEach(s => {
+      s.classList.remove('is-selected');
+      s.setAttribute('aria-pressed', 'false');
+    });
+
+    // Select clicked swatch
+    swatch.classList.add('is-selected');
+    swatch.setAttribute('aria-pressed', 'true');
+
+    // Update the Add to Cart button to use this swatch's variant
+    const addBtn = info.querySelector('.cpc-add-btn');
+    if (addBtn && swatch.dataset.variantId) {
+      addBtn.dataset.variantId = swatch.dataset.variantId;
+    }
+  });
+
+  // -- Add to Cart button on collection cards --
+  document.addEventListener('click', async e => {
+    const btn = e.target.closest('.cpc-add-btn');
+    if (!btn) return;
+
+    const variantId = btn.dataset.variantId;
+    if (!variantId) return;
+
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Adding…';
+
+    try {
+      const res = await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: [{ id: parseInt(variantId, 10), quantity: 1 }] })
+      });
+
+      if (res.ok) {
+        btn.textContent = 'Added ✓';
+        // Refresh cart drawer
+        if (typeof fetchCart === 'function') await fetchCart();
+        // Open the cart drawer
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartOverlay = document.getElementById('cart-overlay');
+        if (cartDrawer) { cartDrawer.setAttribute('aria-hidden', 'false'); cartDrawer.classList.add('is-open'); }
+        if (cartOverlay) cartOverlay.classList.add('is-visible');
+        setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
+      } else {
+        btn.innerHTML = original;
+        btn.disabled = false;
+      }
+    } catch {
+      btn.innerHTML = original;
+      btn.disabled = false;
+    }
+  });
+
+})();

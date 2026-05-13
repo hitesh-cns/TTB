@@ -1,0 +1,183 @@
+{% comment %}
+  ============================================================
+  SECTION: PAGE ABOUT
+  ============================================================
+  About Us Page — Used by the /pages/about URL.
+  Sections: Hero banner, mission quote (dark bg), story + image, values grid, stats, CTA.
+  EDIT: Theme Editor → Pages → About Us (must assign page.about template in Admin)
+  ASSIGN TEMPLATE: Shopify Admin → Online Store → Pages → About Us → Template: page.about
+  ============================================================
+{% endcomment %}
+<!-- Hero -->
+<section class="about-hero">
+  {% if section.settings.hero_image != blank %}
+    <img src="{{ section.settings.hero_image | img_url: '1600x' }}" alt="About {{ shop.name }}" class="about-hero__img">
+  {% else %}
+    <div class="about-hero__img about-hero__img--fallback"></div>
+  {% endif %}
+  <div class="about-hero__overlay">
+    <div class="container about-hero__content">
+      <p class="section-eyebrow" style="color:var(--gold);">{{ section.settings.eyebrow | default: 'Our Story' }}</p>
+      <h1 class="about-hero__title">{{ section.settings.hero_title | default: 'Made with Love, Worn with Joy' }}</h1>
+      <p class="about-hero__sub">{{ section.settings.hero_sub | default: 'Every stitch tells a story of care, quality, and the pure joy of childhood.' }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Mission Quote -->
+<section class="about-mission">
+  <div class="container about-mission__inner">
+    <blockquote class="about-mission__quote">
+      <svg class="about-mission__icon" width="40" height="40" viewBox="0 0 24 24" fill="var(--gold)" opacity="0.35"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+      <p class="about-mission__text">{{ section.settings.mission_quote | default: 'We believe every baby deserves the softest touch. We exist to bring that softness — and a little elegance — to every precious moment of early childhood.' }}</p>
+      <cite class="about-mission__cite">{{ section.settings.mission_cite | default: '— The Tiny Bosses Team' }}</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- Story -->
+<section class="about-story">
+  <div class="container about-story__grid">
+    <div class="about-story__text">
+      <p class="section-eyebrow">{{ section.settings.story_eyebrow | default: "How It Started" }}</p>
+      <h2 class="section-heading">{{ section.settings.story_title | default: "A Parent's Dream" }}</h2>
+      <div class="about-story__body">
+        {% if section.settings.story_text != blank %}
+          {{ section.settings.story_text }}
+        {% else %}
+          <p>The Tiny Bosses was born from a simple frustration: beautiful baby clothing that was either too delicate to actually wear, or durable but completely charmless.</p>
+          <p>We set out to change that. Working with OEKO-TEX certified mills and small-batch artisan workshops, we developed fabrics that are genuinely soft against sensitive skin, wash after wash — and still look gorgeous for every photo moment.</p>
+          <p>Today, thousands of little ones across India wear our pieces for their first smiles, first steps and first adventures.</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="about-story__image">
+      {% if section.settings.story_image != blank %}
+        <img src="{{ section.settings.story_image | img_url: '700x' }}" alt="Our story" class="about-story__img">
+      {% else %}
+        <div class="about-story__img-placeholder">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--blush-dk)" stroke-width="0.7"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <p style="color:var(--espresso-lt);font-size:13px;margin-top:12px;">Add a story image in Theme Editor</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Values Grid -->
+<section class="about-values">
+  <div class="container">
+    <div class="section-header section-header--center">
+      <p class="section-eyebrow">{{ section.settings.values_eyebrow | default: "What We Stand For" }}</p>
+      <h2 class="section-heading">{{ section.settings.values_heading | default: "Our Values" }}</h2>
+    </div>
+    <div class="about-values__grid">
+      <div class="about-value-card">
+        <div class="about-value-card__icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="about-value-card__title">{{ section.settings.val1_title | default: "Safety First" }}</h3>
+        <p class="about-value-card__text">{{ section.settings.val1_text | default: "Every fabric is OEKO-TEX certified — free from harmful chemicals, kind to sensitive newborn skin." }}</p>
+      </div>
+      <div class="about-value-card">
+        <div class="about-value-card__icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3 class="about-value-card__title">{{ section.settings.val2_title | default: "Made with Love" }}</h3>
+        <p class="about-value-card__text">{{ section.settings.val2_text | default: "Small-batch production means every piece gets the attention to detail your baby deserves." }}</p>
+      </div>
+      <div class="about-value-card">
+        <div class="about-value-card__icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+        </div>
+        <h3 class="about-value-card__title">{{ section.settings.val3_title | default: "Built to Last" }}</h3>
+        <p class="about-value-card__text">{{ section.settings.val3_text | default: "Machine washable, colour-fast, and still beautiful after 50 washes. Real baby life approved." }}</p>
+      </div>
+      <div class="about-value-card">
+        <div class="about-value-card__icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+        </div>
+        <h3 class="about-value-card__title">{{ section.settings.val4_title | default: "Thoughtfully Sourced" }}</h3>
+        <p class="about-value-card__text">{{ section.settings.val4_text | default: "Ethical suppliers who share our belief that beautiful things can also be responsible ones." }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="about-stats">
+  <div class="container about-stats__grid">
+    <div class="about-stat">
+      <p class="about-stat__number">{{ section.settings.stat1_num | default: "10,000+" }}</p>
+      <p class="about-stat__label">{{ section.settings.stat1_label | default: "Happy Babies" }}</p>
+    </div>
+    <div class="about-stat">
+      <p class="about-stat__number">{{ section.settings.stat2_num | default: "100%" }}</p>
+      <p class="about-stat__label">{{ section.settings.stat2_label | default: "OEKO-TEX Certified" }}</p>
+    </div>
+    <div class="about-stat">
+      <p class="about-stat__number">{{ section.settings.stat3_num | default: "50+" }}</p>
+      <p class="about-stat__label">{{ section.settings.stat3_label | default: "Styles Available" }}</p>
+    </div>
+    <div class="about-stat">
+      <p class="about-stat__number">{{ section.settings.stat4_num | default: "4.9★" }}</p>
+      <p class="about-stat__label">{{ section.settings.stat4_label | default: "Average Rating" }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="about-cta">
+  <div class="container about-cta__inner">
+    <h2 class="about-cta__title">Ready to dress your little one?</h2>
+    <p class="about-cta__sub">{{ section.settings.cta_sub | default: "Explore our latest collections and find that perfect outfit." }}</p>
+    <div class="about-cta__btns">
+      <a href="{{ section.settings.cta_primary_url | default: '/collections/all' }}" class="btn btn--primary">{{ section.settings.cta_primary_text | default: "Shop All" }}</a>
+      <a href="{{ section.settings.cta_secondary_url | default: '/pages/contact' }}" class="btn btn--ghost">{{ section.settings.cta_secondary_text | default: "Get in Touch" }}</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Us Page",
+  "settings": [
+    { "type": "text", "id": "story_eyebrow", "label": "Story Eyebrow", "default": "How It Started" },
+    { "type": "text", "id": "values_eyebrow", "label": "Values Eyebrow", "default": "What We Stand For" },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero Background Image" },
+    { "type": "text", "id": "eyebrow", "label": "Hero Eyebrow Text", "default": "Our Story" },
+    { "type": "text", "id": "hero_title", "label": "Hero Heading", "default": "Made with Love, Worn with Joy" },
+    { "type": "text", "id": "hero_sub", "label": "Hero Sub-heading" },
+    { "type": "textarea", "id": "mission_quote", "label": "Mission Quote" },
+    { "type": "text", "id": "mission_cite", "label": "Quote Attribution", "default": " -  The Tiny Bosses Team" },
+    { "type": "text", "id": "story_title", "label": "Story Section Heading", "default": "A Parent's Dream" },
+    { "type": "richtext", "id": "story_text", "label": "Story Body Text" },
+    { "type": "image_picker", "id": "story_image",        "label": "Story Image" },
+    { "type": "header",      "content": "Values Section" },
+    { "type": "text",        "id": "values_heading",    "label": "Values Heading",       "default": "Our Values" },
+    { "type": "text",        "id": "val1_title",        "label": "Value 1 Title",        "default": "Safety First" },
+    { "type": "textarea",    "id": "val1_text",         "label": "Value 1 Text",         "default": "Every fabric is OEKO-TEX certified  -  free from harmful chemicals, kind to sensitive newborn skin." },
+    { "type": "text",        "id": "val2_title",        "label": "Value 2 Title",        "default": "Made with Love" },
+    { "type": "textarea",    "id": "val2_text",         "label": "Value 2 Text",         "default": "Small-batch production means every piece gets the attention to detail your baby deserves." },
+    { "type": "text",        "id": "val3_title",        "label": "Value 3 Title",        "default": "Built to Last" },
+    { "type": "textarea",    "id": "val3_text",         "label": "Value 3 Text",         "default": "Machine washable, colour-fast, and still beautiful after 50 washes. Real baby life approved." },
+    { "type": "text",        "id": "val4_title",        "label": "Value 4 Title",        "default": "Thoughtfully Sourced" },
+    { "type": "textarea",    "id": "val4_text",         "label": "Value 4 Text",         "default": "Ethical suppliers who share our belief that beautiful things can also be responsible ones." },
+    { "type": "header",      "content": "Stats Strip" },
+    { "type": "text",        "id": "stat1_num",         "label": "Stat 1 Number",        "default": "10,000+" },
+    { "type": "text",        "id": "stat1_label",       "label": "Stat 1 Label",         "default": "Happy Babies" },
+    { "type": "text",        "id": "stat2_num",         "label": "Stat 2 Number",        "default": "100%" },
+    { "type": "text",        "id": "stat2_label",       "label": "Stat 2 Label",         "default": "OEKO-TEX Certified" },
+    { "type": "text",        "id": "stat3_num",         "label": "Stat 3 Number",        "default": "50+" },
+    { "type": "text",        "id": "stat3_label",       "label": "Stat 3 Label",         "default": "Styles Available" },
+    { "type": "text",        "id": "stat4_num",         "label": "Stat 4 Number",        "default": "4.9★" },
+    { "type": "text",        "id": "stat4_label",       "label": "Stat 4 Label",         "default": "Average Rating" },
+    { "type": "header",      "content": "Bottom CTA" },
+    { "type": "text",        "id": "cta_sub",           "label": "CTA Sub-text",         "default": "Explore our latest collections and find that perfect outfit." },
+    { "type": "text",        "id": "cta_primary_text",  "label": "Primary Button Text",  "default": "Shop All" },
+    { "type": "url",         "id": "cta_primary_url",   "label": "Primary Button URL" },
+    { "type": "text",        "id": "cta_secondary_text","label": "Secondary Button Text","default": "Get in Touch" },
+    { "type": "url",         "id": "cta_secondary_url", "label": "Secondary Button URL" }
+  ]
+}
+{% endschema %}

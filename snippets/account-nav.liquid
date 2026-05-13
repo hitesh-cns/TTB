@@ -1,0 +1,30 @@
+{% comment %}Account navigation — rendered on every customer/* page{% endcomment %}
+<nav class="acct-nav" aria-label="Account navigation">
+  <div class="acct-nav__avatar">
+    <div class="acct-nav__initials">
+      {{ customer.first_name | slice: 0 }}{{ customer.last_name | slice: 0 }}
+    </div>
+    <div>
+      <p class="acct-nav__name">{{ customer.first_name }} {{ customer.last_name }}</p>
+      <p class="acct-nav__email">{{ customer.email }}</p>
+    </div>
+  </div>
+  <ul class="acct-nav__links">
+    <li><a href="/account" class="acct-nav__link {% if request.path == '/account' %}is-active{% endif %}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      My Orders
+    </a></li>
+    <li><a href="/account/addresses" class="acct-nav__link {% if request.path contains 'addresses' %}is-active{% endif %}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Saved Addresses
+    </a></li>
+    <li><a href="/account#profile" class="acct-nav__link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile &amp; Password
+    </a></li>
+    <li><a href="{{ routes.account_logout_url }}" class="acct-nav__link acct-nav__link--logout">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </a></li>
+  </ul>
+</nav>

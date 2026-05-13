@@ -1,0 +1,206 @@
+{% comment %}
+  ============================================================
+  SECTION: PROMO / DISCOUNT BANNER
+  ============================================================
+  A full-width or contained banner with:
+  - Background image with adjustable overlay
+  - Eyebrow, heading, sub-text
+  - Up to 2 CTA buttons with configurable links
+  - Optional countdown timer
+  - Optional discount code display
+
+  Perfect for: Sales, new arrivals, seasonal campaigns.
+  EDIT: Theme Editor → Add section → Promo Banner
+  ============================================================
+{% endcomment %}
+
+{%- assign overlay_pct = section.settings.overlay_opacity | default: 50 | times: 1 -%}
+
+<section class="promo-banner promo-banner--{{ section.settings.height | default: 'medium' }}"
+         style="{% if section.settings.bg_color != blank and section.settings.image == blank %}background:{{ section.settings.bg_color }};{% endif %}">
+
+  <!-- Background image -->
+  {%- if section.settings.image != blank -%}
+    <div class="promo-banner__bg">
+      <img
+        src="{{ section.settings.image | img_url: '1600x' }}"
+        srcset="{{ section.settings.image | img_url: '800x' }} 800w,
+                {{ section.settings.image | img_url: '1200x' }} 1200w,
+                {{ section.settings.image | img_url: '1600x' }} 1600w"
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | default: section.settings.heading }}"
+        loading="lazy"
+        class="promo-banner__img"
+      >
+    </div>
+    <div class="promo-banner__overlay" style="opacity:{{ overlay_pct | divided_by: 100.0 }};background:{{ section.settings.overlay_color | default: '#2c1f18' }};"></div>
+  {%- elsif section.settings.gradient != blank -%}
+    <div class="promo-banner__gradient" style="background:{{ section.settings.gradient }};"></div>
+  {%- endif -%}
+
+  <!-- Content -->
+  <div class="promo-banner__content container promo-banner__content--{{ section.settings.content_align | default: 'center' }}">
+
+    {%- if section.settings.badge_text != blank -%}
+      <span class="promo-banner__badge" style="background:{{ section.settings.badge_color | default: '#b8922a' }};color:{{ section.settings.badge_text_color | default: '#ffffff' }};">
+        {{ section.settings.badge_text }}
+      </span>
+    {%- endif -%}
+
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="promo-banner__eyebrow" style="color:{{ section.settings.text_color | default: '#f9f3ee' }};">
+        {{ section.settings.eyebrow }}
+      </p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="promo-banner__heading" style="color:{{ section.settings.heading_color | default: '#f9f3ee' }};font-size:clamp(28px,{{ section.settings.heading_size | default: 4 }}vw,72px);">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+
+    {%- if section.settings.subtext != blank -%}
+      <p class="promo-banner__sub" style="color:{{ section.settings.text_color | default: '#f9f3ee' }};">
+        {{ section.settings.subtext }}
+      </p>
+    {%- endif -%}
+
+    {%- if section.settings.discount_code != blank -%}
+      <div class="promo-banner__code">
+        <span class="promo-banner__code-label">{{ section.settings.discount_code_label | default: 'Use code:' }}</span>
+        <button class="promo-banner__code-pill" id="promo-copy-{{ section.id }}"
+                onclick="navigator.clipboard.writeText('{{ section.settings.discount_code }}').then(()=>{ this.textContent='✓ Copied!'; setTimeout(()=>this.textContent='{{ section.settings.discount_code }}',2000) })"
+                title="Click to copy">
+          {{ section.settings.discount_code }}
+        </button>
+      </div>
+    {%- endif -%}
+
+    <!-- Countdown timer -->
+    {%- if section.settings.show_countdown and section.settings.end_date != blank -%}
+      <div class="promo-banner__countdown" id="countdown-{{ section.id }}">
+        <div class="countdown-unit"><span class="countdown-num" data-unit="days">--</span><span class="countdown-label">{{ section.settings.label_days | default: 'Days' }}</span></div>
+        <span class="countdown-sep">:</span>
+        <div class="countdown-unit"><span class="countdown-num" data-unit="hours">--</span><span class="countdown-label">{{ section.settings.label_hours | default: 'Hours' }}</span></div>
+        <span class="countdown-sep">:</span>
+        <div class="countdown-unit"><span class="countdown-num" data-unit="mins">--</span><span class="countdown-label">{{ section.settings.label_mins | default: 'Mins' }}</span></div>
+        <span class="countdown-sep">:</span>
+        <div class="countdown-unit"><span class="countdown-num" data-unit="secs">--</span><span class="countdown-label">{{ section.settings.label_secs | default: 'Secs' }}</span></div>
+      </div>
+      <script>
+      (function() {
+        var end = new Date('{{ section.settings.end_date }}').getTime();
+        var el  = document.getElementById('countdown-{{ section.id }}');
+        if (!el || isNaN(end)) return;
+        function tick() {
+          var diff = Math.max(0, end - Date.now());
+          var d = Math.floor(diff / 86400000);
+          var h = Math.floor((diff % 86400000) / 3600000);
+          var m = Math.floor((diff % 3600000)  / 60000);
+          var s = Math.floor((diff % 60000)    / 1000);
+          el.querySelector('[data-unit="days"]').textContent  = String(d).padStart(2,'0');
+          el.querySelector('[data-unit="hours"]').textContent = String(h).padStart(2,'0');
+          el.querySelector('[data-unit="mins"]').textContent  = String(m).padStart(2,'0');
+          el.querySelector('[data-unit="secs"]').textContent  = String(s).padStart(2,'0');
+          if (diff > 0) setTimeout(tick, 1000);
+        }
+        tick();
+      })();
+      </script>
+    {%- endif -%}
+
+    <!-- CTA Buttons -->
+    <div class="promo-banner__ctas">
+      {%- if section.settings.cta_text != blank -%}
+        <a href="{{ section.settings.cta_url | default: '#' }}"
+           class="btn btn--{{ section.settings.cta_style | default: 'primary' }}
+                  promo-banner__cta"
+           style="{% if section.settings.cta_custom_color != blank %}background:{{ section.settings.cta_custom_color }};border-color:{{ section.settings.cta_custom_color }};{% endif %}">
+          {{ section.settings.cta_text }}
+        </a>
+      {%- endif -%}
+      {%- if section.settings.cta_2_text != blank -%}
+        <a href="{{ section.settings.cta_2_url | default: '#' }}"
+           class="btn btn--{{ section.settings.cta_2_style | default: 'outline' }} promo-banner__cta">
+          {{ section.settings.cta_2_text }}
+        </a>
+      {%- endif -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promo Banner",
+  "tag": "section",
+  "settings": [
+    { "type": "header",       "content": "Background" },
+    { "type": "image_picker", "id": "image",          "label": "Background Image",
+      "info": "Optional. Leave blank to use a solid colour or gradient." },
+    { "type": "range",        "id": "overlay_opacity", "label": "Image Overlay Darkness",
+      "min": 0, "max": 90, "step": 5, "default": 50, "unit": "%" },
+    { "type": "color",        "id": "overlay_color",   "label": "Overlay Colour",  "default": "#2c1f18" },
+    { "type": "color",        "id": "bg_color",        "label": "Solid Background (if no image)", "default": "#2c1f18" },
+    { "type": "text",         "id": "gradient",        "label": "CSS Gradient (if no image)",
+      "info": "e.g. linear-gradient(135deg,#2c1f18,#a05c5e). Overrides solid colour." },
+    { "type": "select",       "id": "height",          "label": "Banner Height",
+      "options": [
+        { "value": "small",  "label": "Small  (300px)" },
+        { "value": "medium", "label": "Medium (480px)" },
+        { "value": "large",  "label": "Large  (600px)" },
+        { "value": "auto",   "label": "Auto (fits content)" }
+      ], "default": "medium" },
+    { "type": "header",       "content": "Content" },
+    { "type": "select",       "id": "content_align",   "label": "Content Alignment",
+      "options": [
+        { "value": "left",   "label": "Left"   },
+        { "value": "center", "label": "Centre" },
+        { "value": "right",  "label": "Right"  }
+      ], "default": "center" },
+    { "type": "text",         "id": "badge_text",      "label": "Badge Label", "info": "Small pill above eyebrow, e.g. 'Flash Sale'" },
+    { "type": "color",        "id": "badge_color",     "label": "Badge Background", "default": "#b8922a" },
+    { "type": "color",        "id": "badge_text_color","label": "Badge Text Colour", "default": "#ffffff" },
+    { "type": "text",         "id": "eyebrow",         "label": "Eyebrow Text" },
+    { "type": "text",         "id": "heading",         "label": "Main Heading" },
+    { "type": "range",        "id": "heading_size",    "label": "Heading Size (vw)",
+      "min": 2, "max": 7, "step": 0.5, "default": 4 },
+    { "type": "color",        "id": "heading_color",   "label": "Heading Colour",  "default": "#f9f3ee" },
+    { "type": "textarea",     "id": "subtext",         "label": "Sub-text" },
+    { "type": "color",        "id": "text_color",      "label": "Eyebrow & Sub-text Colour", "default": "#f9f3ee" },
+    { "type": "header",       "content": "Discount Code" },
+    { "type": "text",         "id": "discount_code",       "label": "Discount Code",
+      "info": "Displays as a click-to-copy pill. Leave blank to hide." },
+    { "type": "text",         "id": "discount_code_label", "label": "Label before code", "default": "Use code:" },
+    { "type": "header",       "content": "Countdown Timer" },
+    { "type": "checkbox",     "id": "show_countdown",  "label": "Show Countdown Timer",  "default": false },
+    { "type": "text",         "id": "end_date",         "label": "End Date & Time",
+      "info": "ISO format: 2025-12-31T23:59:59 (your store timezone)" },
+    { "type": "text",         "id": "label_days",  "label": "Days Label",  "default": "Days"  },
+    { "type": "text",         "id": "label_hours", "label": "Hours Label", "default": "Hours" },
+    { "type": "text",         "id": "label_mins",  "label": "Mins Label",  "default": "Mins"  },
+    { "type": "text",         "id": "label_secs",  "label": "Secs Label",  "default": "Secs"  },
+    { "type": "header",       "content": "Button 1" },
+    { "type": "text",         "id": "cta_text",    "label": "Button Text" },
+    { "type": "url",          "id": "cta_url",     "label": "Button URL" },
+    { "type": "select",       "id": "cta_style",   "label": "Button Style",
+      "options": [
+        { "value": "primary", "label": "Primary (dark fill)" },
+        { "value": "ghost",   "label": "Ghost (white outline)" },
+        { "value": "outline", "label": "Outline" }
+      ], "default": "primary" },
+    { "type": "color",        "id": "cta_custom_color", "label": "Custom Button Colour",
+      "info": "Leave blank to use the style default." },
+    { "type": "header",       "content": "Button 2 (optional)" },
+    { "type": "text",         "id": "cta_2_text",  "label": "Button 2 Text" },
+    { "type": "url",          "id": "cta_2_url",   "label": "Button 2 URL" },
+    { "type": "select",       "id": "cta_2_style", "label": "Button 2 Style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "ghost",   "label": "Ghost"   },
+        { "value": "outline", "label": "Outline" }
+      ], "default": "ghost" }
+  ],
+  "presets": [{ "name": "Promo Banner" }]
+}
+{% endschema %}

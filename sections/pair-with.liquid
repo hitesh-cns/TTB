@@ -1,0 +1,267 @@
+{% comment %}
+  ============================================================
+  SECTION: PAIR WITH
+  ============================================================
+  Pair With — 'Complete the Look' product recommendations on product pages.
+  Shows products linked via the custom.pair_with metafield.
+  SETUP: In Shopify Admin → Products → each product → Metafields → custom.pair_with
+         Add the products that pair well with this product.
+  EDIT: Theme Editor → Product pages → Pair With
+  ============================================================
+{% endcomment %}
+{% comment %}
+  = PAIR WITH — Metafield setup (Metafields Guru) =
+  Namespace : custom
+  Key       : pair_with
+  Type      : product_reference → "List of products"
+
+  1. Metafields Guru → Product → Add definition with the above.
+  2. On each product in Shopify Admin → Metafields → "Pair With"
+     → pick the companion products (e.g. matching socks, hat, bag).
+
+  FALLBACK: If metafield is empty the section falls back to Theme
+  Editor blocks (the old manual picker method still works).
+{% endcomment %}
+
+{% assign meta_pairs = product.metafields.custom.pair_with.value %}
+{% assign pair_count = 0 %}
+
+{% if meta_pairs != blank and meta_pairs.size > 0 %}
+  {% for p in meta_pairs %}
+    {% if p.id != product.id %}{% assign pair_count = pair_count | plus: 1 %}{% endif %}
+  {% endfor %}
+{% else %}
+  {% for block in section.blocks %}
+    {% if block.type == 'pair_product' %}
+      {% assign p = all_products[block.settings.product] %}
+      {% if p != blank and p.id != product.id %}{% assign pair_count = pair_count | plus: 1 %}{% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if pair_count > 0 %}
+<section class="pair-with-section section-spacing" id="pair-with" aria-label="Complete the Look">
+  <div class="container">
+
+    <div class="section-header">
+      <p class="section-eyebrow">{{ section.settings.eyebrow | default: 'Complete the Look' }}</p>
+      <h2 class="section-heading">{{ section.settings.heading | default: 'Pair It With' }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section-subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+
+    <div class="pair-with-carousel-wrap">
+      <div class="pair-with-carousel" id="pair-track">
+
+        {% comment %} Use metafield products if set, else fall back to Theme Editor blocks {% endcomment %}
+        {% if meta_pairs != blank and meta_pairs.size > 0 %}
+          {% for pp in meta_pairs limit: 6 %}
+            {% if pp != blank and pp.id != product.id %}
+
+              <div class="pair-card" {{ block.shopify_attributes }} data-product-id="{{ pp.id }}">
+                <div class="pair-card__image-wrap">
+
+                  <a href="{{ pp.url }}" class="pair-card__image-link" aria-label="{{ pp.title }}">
+                    {% if pp.featured_image %}
+                      <!-- Primary image — visible by default -->
+                      <img
+                        src="{{ pp.featured_image | img_url: '600x' }}"
+                        alt="{{ pp.featured_image.alt | default: pp.title }}"
+                        class="pair-card__img pair-card__img--primary"
+                        loading="lazy"
+                        width="600"
+                      >
+                      <!-- Secondary image — fades in on hover -->
+                      {% if pp.images[1] %}
+                        <img
+                          src="{{ pp.images[1] | img_url: '600x' }}"
+                          alt="{{ pp.images[1].alt | default: pp.title }}"
+                          class="pair-card__img pair-card__img--secondary"
+                          loading="lazy"
+                          width="600"
+                        >
+                      {% endif %}
+                    {% else %}
+                      {{ 'product-2' | placeholder_svg_tag: 'placeholder-svg' }}
+                    {% endif %}
+                  </a>
+
+                  {% if block.settings.category_label != blank %}
+                    <div class="pair-card__tag">{{ block.settings.category_label }}</div>
+                  {% endif %}
+
+                  <!-- = HOVER CTA =
+                       Single-variant products → direct Add to Cart
+                       Multi-variant products → popup to pick size/colour -->
+                  <div class="pair-card__hover-actions">
+                    {% if pp.variants.size == 1 and pp.variants.first.title == 'Default Title' %}
+                      <button
+                        class="btn-pair-add"
+                        data-variant-id="{{ pp.variants.first.id }}"
+                        data-product-id="{{ pp.id }}"
+                        data-title="{{ pp.title | escape }}"
+                        aria-label="Add {{ pp.title }} to basket"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        Add to Basket
+                      </button>
+                    {% else %}
+                      <button
+                        class="btn-pair-variants"
+                        data-product-id="{{ pp.id }}"
+                        data-product-handle="{{ pp.handle }}"
+                        data-product-title="{{ pp.title | escape }}"
+                        data-product-price="{{ pp.price | money }}"
+                        data-product-image="{{ pp.featured_image | img_url: '300x' }}"
+                        data-variants="{{ pp.variants | json | escape }}"
+                        data-options="{{ pp.options_with_values | json | escape }}"
+                        aria-label="Select options for {{ pp.title }}"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        Select Options
+                      </button>
+                    {% endif %}
+                  </div>
+
+                </div>
+
+                <div class="pair-card__info">
+                  <p class="pair-card__category">{{ block.settings.category_label | default: 'Pairs With' }}</p>
+                  <h4 class="pair-card__title">
+                    <a href="{{ pp.url }}">{{ pp.title }}</a>
+                  </h4>
+                  <div class="pair-card__price">
+                    {% if pp.compare_at_price > pp.price %}
+                      <span class="price price--sale">{{ pp.price | money }}</span>
+                      <span class="price price--compare">{{ pp.compare_at_price | money }}</span>
+                    {% else %}
+                      <span class="price">{{ pp.price | money }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% for block in section.blocks %}
+            {% if block.type == 'pair_product' %}
+              {% assign pp = all_products[block.settings.product] %}
+              {% if pp != blank and pp.id != product.id %}
+                {% comment %}Re-render same card HTML for block source{% endcomment %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+      </div><!-- /pair-track -->
+
+      <!-- Carousel navigation — prev/next buttons and dot indicators -->
+      <div class="carousel-controls pair-controls">
+        <button class="carousel-btn carousel-btn--prev" id="pair-prev" aria-label="Previous products">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="carousel-dots" id="pair-dots" role="tablist" aria-label="Carousel pages"></div>
+        <button class="carousel-btn carousel-btn--next" id="pair-next" aria-label="Next products">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- = VARIANT PICKER POPUP =
+     Opens when a paired product with multiple variants is clicked.
+     Lets customer select size/colour before adding to cart. -->
+<div class="modal-overlay" id="variant-popup-overlay" aria-hidden="true">
+  <div class="modal variant-popup" role="dialog" aria-modal="true" aria-labelledby="variant-popup-title">
+    <div class="modal__header">
+      <div class="variant-popup__product-row">
+        <img id="variant-popup-image" src="" alt="" class="variant-popup__img">
+        <div>
+          <h3 class="modal__title" id="variant-popup-title"></h3>
+          <p class="variant-popup__price" id="variant-popup-price"></p>
+        </div>
+      </div>
+      <button class="modal__close" id="variant-popup-close" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal__body" id="variant-popup-body">
+      <!-- Options injected by product-page.js -->
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--primary btn--full" id="variant-popup-add" disabled>
+        Select an option to continue
+      </button>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Pair With",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "⚠️ HOW TO USE: Click 'Add block' below -> select 'Paired Product' -> use the product picker to choose a product. Add up to 6 paired items. This section only appears on the front end once at least one product is added that is different from the product being viewed."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "info": "Small text above the heading (e.g. 'Complete the Look')",
+      "default": "Complete the Look"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Pair It With"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading (optional)",
+      "default": "Curated pieces that go beautifully together"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "pair_product",
+      "name": "Paired Product",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Pick a product to show alongside the current product. The current product is automatically excluded even if selected."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "category_label",
+          "label": "Category Label",
+          "info": "Short label shown on the card (e.g. 'Bottoms', 'Socks', 'Accessories'). Appears as a pill tag on the image.",
+          "default": "Pairs With"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pair With",
+      "blocks": [
+        { "type": "pair_product" },
+        { "type": "pair_product" },
+        { "type": "pair_product" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,86 @@
+{% comment %}
+  ============================================================
+  SECTION: IMAGE GALLERY / LOOKBOOK
+  ============================================================
+  A masonry or uniform grid of images. Each image can have an
+  optional overlay label and link (e.g. to a product or collection).
+  Perfect for lookbooks, inspiration boards, before/after grids.
+  EDIT: Theme Editor → Add section → Image Gallery
+  ============================================================
+{% endcomment %}
+<section class="gallery-section section-spacing">
+  <div class="{% if section.settings.full_width %}gallery-full{% else %}container{% endif %}">
+    {%- if section.settings.heading != blank or section.settings.eyebrow != blank -%}
+      <div class="section-header section-header--{{ section.settings.header_align | default: 'center' }}">
+        {%- if section.settings.eyebrow != blank -%}<p class="section-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2 class="section-heading">{{ section.settings.heading }}</h2>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="gallery-grid gallery-grid--{{ section.settings.layout }} gallery-grid--cols-{{ section.settings.columns }}" style="gap:{{ section.settings.gap | default: 12 }}px;">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.image != blank -%}
+          <div class="gallery-item gallery-item--{{ block.settings.size | default: '1x1' }}" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="gallery-item__link">{%- endif -%}
+              <div class="gallery-item__img-wrap">
+                <img
+                  src="{{ block.settings.image | img_url: '800x' }}"
+                  srcset="{{ block.settings.image | img_url: '400x' }} 400w, {{ block.settings.image | img_url: '800x' }} 800w"
+                  alt="{{ block.settings.image.alt | default: block.settings.label }}"
+                  loading="lazy" class="gallery-item__img">
+                {%- if block.settings.label != blank -%}
+                  <div class="gallery-item__overlay">
+                    <span class="gallery-item__label">{{ block.settings.label }}</span>
+                    {%- if block.settings.link != blank -%}
+                      <span class="gallery-item__arrow">→</span>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- if block.settings.link != blank -%}</a>{%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Image Gallery",
+  "max_blocks": 12,
+  "blocks": [{
+    "type": "image",
+    "name": "Image",
+    "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text",         "id": "label", "label": "Overlay Label", "info": "Optional text shown on hover." },
+      { "type": "url",          "id": "link",  "label": "Link URL" },
+      { "type": "select",       "id": "size",  "label": "Grid Size (masonry only)",
+        "options": [
+          {"value":"1x1","label":"Normal (1×1)"},
+          {"value":"1x2","label":"Tall (1×2)"},
+          {"value":"2x1","label":"Wide (2×1)"},
+          {"value":"2x2","label":"Large (2×2)"}
+        ], "default": "1x1" }
+    ]
+  }],
+  "settings": [
+    { "type": "text",     "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text",     "id": "heading", "label": "Heading" },
+    { "type": "select",   "id": "header_align","label":"Header Alignment",
+      "options":[{"value":"left","label":"Left"},{"value":"center","label":"Centre"}], "default":"center"},
+    { "type": "select",   "id": "layout",  "label": "Gallery Layout",
+      "options": [
+        {"value":"uniform", "label":"Uniform grid"},
+        {"value":"masonry", "label":"Masonry (size-aware)"}
+      ], "default": "uniform" },
+    { "type": "select",   "id": "columns", "label": "Columns",
+      "options": [{"value":"2","label":"2"},{"value":"3","label":"3"},{"value":"4","label":"4"}],
+      "default": "3" },
+    { "type": "range",    "id": "gap",     "label": "Gap between images (px)", "min": 0, "max": 32, "step": 4, "default": 12 },
+    { "type": "checkbox", "id": "full_width","label":"Full width (no margins)","default":false }
+  ],
+  "presets": [{ "name": "Image Gallery",
+    "blocks":[{"type":"image"},{"type":"image"},{"type":"image"},{"type":"image"}] }]
+}
+{% endschema %}

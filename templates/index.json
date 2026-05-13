@@ -1,0 +1,225 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "image": "shopify://shop_images/95F04412-5B1B-4B0C-85CF-6533DA75EFC6.png",
+        "height": "large",
+        "overlay_opacity": 40,
+        "text_align": "center",
+        "btn_position": "inherit",
+        "content_position": "center",
+        "eyebrow": "New Collection",
+        "heading": "Buy 4 and Get 30% off",
+        "heading_size": "large",
+        "subheading": "",
+        "cta_1_text": "Shop Now",
+        "cta_1_url": "",
+        "cta_2_text": "",
+        "cta_2_url": "",
+        "show_scroll": false,
+        "scroll_label": "Scroll"
+      }
+    },
+    "featured_collections": {
+      "type": "featured-collections",
+      "blocks": {
+        "col_1": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "label": "",
+            "subtitle": "",
+            "url": ""
+          }
+        },
+        "col_2": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "label": "",
+            "subtitle": "",
+            "url": ""
+          }
+        },
+        "col_3": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "label": "",
+            "subtitle": "",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "col_1",
+        "col_2",
+        "col_3"
+      ],
+      "settings": {
+        "eyebrow": "Shop by Category",
+        "heading": "Our Collections",
+        "subheading": "",
+        "cta_label": "Explore"
+      }
+    },
+    "discount_carousel": {
+      "type": "discount-carousel",
+      "settings": {
+        "eyebrow": "Bundle & Save",
+        "heading": "The More You Love, The More You Save",
+        "subheading": "Mix and match any items across our collection",
+        "shop_url": "",
+        "shop_btn_text": "Shop Now",
+        "popular_badge": "Popular",
+        "unlock_text": "Add items to unlock savings",
+        "tier1_title": "Buy 2",
+        "tier1_pct": "5% off",
+        "tier1_desc": "Perfect starter bundle for the new arrival",
+        "tier2_title": "Buy 3",
+        "tier2_pct": "10% off",
+        "tier2_desc": "Ideal for seasonal wardrobe refresh",
+        "tier3_title": "Buy 4",
+        "tier3_pct": "15% off",
+        "tier3_desc": "Build a complete nursery wardrobe",
+        "tier4_title": "Buy 5+",
+        "tier4_pct": "20% off",
+        "tier4_desc": "The ultimate luxury gift set or full collection"
+      }
+    },
+    "product_grid": {
+      "type": "product-grid",
+      "blocks": {
+        "grid_col_1": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "eyebrow": "",
+            "heading": "",
+            "view_all_text": "View all",
+            "products_count": 8,
+            "columns": "4"
+          }
+        }
+      },
+      "block_order": [
+        "grid_col_1"
+      ],
+      "settings": {
+        "eyebrow": "New Arrivals",
+        "heading": "Crafted for Tiny Moments",
+        "collection": "",
+        "products_count": 8,
+        "columns": "4",
+        "view_all_text": "View all"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Absolutely beautiful quality. The fabrics are so soft \u2014 my baby looks like royalty.",
+            "name": "Sophie M.",
+            "subtitle": "Mama of 2, Mumbai",
+            "rating": 5
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "We've tried many baby brands and nothing comes close. Every piece has held up perfectly.",
+            "name": "Priya K.",
+            "subtitle": "Mother of twins, Delhi",
+            "rating": 5
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The packaging alone made me feel special. But the clothes \u2014 incredible. Worth every rupee.",
+            "name": "Ananya R.",
+            "subtitle": "New Mum, Bangalore",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {
+        "eyebrow": "Testimonials",
+        "heading": "Words from Our Little Family",
+        "subheading": "",
+        "bg_color": ""
+      }
+    },
+    "trust_cards": {
+      "type": "trust-cards",
+      "blocks": {
+        "tc1": {
+          "type": "card",
+          "settings": {
+            "icon": "shipping",
+            "title": "Ship It Free",
+            "description": "Free delivery on all qualifying orders, straight to your door."
+          }
+        },
+        "tc2": {
+          "type": "card",
+          "settings": {
+            "icon": "returns",
+            "title": "Money-Back Guarantee",
+            "description": "Return your item for a full refund if it doesn't meet your expectations."
+          }
+        },
+        "tc3": {
+          "type": "card",
+          "settings": {
+            "icon": "support",
+            "title": "24/7 Customer Support",
+            "description": "Our team is available 24/7 to address your inquiries."
+          }
+        },
+        "tc4": {
+          "type": "card",
+          "settings": {
+            "icon": "secure",
+            "title": "Safe Checkout",
+            "description": "Your payment details are always protected with advanced security."
+          }
+        }
+      },
+      "block_order": [
+        "tc1",
+        "tc2",
+        "tc3",
+        "tc4"
+      ],
+      "settings": {}
+    },
+    "subscribe_cta": {
+      "type": "subscribe-cta",
+      "settings": {
+        "heading": "Save 20% on Your Purchase Today.",
+        "label": "Email",
+        "placeholder": "Enter your email",
+        "button_text": "Subscribe",
+        "success_message": "Thanks for subscribing! Check your inbox for your discount code."
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "featured_collections",
+    "discount_carousel",
+    "product_grid",
+    "trust_cards",
+    "testimonials",
+    "subscribe_cta"
+  ]
+}

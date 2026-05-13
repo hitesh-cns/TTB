@@ -1,0 +1,99 @@
+{% comment %}
+  ============================================================
+  SECTION: ANNOUNCEMENT BAR
+  ============================================================
+  Announcement Bar — The thin strip at the very top of every page.
+  Rotates through up to 3 messages. Each message can have a link.
+  EDIT: Theme Editor → Announcement Bar
+  ============================================================
+{% endcomment %}
+
+{%- assign bar_bg    = section.settings.bg_color   | default: '#FFEB3B' -%}
+{%- assign bar_color = section.settings.text_color | default: '#F9F3EE' -%}
+{%- assign bar_speed = section.settings.speed      | default: 35 -%}
+{%- assign divider   = section.settings.divider    | default: '*' -%}
+
+<div class="announcement-bar" id="announcement-bar"
+     style="background:{{ bar_bg }};color:{{ bar_color }};--bar-speed:{{ bar_speed }}s;">
+  <div class="announcement-track">
+    <div class="announcement-items">
+
+      {%- comment -%} First pass — render items {%- endcomment -%}
+      {%- if section.settings.text_1 != blank -%}
+        {%- if section.settings.url_1 != blank -%}
+          <a href="{{ section.settings.url_1 }}" class="announcement-item announcement-item--link" style="color:{{ bar_color }};">{{ section.settings.text_1 }}</a>
+        {%- else -%}
+          <span class="announcement-item">{{ section.settings.text_1 }}</span>
+        {%- endif -%}
+        <span class="announcement-divider">{{ divider }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.text_2 != blank -%}
+        {%- if section.settings.url_2 != blank -%}
+          <a href="{{ section.settings.url_2 }}" class="announcement-item announcement-item--link" style="color:{{ bar_color }};">{{ section.settings.text_2 }}</a>
+        {%- else -%}
+          <span class="announcement-item">{{ section.settings.text_2 }}</span>
+        {%- endif -%}
+        <span class="announcement-divider">{{ divider }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.text_3 != blank -%}
+        {%- if section.settings.url_3 != blank -%}
+          <a href="{{ section.settings.url_3 }}" class="announcement-item announcement-item--link" style="color:{{ bar_color }};">{{ section.settings.text_3 }}</a>
+        {%- else -%}
+          <span class="announcement-item">{{ section.settings.text_3 }}</span>
+        {%- endif -%}
+        <span class="announcement-divider">{{ divider }}</span>
+      {%- endif -%}
+
+      {%- comment -%} Second pass — duplicate for seamless CSS scroll loop {%- endcomment -%}
+      {%- if section.settings.text_1 != blank -%}
+        {%- if section.settings.url_1 != blank -%}
+          <a href="{{ section.settings.url_1 }}" class="announcement-item announcement-item--link" style="color:{{ bar_color }};" aria-hidden="true">{{ section.settings.text_1 }}</a>
+        {%- else -%}
+          <span class="announcement-item" aria-hidden="true">{{ section.settings.text_1 }}</span>
+        {%- endif -%}
+        <span class="announcement-divider" aria-hidden="true">{{ divider }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.text_2 != blank -%}
+        {%- if section.settings.url_2 != blank -%}
+          <a href="{{ section.settings.url_2 }}" class="announcement-item announcement-item--link" style="color:{{ bar_color }};" aria-hidden="true">{{ section.settings.text_2 }}</a>
+        {%- else -%}
+          <span class="announcement-item" aria-hidden="true">{{ section.settings.text_2 }}</span>
+        {%- endif -%}
+        <span class="announcement-divider" aria-hidden="true">{{ divider }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.text_3 != blank -%}
+        {%- if section.settings.url_3 != blank -%}
+          <a href="{{ section.settings.url_3 }}" class="announcement-item announcement-item--link" style="color:{{ bar_color }};" aria-hidden="true">{{ section.settings.text_3 }}</a>
+        {%- else -%}
+          <span class="announcement-item" aria-hidden="true">{{ section.settings.text_3 }}</span>
+        {%- endif -%}
+        <span class="announcement-divider" aria-hidden="true">{{ divider }}</span>
+      {%- endif -%}
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [
+    { "type": "header",   "content": "Messages" },
+    { "type": "text",  "id": "text_1", "label": "Message 1", "default": "Free shipping on orders over ₹1500" },
+    { "type": "url",   "id": "url_1",  "label": "Message 1 Link", "info": "Optional  -  makes this message clickable." },
+    { "type": "text",  "id": "text_2", "label": "Message 2", "default": "Buy 2 get 5% off · Buy 3 get 10% off · Buy 5 get 20% off" },
+    { "type": "url",   "id": "url_2",  "label": "Message 2 Link" },
+    { "type": "text",  "id": "text_3", "label": "Message 3", "default": "Crafted with love for your little ones" },
+    { "type": "url",   "id": "url_3",  "label": "Message 3 Link" },
+    { "type": "text",  "id": "divider","label": "Divider Symbol", "default": "✦" },
+    { "type": "header", "content": "Appearance" },
+    { "type": "color", "id": "bg_color",   "label": "Background Colour", "default": "#FFEB3B" },
+    { "type": "color", "id": "text_color", "label": "Text Colour",       "default": "#F9F3EE" },
+    { "type": "range", "id": "speed", "label": "Scroll Speed (seconds)", "min": 15, "max": 80, "step": 5, "default": 35 }
+  ]
+}
+{% endschema %}

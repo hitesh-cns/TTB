@@ -1,0 +1,146 @@
+{% comment %}
+  ============================================================
+  SECTION: BLOG LISTING
+  ============================================================
+  Blog Listing — The main /blogs/* page showing all articles.
+  Shows a featured article at the top and a grid of smaller article cards below.
+  EDIT: Theme Editor → Blog pages → Blog Listing
+  ============================================================
+{% endcomment %}
+<div class="be-page">
+
+  <!-- Hero -->
+  <div class="be-page__hero be-page__hero--blog">
+    <div class="container">
+      <p class="section-eyebrow">{{ section.settings.eyebrow | default: 'Stories & Guides' }}</p>
+      <h1 class="be-page__title">{{ blog.title | default: section.settings.heading | default: 'The Baby Elegance Journal' }}</h1>
+      <p class="be-page__sub">{{ section.settings.subheading | default: 'Care guides, styling tips and stories for modern parents.' }}</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Tag filter pills -->
+    {% if blog.all_tags.size > 0 %}
+      <div class="blog-tags">
+        <a href="{{ blog.url }}" class="blog-tag {% unless current_tags %}is-active{% endunless %}">All</a>
+        {% for tag in blog.all_tags %}
+          {% if current_tags contains tag %}
+            <a href="{{ blog.url }}" class="blog-tag is-active">{{ tag }}</a>
+          {% else %}
+            {{ tag | link_to_tag: tag | replace: '<a ', '<a class="blog-tag" ' }}
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Article grid -->
+    {% paginate blog.articles by section.settings.articles_per_page %}
+
+      {% if blog.articles.size > 0 %}
+
+        <!-- Featured first article -->
+        {% assign first = blog.articles.first %}
+        {% if paginate.current_page == 1 and section.settings.show_featured %}
+          <article class="blog-featured">
+            <a href="{{ first.url }}" class="blog-featured__image-link">
+              {% if first.image %}
+                <img src="{{ first.image | img_url: '1200x' }}" alt="{{ first.image.alt | default: first.title | escape }}"
+                     class="blog-featured__img" loading="eager">
+              {% else %}
+                <div class="blog-featured__img-placeholder">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+              {% endif %}
+            </a>
+            <div class="blog-featured__body">
+              <div class="blog-featured__meta">
+                {% for tag in first.tags limit: 2 %}
+                  <span class="blog-tag-pill">{{ tag }}</span>
+                {% endfor %}
+                <time datetime="{{ first.published_at | date: '%Y-%m-%d' }}" class="blog-meta-date">
+                  {{ first.published_at | date: '%d %B %Y' }}
+                </time>
+              </div>
+              <h2 class="blog-featured__title"><a href="{{ first.url }}">{{ first.title }}</a></h2>
+              <p class="blog-featured__excerpt">{{ first.excerpt | default: first.content | strip_html | truncate: 200 }}</p>
+              <div class="blog-featured__author">
+                <div class="blog-author-avatar">{{ first.author | slice: 0 }}</div>
+                <span>{{ first.author }}</span>
+                <span class="blog-read-time">· {{ first.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} min read</span>
+              </div>
+              <a href="{{ first.url }}" class="btn btn--ghost blog-featured__cta">Read Article →</a>
+            </div>
+          </article>
+        {% endif %}
+
+        <!-- Article grid -->
+        <div class="blog-grid">
+          {% for article in blog.articles %}
+            {% if forloop.first and paginate.current_page == 1 and section.settings.show_featured %}{% continue %}{% endif %}
+            <article class="blog-card">
+              <a href="{{ article.url }}" class="blog-card__image-link">
+                <div class="blog-card__image-wrap">
+                  {% if article.image %}
+                    <img src="{{ article.image | img_url: '600x' }}" alt="{{ article.image.alt | default: article.title | escape }}"
+                         class="blog-card__img" loading="lazy">
+                  {% else %}
+                    <div class="blog-card__img-placeholder">{{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+                  {% endif %}
+                </div>
+              </a>
+              <div class="blog-card__body">
+                <div class="blog-card__meta">
+                  {% for tag in article.tags limit: 1 %}
+                    <span class="blog-tag-pill">{{ tag }}</span>
+                  {% endfor %}
+                  <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" class="blog-meta-date">
+                    {{ article.published_at | date: '%d %b %Y' }}
+                  </time>
+                </div>
+                <h3 class="blog-card__title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+                <p class="blog-card__excerpt">{{ article.excerpt | default: article.content | strip_html | truncate: 120 }}</p>
+                <div class="blog-card__footer">
+                  <div class="blog-author-avatar blog-author-avatar--sm">{{ article.author | slice: 0 }}</div>
+                  <span class="blog-card__author">{{ article.author }}</span>
+                  <span class="blog-read-time">· {{ article.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} min</span>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if paginate.pages > 1 %}
+          <div class="blog-pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="btn btn--ghost">← Newer</a>
+            {% endif %}
+            <span class="blog-pagination__info">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="btn btn--ghost">Older →</a>
+            {% endif %}
+          </div>
+        {% endif %}
+
+      {% else %}
+        <div class="acct-empty" style="padding: 60px 0;">
+          <h3>No articles yet</h3>
+          <p>Check back soon — we're writing something beautiful.</p>
+        </div>
+      {% endif %}
+
+    {% endpaginate %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog Listing",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Stories & Guides" },
+    { "type": "text", "id": "heading", "label": "Heading (fallback if no blog)", "default": "The Baby Elegance Journal" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Care guides, styling tips and stories for modern parents." },
+    { "type": "checkbox", "id": "show_featured", "label": "Show first article as featured hero", "default": true },
+    { "type": "range", "id": "articles_per_page", "label": "Articles per page", "min": 6, "max": 24, "step": 3, "default": 9 }
+  ]
+}
+{% endschema %}

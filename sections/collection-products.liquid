@@ -1,0 +1,350 @@
+{% comment %}
+  ============================================================
+  SECTION: COLLECTION PRODUCTS
+  ============================================================
+  Collection Products — The layout for collection pages (/collections/* URLs).
+  Contains: sidebar filter panel, sort dropdown, product grid.
+  FILTERS: Products are filtered by tags in the format filter-{Group}:{Value}
+    Example: tag 'filter-Color:Pink' creates a Pink option in the Colour filter.
+    Add these tags in Shopify Admin → Products → each product → Tags field.
+  EDIT: Theme Editor → Collection pages → Collection Products
+  ============================================================
+{% endcomment %}
+{%- comment -%}
+  -- Parse which filters are currently active from the URL
+  -- e.g. ?filter-Color=White&filter-Size=0-3M
+{%- endcomment -%}
+{% assign active_filters = '' %}
+{% for param in request.parameters %}
+  {% if param[0] contains 'filter-' %}
+    {% assign active_filters = active_filters | append: param[0] | append: ':' | append: param[1] | append: '|' %}
+  {% endif %}
+{% endfor %}
+
+{%- comment -%}
+  -- Build the list of filter groups from product tags.
+  -- Only reads tags that start with "filter-"
+{%- endcomment -%}
+{% assign filter_groups_raw = '' %}
+{% for product in collection.products %}
+  {% for tag in product.tags %}
+    {% if tag contains 'filter-' %}
+      {% assign filter_groups_raw = filter_groups_raw | append: tag | append: '||' %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+<!-- = COLLECTION HEADER = -->
+<div class="collection-hero">
+  <div class="container">
+    <nav class="product-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">›</span>
+      <span>{{ collection.title }}</span>
+    </nav>
+    <h1 class="collection-title">{{ collection.title }}</h1>
+    {% if collection.description != blank %}
+      <div class="collection-description rte">{{ collection.description }}</div>
+    {% endif %}
+    <p class="collection-count">{{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}</p>
+  </div>
+</div>
+
+<!-- = MAIN COLLECTION LAYOUT (sidebar + grid) = -->
+<div class="collection-layout container" id="collection-layout">
+
+  <!-- = FILTERS SIDEBAR =
+       Built from product tags. Add tags in format filter-Group:Value.
+       On mobile this is hidden behind a toggle button. -->
+  <aside class="collection-sidebar" id="collection-sidebar" aria-label="Product filters">
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">{{ section.settings.filters_label | default: "Filters" }}</h2>
+      <button class="sidebar-clear-all" id="sidebar-clear-all" aria-label="Clear all filters">{{ section.settings.clear_label | default: "Clear all" }}</button>
+      <!-- Close button — only visible on mobile where sidebar overlays the page -->
+      <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close filters">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="filter-groups" id="filter-groups">
+      <!-- Filter groups are rendered by JS from product tags -->
+      <!-- See collection-filters.js for the logic -->
+      <div class="filter-loading">
+        <div class="filter-skeleton"></div>
+        <div class="filter-skeleton"></div>
+        <div class="filter-skeleton"></div>
+      </div>
+    </div>
+
+    <!-- Hidden data element — passes product tags to JS -->
+    <script type="application/json" id="collection-tags-data">
+      {
+        "tags": [
+          {% assign all_tags = collection.all_tags %}
+          {% for tag in all_tags %}
+            {% if tag contains 'filter-' %}
+              {{ tag | json }}{% unless forloop.last %},{% endunless %}
+            {% endif %}
+          {% endfor %}
+        ],
+        "activeUrl": {{ request.path | json }},
+        "current_tags": {{ collection.current_tags | json }}
+      }
+    </script>
+
+  </aside>
+
+  <!-- = PRODUCT GRID AREA = -->
+  <div class="collection-main" id="collection-main">
+
+    <!-- Toolbar: sort + mobile filter toggle + active chips -->
+    <div class="collection-toolbar">
+      <div class="collection-toolbar__left">
+
+        <!-- Mobile filter toggle -->
+        <button class="btn-filter-toggle" id="filter-toggle-mobile" aria-expanded="false" aria-controls="collection-sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          Filters
+          <span class="filter-count-badge" id="filter-count-badge" aria-live="polite"></span>
+        </button>
+
+        <!-- Active filter chips — shown when filters are applied -->
+        <div class="active-filter-chips" id="active-filter-chips" aria-label="Active filters" aria-live="polite">
+          <!-- Chips injected by collection-filters.js -->
+        </div>
+
+      </div>
+
+      <div class="collection-toolbar__right">
+        <label for="collection-sort" class="sort-label">{{ section.settings.sort_label | default: "Sort by" }}</label>
+        <select class="collection-sort" id="collection-sort" name="sort_by" aria-label="Sort products">
+          <option value="manual"            {% if collection.sort_by == 'manual' %}selected{% endif %}>{{ section.settings.sort_featured | default: "Featured" }}</option>
+          <option value="best-selling"      {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
+          <option value="created-descending"{% if collection.sort_by == 'created-descending' %}selected{% endif %}>{{ section.settings.sort_newest | default: "Newest" }}</option>
+          <option value="price-ascending"   {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
+          <option value="price-descending"  {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
+          <option value="title-ascending"   {% if collection.sort_by == 'title-ascending' %}selected{% endif %}>A–Z</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- = PRODUCT GRID = -->
+    {% paginate collection.products by section.settings.products_per_page %}
+
+      {% if collection.products.size > 0 %}
+        <div class="collection-grid" id="collection-grid" data-columns="{{ section.settings.grid_columns }}">
+          {% for product in collection.products %}
+            <div class="collection-product-card" data-tags="{{ product.tags | join: ',' | escape }}">
+              <div class="product-card-wrap">
+
+                <!-- Scrollable image strip — swipe/scroll to see all images -->
+                <div class="cpc-image-wrap">
+                  <div class="cpc-image-scroll">
+                    {% if product.images.size > 0 %}
+                      {% for image in product.images limit: 6 %}
+                        <a href="{{ product.url }}" class="cpc-image-link" tabindex="-1">
+                          <img
+                            src="{{ image | img_url: '600x' }}"
+                            alt="{{ image.alt | default: product.title | escape }}"
+                            class="cpc-img"
+                            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                            draggable="false"
+                          >
+                        </a>
+                      {% endfor %}
+                    {% else %}
+                      <a href="{{ product.url }}" class="cpc-image-link" tabindex="-1">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</a>
+                    {% endif %}
+                  </div>
+                  {% if product.images.size > 1 %}
+                    <div class="cpc-scroll-dots" aria-hidden="true">
+                      {% for image in product.images limit: 6 %}
+                        <span class="scroll-dot {% if forloop.first %}is-active{% endif %}"></span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  {% if product.tags contains 'new' %}
+                    <div class="product-badge product-badge--new">{{ section.settings.new_badge | default: "New" }}</div>
+                  {% elsif product.compare_at_price > product.price %}
+                    <div class="product-badge product-badge--sale">Sale</div>
+                  {% endif %}
+                </div>
+
+                <!-- Product info: title + price row, then colour swatches, then Add to Cart -->
+                <div class="cpc-info" data-product-id="{{ product.id }}">
+
+                  <div class="cpc-title-row">
+                    <h3 class="cpc-title">
+                      <a href="{{ product.url }}">{{ product.title }}</a>
+                    </h3>
+                    <div class="cpc-price">
+                      {% if product.compare_at_price > product.price %}
+                        <span class="price price--sale">{{ product.price | money }}</span>
+                        <span class="price price--compare">{{ product.compare_at_price | money }}</span>
+                      {% else %}
+                        <span class="price">{{ product.price | money }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  {% comment %} Colour swatches — clickable, selects variant {% endcomment %}
+                  {% assign color_option_index = nil %}
+                  {% for option in product.options %}
+                    {% if option == 'Color' or option == 'Colour' %}
+                      {% assign color_option_index = forloop.index0 %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if color_option_index != nil %}
+                    <div class="cpc-color-row" data-option-index="{{ color_option_index }}">
+                      {% assign shown_colors = '' %}
+                      {% for variant in product.variants %}
+                        {% assign color_val = variant.options[color_option_index] %}
+                        {% unless shown_colors contains color_val %}
+                          {% assign shown_colors = shown_colors | append: color_val | append: ',' %}
+                          <button
+                            class="cpc-color-swatch{% if forloop.first %} is-selected{% endif %}"
+                            data-variant-id="{{ variant.id }}"
+                            data-color="{{ color_val | escape }}"
+                            style="background-color: {{ color_val | downcase | replace: ' ', '' }};"
+                            title="{{ color_val }}"
+                            aria-label="Select {{ color_val }}"
+                            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                          ></button>
+                        {% endunless %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  {% comment %} Add to Cart button — always visible below swatches {% endcomment %}
+                  {% if product.variants.size == 1 %}
+                    <button
+                      class="cpc-add-btn"
+                      data-variant-id="{{ product.variants.first.id }}"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                      Add to Cart
+                    </button>
+                  {% else %}
+                    <button
+                      class="cpc-add-btn"
+                      data-variant-id="{{ product.variants.first.id }}"
+                      data-has-variants="true"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                      Add to Cart
+                    </button>
+                  {% endif %}
+
+                </div>
+
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- No results message (hidden by default, shown by JS when filters match nothing) -->
+        <div class="collection-no-results" id="collection-no-results" style="display:none;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <h3>No products match your filters</h3>
+          <p>Try removing a filter or <button class="link-btn" id="no-results-clear">clear all filters</button> to see all products.</p>
+        </div>
+
+        <!-- Pagination -->
+        {% if paginate.pages > 1 %}
+          <nav class="pagination" aria-label="Product pages">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="pagination-btn" aria-label="Previous page">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+              </a>
+            {% endif %}
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <a href="{{ part.url }}" class="pagination-num">{{ part.title }}</a>
+              {% elsif part.title == paginate.current_page %}
+                <span class="pagination-num is-active" aria-current="page">{{ part.title }}</span>
+              {% else %}
+                <span class="pagination-ellipsis">…</span>
+              {% endif %}
+            {% endfor %}
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="pagination-btn" aria-label="Next page">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            {% endif %}
+          </nav>
+        {% endif %}
+
+      {% else %}
+        <!-- Empty collection state -->
+        <div class="collection-empty">
+          <p>No products found in this collection.</p>
+          <a href="/collections/all" class="btn btn--outline">Browse All Products</a>
+        </div>
+      {% endif %}
+
+    {% endpaginate %}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection Products",
+  "settings": [
+    { "type": "text", "id": "filters_label", "label": "Filters Label", "default": "Filters" },
+    { "type": "text", "id": "clear_label", "label": "Clear Label", "default": "Clear all" },
+    { "type": "text", "id": "sort_label", "label": "Sort Label", "default": "Sort by" },
+    { "type": "text", "id": "sort_featured", "label": "Sort Featured", "default": "Featured" },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    { "type": "header",  "content": "Labels" },
+    { "type": "text",   "id": "new_badge",    "label": "'New' Badge Text",     "default": "New" },
+    { "type": "text",   "id": "sort_newest",  "label": "Sort: Newest Label",   "default": "Newest" },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products Per Page",
+      "info": "How many products to show before pagination kicks in.",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "grid_columns",
+      "label": "Grid Columns (Desktop)",
+      "info": "How many product columns to show side-by-side on desktop.",
+      "options": [
+        { "value": "2", "label": "2 columns" },
+        { "value": "3", "label": "3 columns" },
+        { "value": "4", "label": "4 columns" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "header",
+      "content": "Filters",
+      "info": "Filters are built automatically from product tags. Add tags in the format 'filter-Color:White' to a product to add it to the Color filter group with a White option."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filter sidebar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count next to filter values",
+      "default": true
+    }
+  ],
+  "presets": [
+    { "name": "Collection Products" }
+  ]
+}
+{% endschema %}
