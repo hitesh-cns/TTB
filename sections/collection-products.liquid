@@ -84,45 +84,43 @@
 
     </div>
   </div>
-</div>
 
-<!-- = FILTER PANEL (collapsible, full-width) =
-     Toggled by the Filters button above.
-     The #collection-sidebar ID is required by collection-filters.js -->
-<div class="collection-sidebar" id="collection-sidebar" aria-label="Product filters">
-  <div class="container">
-    <div class="coll-filter-panel">
+  <!-- = FILTER PANEL — inside filter bar so position:absolute top:100% floats over products = -->
+  <div class="collection-sidebar" id="collection-sidebar" aria-label="Product filters">
+    <div class="container">
+      <div class="coll-filter-panel">
 
-      <div class="filter-groups" id="filter-groups">
-        <div class="filter-loading">
-          <div class="filter-skeleton"></div>
-          <div class="filter-skeleton"></div>
-          <div class="filter-skeleton"></div>
+        <div class="filter-groups" id="filter-groups">
+          <div class="filter-loading">
+            <div class="filter-skeleton"></div>
+            <div class="filter-skeleton"></div>
+            <div class="filter-skeleton"></div>
+          </div>
         </div>
+
+        <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close filters">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
       </div>
-
-      <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close filters">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-
     </div>
-  </div>
 
-  <!-- Hidden data element — passes product tags to JS -->
-  <script type="application/json" id="collection-tags-data">
-    {
-      "tags": [
-        {% assign all_tags = collection.all_tags %}
-        {% for tag in all_tags %}
-          {% if tag contains 'filter-' %}
-            {{ tag | json }}{% unless forloop.last %},{% endunless %}
-          {% endif %}
-        {% endfor %}
-      ],
-      "activeUrl": {{ request.path | json }},
-      "current_tags": {{ collection.current_tags | json }}
-    }
-  </script>
+    <!-- Hidden data element — passes product tags to JS -->
+    <script type="application/json" id="collection-tags-data">
+      {
+        "tags": [
+          {% assign all_tags = collection.all_tags %}
+          {% for tag in all_tags %}
+            {% if tag contains 'filter-' %}
+              {{ tag | json }}{% unless forloop.last %},{% endunless %}
+            {% endif %}
+          {% endfor %}
+        ],
+        "activeUrl": {{ request.path | json }},
+        "current_tags": {{ collection.current_tags | json }}
+      }
+    </script>
+  </div>
 </div>
 
 <!-- = PRODUCT GRID = -->
@@ -215,6 +213,7 @@
                         class="cpc-color-swatch{% if forloop.first %} is-selected{% endif %}"
                         data-variant-id="{{ variant.id }}"
                         data-color="{{ color_val | escape }}"
+                        data-image="{% if variant.featured_image %}{{ variant.featured_image | img_url: '600x' }}{% endif %}"
                         style="background-color: {{ color_val | downcase | replace: ' ', '' }};"
                         title="{{ color_val }}"
                         aria-label="Select {{ color_val }}"

@@ -253,8 +253,12 @@
     window.location.href = url.toString();
   });
 
-  // -- Filter panel toggle --
+  // -- Filter panel toggle — second click closes if already open --
   function openSidebar() {
+    if (sidebar && sidebar.classList.contains('is-mobile-open')) {
+      closeSidebar();
+      return;
+    }
     sidebar && sidebar.classList.add('is-mobile-open');
     mobileToggle && mobileToggle.setAttribute('aria-expanded', 'true');
   }
