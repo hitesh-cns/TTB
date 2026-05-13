@@ -757,11 +757,11 @@
     const swatch = e.target.closest('.cpc-color-swatch');
     if (!swatch) return;
 
-    const info = swatch.closest('.cpc-info');
-    if (!info) return;
+    const card = swatch.closest('.collection-product-card');
+    if (!card) return;
 
     // Deselect all swatches in this card
-    info.querySelectorAll('.cpc-color-swatch').forEach(s => {
+    card.querySelectorAll('.cpc-color-swatch').forEach(s => {
       s.classList.remove('is-selected');
       s.setAttribute('aria-pressed', 'false');
     });
@@ -771,7 +771,7 @@
     swatch.setAttribute('aria-pressed', 'true');
 
     // Update the Add to Cart button to use this swatch's variant
-    const addBtn = info.querySelector('.cpc-add-btn');
+    const addBtn = card.querySelector('.cpc-add-btn');
     if (addBtn && swatch.dataset.variantId) {
       addBtn.dataset.variantId = swatch.dataset.variantId;
     }
