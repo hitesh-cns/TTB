@@ -4058,7 +4058,7 @@ a.footer-contact-item:hover { color: var(--ivory); }
   color: var(--espresso);
   transition: all 0.15s ease;
 }
-.size-sheet__pill:hover { border-color: #000000; color: #000000; background: #ffffff; }
+.size-sheet__pill:hover { background: #000000 !important; color: #ffffff !important; border-color: #000000 !important; }
 .size-sheet__pill.is-selected {
   background: #000000;
   color: #ffffff;
