@@ -303,7 +303,10 @@ ul { list-style: none; }
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s;
+  pointer-events: none;
+  margin-top: -8px;
+  padding-top: 8px;
+  transition: opacity 0.15s ease, visibility 0.15s;
   z-index: 1100;
 }
 /* Desktop mouse: CSS :hover opens the panel */
