@@ -48,6 +48,9 @@
     fetchCart();
   }
 
+  window.openCart  = openCart;
+  window.fetchCart = fetchCart;
+
   function closeCart() {
     cartDrawer && cartDrawer.setAttribute('aria-hidden', 'true');
     cartOverlay && cartOverlay.classList.remove('is-visible');
@@ -185,6 +188,7 @@
 
     btn.textContent = 'Adding...';
     btn.disabled = true;
+    openCart();
 
     try {
       const res = await fetch('/cart/add.js', {
@@ -195,7 +199,6 @@
       if (res.ok) {
         btn.textContent = 'Added ✓';
         await fetchCart();
-        openCart();
         setTimeout(() => { btn.textContent = 'Quick Add'; btn.disabled = false; }, 2000);
       }
     } catch (e) {
@@ -867,6 +870,8 @@
     const original = btn.innerHTML;
     btn.disabled = true;
     btn.textContent = 'Adding…';
+    // Open drawer immediately — before fetch resolves
+    if (typeof window.openCart === 'function') window.openCart();
     try {
       const res = await fetch('/cart/add.js', {
         method: 'POST',
@@ -874,15 +879,9 @@
         body: JSON.stringify({ items: [{ id: parseInt(variantId, 10), quantity: 1 }] })
       });
       if (res.ok) {
-        const cartData = await fetch('/cart.js').then(r => r.json());
-        if (typeof window.renderCart === 'function') window.renderCart(cartData);
-        await updateCartBadge();
-        const cartDrawer  = document.getElementById('cart-drawer');
-        const cartOverlay = document.getElementById('cart-overlay');
-        if (cartDrawer) void cartDrawer.offsetHeight;
-        if (cartDrawer)  { cartDrawer.setAttribute('aria-hidden', 'false'); cartDrawer.classList.add('is-open'); }
-        if (cartOverlay) cartOverlay.classList.add('is-visible');
-        document.body.style.overflow = 'hidden';
+        // Update cart contents only — drawer already open
+        if (typeof window.fetchCart === 'function') window.fetchCart();
+        updateCartBadge(); // non-blocking
         btn.textContent = 'Added ✓';
         setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
       } else {
