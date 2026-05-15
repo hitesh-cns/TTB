@@ -3913,6 +3913,7 @@ a.footer-contact-item:hover { color: var(--ivory); }
 .size-sheet-backdrop {
   position: fixed;
   inset: 0;
+  display: flex; align-items: center; justify-content: center;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -3942,7 +3943,8 @@ a.footer-contact-item:hover { color: var(--ivory); }
   visibility: hidden;
   transform: translateY(100%);
   transition: transform 200ms ease-out, visibility 0s 200ms;
-  max-height: 85vh;
+  height: auto;
+  max-height: 90vh;
   overflow-y: auto;
 }
 .size-sheet.is-open {
@@ -3958,7 +3960,7 @@ a.footer-contact-item:hover { color: var(--ivory); }
     top: 50%;
     left: 50%;
     right: auto;
-    width: min(480px, 90vw);
+    min-width: 420px; max-width: 520px; width: auto;
     border-radius: 20px;
     transform: translate(-50%, calc(-50% + 30px));
     opacity: 0;
