@@ -1390,6 +1390,10 @@ body:not(.is-touch) .nav-item--mega:hover .nav-chevron,
 
 .cart-item__price { font-family: var(--font-display); font-size: 17px; font-weight: 400; }
 
+.cart-item__title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.cart-remove-btn { background: none; border: none; cursor: pointer; color: #999; padding: 4px; flex-shrink: 0; line-height: 1; }
+.cart-remove-btn:hover { color: #000000; }
+
 .cart-drawer__footer {
   padding: 20px 28px;
   border-top: 1px solid var(--ivory-dk);
