@@ -416,20 +416,20 @@ body:not(.is-touch) .site-header:has(.nav-item--mega:hover) .mega-backdrop,
 /* Keep small dropdown for simple children */
 .nav-dropdown {
   position: absolute;
-  top: calc(100% + 16px);
+  top: 100%;
   left: 0;
   background: var(--white);
   border: 1px solid var(--ivory-dk);
   border-radius: var(--radius-lg);
-  padding: 10px 0;
+  padding: 16px 0 10px;
   min-width: 200px;
   box-shadow: var(--shadow-lg);
-  opacity: 0; visibility: hidden;
+  opacity: 0; visibility: hidden; pointer-events: none;
   transform: translateY(6px);
-  transition: all var(--transition);
+  transition: opacity 0.12s ease, visibility 0.12s ease;
   z-index: 901;
 }
-.nav-item:hover .nav-dropdown { opacity: 1; visibility: visible;  }
+.nav-item:hover .nav-dropdown { opacity: 1; visibility: visible; pointer-events: auto; }
 .nav-dropdown__link {
   display: block; padding: 9px 20px;
   font-size: 14px; font-weight: 400; color: var(--espresso);
