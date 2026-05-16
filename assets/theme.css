@@ -231,11 +231,11 @@ ul { list-style: none; }
 .site-header {
   /* NOT sticky itself — the parent #sticky-bar handles sticky positioning */
   position: relative;   /* needed so .mega-panel absolute is positioned against this */
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #ffffff;
   border-bottom: 1px solid var(--ivory-dk);
   transition: box-shadow 0.3s ease;
+  will-change: box-shadow;
+  transform: translateZ(0);
   z-index: 1;           /* above page content */
 }
 
