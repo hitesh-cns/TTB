@@ -304,9 +304,9 @@ ul { list-style: none; }
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  margin-top: -8px;
-  padding-top: 8px;
-  transition: opacity 0.15s ease, visibility 0.15s;
+  margin-top: -12px;
+  padding-top: 12px;
+  transition: opacity 0.12s ease, visibility 0.12s ease;
   z-index: 1100;
 }
 /* Desktop mouse: CSS :hover opens the panel */
