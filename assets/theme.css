@@ -296,9 +296,7 @@ ul { list-style: none; }
   position: absolute;   /* absolute under site-header, not fixed */
   top: 100%;            /* sits directly below the header bar */
   left: 0; right: 0;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #ffffff;
   border-bottom: 1px solid var(--ivory-dk);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
   opacity: 0;
@@ -306,6 +304,8 @@ ul { list-style: none; }
   pointer-events: none;
   margin-top: -12px;
   padding-top: 12px;
+  will-change: opacity, visibility;
+  transform: translateZ(0);
   transition: opacity 0.12s ease, visibility 0.12s ease;
   z-index: 1100;
 }
