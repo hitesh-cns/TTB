@@ -405,7 +405,9 @@ body:not(.is-touch) .nav-item--mega:focus-within .mega-panel,
   z-index: 1099;
 }
 /* CSS-only backdrop — no JS needed, no race condition possible */
-body:not(.is-touch) .site-header:has(.nav-item--mega:hover) .mega-backdrop,
+body:not(.is-touch) .site-header:has(.nav-item--mega:hover) .mega-backdrop {
+  opacity: 1; visibility: visible;
+}
 .site-header:has(.nav-item--mega.is-open) .mega-backdrop {
   opacity: 1; visibility: visible; pointer-events: auto;
 }
