@@ -102,7 +102,12 @@
           ${item.image ? `<img src="${item.image}" alt="${escHtml(item.product_title)}" loading="lazy">` : ''}
         </div>
         <div class="cart-item__info">
-          <p class="cart-item__title">${escHtml(item.product_title)}</p>
+          <div class="cart-item__title-row">
+            <p class="cart-item__title">${escHtml(item.product_title)}</p>
+            <button class="cart-remove-btn" data-key="${item.key}" aria-label="Remove item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>
           ${item.variant_title && item.variant_title !== 'Default Title' ? `<p class="cart-item__variant">${escHtml(item.variant_title)}</p>` : ''}
           <div class="cart-item__controls">
             <div class="cart-item__qty">
@@ -128,6 +133,14 @@
         const key = btn.dataset.key;
         const qty = Math.max(0, parseInt(btn.dataset.qty, 10));
         await updateCartItem(key, qty);
+      });
+    });
+
+    // Attach remove button handlers
+    itemsEl && itemsEl.querySelectorAll('.cart-remove-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const key = btn.dataset.key;
+        try { await updateCartItem(key, 0); } catch(e) {}
       });
     });
   }
