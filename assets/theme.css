@@ -7556,3 +7556,176 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     cursor: not-allowed;
   }
 }
+
+/* ============================================================
+   FIX 1 — STICKY HEADER (all breakpoints)
+   #sticky-bar already handles sticky, but these rules ensure
+   the header is sticky even on pages/templates that may not
+   include #sticky-bar or where overflow-x breaks sticky.
+   ============================================================ */
+.site-header,
+header.site-header,
+#shopify-section-header .site-header,
+#shopify-section-header header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 100;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+  body {
+    padding-top: 0; /* sticky header stays in flow — no manual offset needed */
+  }
+}
+
+/* ============================================================
+   FIX 2 — HEADER LAYOUT (Dawn + custom selectors, all mobile)
+   Dawn selectors are included for safety; the actual custom
+   theme selectors (.header-inner etc.) are already handled
+   in the 768px / 480px blocks above.
+   ============================================================ */
+
+/* Mobile — up to 480px */
+@media (max-width: 480px) {
+  .header__wrapper,
+  .header__inner,
+  .site-header .container,
+  .site-header .header__row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 12px !important;
+    height: 56px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .header__menu-toggle,
+  .header__icon--menu,
+  .nav-toggle,
+  button[aria-label*="enu"] {
+    flex-shrink: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .header__heading,
+  .header__heading-link,
+  .header__logo,
+  .header__logo-link,
+  .site-logo {
+    flex: 1 !important;
+    text-align: center !important;
+    font-size: 15px !important;
+    letter-spacing: 0.01em !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    padding: 0 8px !important;
+    margin: 0 !important;
+  }
+
+  .header__heading-link img,
+  .header__logo img,
+  .header__logo-link img {
+    max-height: 30px !important;
+    width: auto !important;
+  }
+
+  .header__icons,
+  .header__icons-wrapper,
+  .header__icon-wrapper,
+  .header__right-icons {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+  }
+
+  .header__icon,
+  .header__icon--account,
+  .header__icon--search,
+  .header__icon--cart,
+  a[href*="/cart"],
+  a[href*="/account"] {
+    flex-shrink: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+}
+
+/* Tablet — 481px to 1023px */
+@media (min-width: 481px) and (max-width: 1023px) {
+  .header__wrapper,
+  .header__inner,
+  .site-header .container,
+  .site-header .header__row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 20px !important;
+    height: 64px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .header__heading-link,
+  .header__logo-link,
+  .site-logo {
+    flex: 1 !important;
+    text-align: center !important;
+    font-size: 18px !important;
+    white-space: nowrap !important;
+  }
+
+  .header__icons,
+  .header__icons-wrapper {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    gap: 4px !important;
+  }
+}
+
+/* ============================================================
+   FIX 4 — BREADCRUMB ABOVE PRODUCT IMAGE ON MOBILE
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Pull breadcrumb to top of product layout */
+  .breadcrumb,
+  nav.breadcrumb,
+  .product__breadcrumb,
+  .product-breadcrumbs,
+  nav[aria-label*="readcrumb"] {
+    order: -1 !important;
+    width: 100% !important;
+    padding: 8px 16px 4px !important;
+    font-size: 11px !important;
+  }
+
+  /* Ensure product page wrapper is a flex column so order works */
+  .product,
+  .product__wrapper,
+  .product-page-wrapper,
+  section.product,
+  .product-template,
+  [class*="product-section"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+}
