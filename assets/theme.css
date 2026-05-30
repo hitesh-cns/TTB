@@ -41,7 +41,7 @@
 /* ---- Reset & Base ---- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; max-width: 100%; overflow-x: hidden; }
 
 body {
   font-family: var(--font-body);
@@ -52,6 +52,8 @@ body {
   font-weight: 400;       /* was 300 — improves legibility significantly */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 img { display: block; max-width: 100%; }
@@ -1524,9 +1526,8 @@ body:not(.is-touch) .nav-item--mega:hover .nav-chevron,
 }
 @media (max-width: 640px)  {
   .footer-trust { padding: 28px 0; }
-  .footer-trust__grid { grid-template-columns: 1fr; gap: 0; }
-  .footer-trust__item { flex-direction: row; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--ivory-dk); }
-  .footer-trust__item:last-child { border-bottom: none; }
+  .footer-trust__grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .footer-trust__item { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px 8px; }
   .footer-trust__item svg { width: 22px; height: 22px; }
 }
 .footer-trust__item {
