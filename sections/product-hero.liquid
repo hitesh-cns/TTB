@@ -3,6 +3,17 @@
   <div class="container">
     <div class="product-layout">
 
+      <!-- BREADCRUMB — above gallery so it renders first on mobile -->
+      <nav class="product-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>›</span>
+        {% if product.collections.first %}
+          <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+          <span>›</span>
+        {% endif %}
+        <span>{{ product.title }}</span>
+      </nav>
+
       <!-- GALLERY -->
       {% assign g_mode_raw = section.settings.gallery_mode | default: 'global' %}
       {% if g_mode_raw == 'global' or g_mode_raw == blank %}
@@ -125,16 +136,6 @@
 
       <!-- INFO PANEL -->
       <div class="product-info" id="product-info">
-
-        <nav class="product-breadcrumb" aria-label="Breadcrumb">
-          <a href="/">Home</a>
-          <span>›</span>
-          {% if product.collections.first %}
-            <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
-            <span>›</span>
-          {% endif %}
-          <span>{{ product.title }}</span>
-        </nav>
 
         <!-- Title row: name left, rating right -->
         <div class="product-title-row">
