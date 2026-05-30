@@ -1000,3 +1000,60 @@
   });
 
 })();
+
+/* ============================================================
+   STICKY ATC BAR — mobile PDP
+   ============================================================ */
+(function () {
+  'use strict';
+
+  if (window.innerWidth > 767) return;
+
+  var bar    = document.getElementById('sticky-atc-bar');
+  var stickyBtn = document.getElementById('sticky-atc-btn');
+  var nativeBtn = document.querySelector('[name="add"]');
+
+  if (!bar || !stickyBtn || !nativeBtn) return;
+
+  /* Show bar when native ATC button scrolls out of view */
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var visible = !entry.isIntersecting;
+      bar.classList.toggle('is-visible', visible);
+      bar.setAttribute('aria-hidden', String(!visible));
+    });
+  }, { threshold: 0 });
+  observer.observe(nativeBtn);
+
+  /* Click handler — validate variants then trigger native button */
+  stickyBtn.addEventListener('click', function () {
+    var form = nativeBtn.closest('form');
+    if (!form) { nativeBtn.click(); return; }
+
+    var invalid = [];
+
+    /* Check fieldsets (swatch pickers) */
+    form.querySelectorAll('fieldset[data-option-index]').forEach(function (fs) {
+      var checked = fs.querySelector('input[type="radio"]:checked');
+      if (!checked) invalid.push(fs);
+    });
+
+    /* Check select elements (dropdown pickers) */
+    form.querySelectorAll('select[data-option-index]').forEach(function (sel) {
+      if (!sel.value) invalid.push(sel);
+    });
+
+    if (invalid.length) {
+      invalid[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      invalid.forEach(function (el) {
+        el.classList.add('variant-required-error');
+        el.addEventListener('change', function () {
+          el.classList.remove('variant-required-error');
+        }, { once: true });
+      });
+      return;
+    }
+
+    nativeBtn.click();
+  });
+})();
