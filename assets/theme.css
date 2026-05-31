@@ -7966,3 +7966,142 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 /* ============================================================
    END TTB MOBILE FIXES
    ============================================================ */
+
+/* ============================================================
+   TTB TARGETED FIXES — real class names from source files
+   ============================================================ */
+
+/* FIX A: Header logo text — force black color on all screens
+   .header-logo__link = logo anchor  (header.liquid line 363)
+   .logo-text         = text fallback (header.liquid line 393) */
+.header-logo__link,
+.header-logo__link *,
+.logo-text {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  text-decoration: none;
+}
+
+/* FIX B: Sticky header — mobile only
+   #sticky-bar = wrapper in layout/theme.liquid line 297
+   containing both announcement-bar and header sections */
+@media (max-width: 767px) {
+  #sticky-bar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+}
+
+/* FIX C: Header icons not clipping at 375px–390px — mobile only
+   .site-header    = outermost <header>   (header.liquid line 158)
+   .header-inner   = inner flex container (header.liquid line 159)
+   .header-actions = icons wrapper div    (header.liquid line 399)
+   .header-action  = each icon button/link (header.liquid lines 400, 406, 424) */
+@media (max-width: 480px) {
+  .site-header,
+  .header-inner {
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  .header-inner {
+    padding-left: 10px;
+    padding-right: 6px;
+  }
+
+  .header-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .header-action {
+    padding: 2px;
+    min-width: 28px;
+    flex-shrink: 0;
+  }
+
+  .header-logo__link,
+  .logo-text {
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+
+  .logo-img {
+    max-height: var(--logo-h-mobile, 28px);
+    width: auto;
+  }
+}
+
+/* FIX D: PDP image gallery — horizontal swipe carousel — mobile only
+   .gallery-main__inner = slideshow track container (product-hero.liquid line 79)
+   .gallery-slide       = each image slide           (product-hero.liquid line 81)
+   .gallery-image       = the <img> inside each slide (product-hero.liquid line 85) */
+@media (max-width: 767px) {
+  .gallery-main__inner {
+    display: flex;
+    flex-direction: row;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .gallery-main__inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery-slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+  }
+
+  .gallery-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+}
+
+/* FIX E: Share icons inline with price — mobile only
+   .product-price-row    = outer flex row containing price + share (product-hero.liquid line 163)
+   .product-share-inline = share buttons wrapper                   (product-hero.liquid line 176)
+   .share-btn-sm         = individual share icon links/buttons     (product-hero.liquid line 178+) */
+@media (max-width: 767px) {
+  .product-price-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .product-share-inline {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .share-btn-sm {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+}
+
+/* ============================================================
+   END TTB TARGETED FIXES
+   ============================================================ */
