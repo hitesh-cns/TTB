@@ -1002,6 +1002,127 @@
 })();
 
 /* ============================================================
+   TTB PDP GALLERY — dot indicators (ISSUE 3) + variant image switch (ISSUE 4)
+   ============================================================ */
+(function () {
+  'use strict';
+
+  // Only on product pages
+  if (!document.querySelector('.template-product')) return;
+
+  var gallery = document.querySelector('.product-gallery');
+  if (!gallery) return;
+
+  var mode  = gallery.getAttribute('data-gallery-mode') || 'slideshow';
+  var track, items;
+
+  if (mode === 'scroll') {
+    track = document.getElementById('gallery-scroll-track');
+    items = track ? Array.from(track.querySelectorAll('.gallery-scroll-item')) : [];
+  } else if (mode === 'grid') {
+    track = document.getElementById('gallery-grid-track');
+    items = track ? Array.from(track.querySelectorAll('.gallery-grid-item')) : [];
+  } else {
+    track = document.getElementById('gallery-track');
+    items = track ? Array.from(track.querySelectorAll('.gallery-slide')) : [];
+  }
+
+  var isMobile = window.innerWidth <= 767;
+
+  function scrollToIndex(idx) {
+    if (!track || idx < 0 || idx >= items.length) return;
+    track.scrollTo({ left: track.offsetWidth * idx, behavior: 'smooth' });
+  }
+
+  /* ── ISSUE 3: DOT INDICATORS (mobile only) ─────────────────────── */
+  function initDots() {
+    if (!isMobile || !track || items.length < 2) return;
+
+    var dotsWrap = document.createElement('div');
+    dotsWrap.className = 'gallery-dots';
+
+    var dots = [];
+    items.forEach(function (item, i) {
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'gallery-dot' + (i === 0 ? ' is-active' : '');
+      dot.setAttribute('aria-label', 'Image ' + (i + 1));
+      dot.addEventListener('click', function () { scrollToIndex(i); });
+      dotsWrap.appendChild(dot);
+      dots.push(dot);
+    });
+
+    // Insert immediately after .gallery-main
+    var galleryMain = document.getElementById('gallery-main');
+    if (galleryMain && galleryMain.parentNode) {
+      galleryMain.parentNode.insertBefore(dotsWrap, galleryMain.nextSibling);
+    }
+
+    // Sync active dot as user scrolls
+    track.addEventListener('scroll', function () {
+      var idx = Math.round(track.scrollLeft / (track.offsetWidth || 1));
+      dots.forEach(function (d, i) {
+        d.classList.toggle('is-active', i === idx);
+      });
+    }, { passive: true });
+  }
+
+  /* ── ISSUE 4: VARIANT → GALLERY IMAGE SWITCHING ─────────────────── */
+  function initVariantImageSwitch() {
+    // product-hero.liquid already outputs:
+    // <script type="application/json" id="product-variants-json">{{ product.variants | json }}</script>
+    var dataEl = document.getElementById('product-variants-json');
+    if (!dataEl || !track) return;
+
+    var variants;
+    try { variants = JSON.parse(dataEl.textContent); } catch (e) { return; }
+    if (!Array.isArray(variants) || !variants.length) return;
+
+    function getSelectedOptions() {
+      var opts = {};
+      document.querySelectorAll('.color-swatch-input:checked, .size-btn-input:checked').forEach(function (el) {
+        var idx = parseInt(el.getAttribute('data-option-index'), 10);
+        if (!isNaN(idx)) opts[idx] = el.value;
+      });
+      return opts;
+    }
+
+    function findVariant(opts) {
+      // Match all collected option indices; ignore option positions not yet selected
+      return variants.find(function (v) {
+        return Object.keys(opts).every(function (idx) {
+          var key = 'option' + (parseInt(idx, 10) + 1); // option1, option2 …
+          return v[key] === opts[idx];
+        });
+      });
+    }
+
+    function onOptionChange() {
+      var opts    = getSelectedOptions();
+      var variant = findVariant(opts);
+      if (!variant) return;
+
+      // Keep hidden variant-id input in sync
+      var variantInput = document.getElementById('variant-id');
+      if (variantInput) variantInput.value = variant.id;
+
+      // Scroll gallery to the variant's featured image (position is 1-indexed)
+      if (variant.featured_image && typeof variant.featured_image.position === 'number') {
+        scrollToIndex(variant.featured_image.position - 1);
+      }
+    }
+
+    document.querySelectorAll('.color-swatch-input, .size-btn-input').forEach(function (el) {
+      el.addEventListener('change', onOptionChange);
+    });
+  }
+
+  initDots();
+  initVariantImageSwitch();
+
+})();
+
+/* ============================================================
    STICKY ATC BAR — mobile PDP
    ============================================================ */
 (function () {
