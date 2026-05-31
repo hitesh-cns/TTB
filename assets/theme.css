@@ -7418,3 +7418,222 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   color: var(--espresso);
   font-weight: 600;
 }
+
+/* ============================================================
+   FIX 1 — HEADER CART ICON CLIPPING (375px / 390px)
+   ============================================================ */
+@media (max-width: 480px) {
+  /* Prevent header from clipping its own overflow on the right */
+  .site-header,
+  #shopify-section-header,
+  .header__wrapper,
+  .header__inner {
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  /* Tighten header padding so all icons fit in 375px */
+  .header__wrapper,
+  .header__inner {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  /* Scale logo text down only */
+  .header__heading a,
+  .header__heading-link {
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+
+  .header__heading a img,
+  .header__logo img {
+    max-height: 28px;
+    width: auto;
+  }
+
+  /* Reduce icon button padding so they fit inline */
+  .header__icon,
+  .header__icon--cart,
+  .header__icon--search,
+  .header__icon--account {
+    padding: 4px;
+  }
+}
+
+/* ============================================================
+   FIX 2 — REMOVE EXCESS WHITESPACE ON PDP (above product image)
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Remove excess top padding/margin on the product page main wrapper */
+  .product,
+  .product__wrapper,
+  .template-product main,
+  main .product-section,
+  .shopify-section.product-section,
+  [class*="product-template"] {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  /* Tighten breadcrumb spacing */
+  .breadcrumb,
+  nav.breadcrumb,
+  .product__breadcrumb,
+  .product-breadcrumbs,
+  nav[aria-label*="readcrumb"] {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Remove top padding from product media/gallery wrapper */
+  .product__media-wrapper,
+  .product__media-list,
+  .product-media-container,
+  .product__gallery {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* ============================================================
+   FIX 3 — PRODUCT IMAGE GALLERY: HORIZONTAL SWIPE CAROUSEL
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Turn the media list into a horizontal scroll carousel */
+  .product__media-list,
+  .product__media-wrapper ul,
+  .product-media-list,
+  ul.product__media-list {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+    width: 100% !important;
+    scrollbar-width: none !important; /* Firefox */
+  }
+
+  .product__media-list::-webkit-scrollbar,
+  .product__media-wrapper ul::-webkit-scrollbar {
+    display: none !important; /* Chrome/Safari */
+  }
+
+  /* Each image item snaps to full width */
+  .product__media-list li,
+  .product__media-list .product__media-item,
+  .product-media-list li,
+  ul.product__media-list > li {
+    flex: 0 0 100% !important;
+    min-width: 100% !important;
+    scroll-snap-align: start !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Image fills the card */
+  .product__media-list img,
+  .product__media-list video {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    object-fit: cover !important;
+  }
+}
+
+/* ============================================================
+   FIX 4 — PDP INFO SECTION: COMPACT LAYOUT ON MOBILE
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Tighten all vertical spacing in the product info column */
+  .product__info-wrapper,
+  .product__info-container,
+  .product-info {
+    padding-top: 12px !important;
+    padding-bottom: 80px !important; /* space for sticky ATC bar */
+  }
+
+  /* Title */
+  .product__title,
+  .product-title,
+  h1.product__title {
+    font-size: 20px !important;
+    margin-bottom: 4px !important;
+    margin-top: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Price */
+  .price,
+  .product__price,
+  .price-wrapper,
+  .price__container {
+    font-size: 16px !important;
+    margin-bottom: 8px !important;
+    margin-top: 0 !important;
+  }
+
+  /* Tax note */
+  .product__tax,
+  .product__policies,
+  .price__tax-note,
+  .caption-with-letter-spacing {
+    font-size: 10px !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* Share icons row */
+  .product__share-buttons,
+  .share-buttons,
+  .social-sharing {
+    margin-bottom: 8px !important;
+    margin-top: 0 !important;
+  }
+
+  /* Variant labels (COLOR, SIZE) */
+  .product-form__input,
+  .variant-input-wrap,
+  fieldset.product-form__input {
+    margin-bottom: 8px !important;
+    margin-top: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Swatch/size button grid */
+  .variant-input-wrap .swatch,
+  .product-form__input .color-swatch,
+  .product-form__input label {
+    margin-bottom: 4px !important;
+  }
+
+  /* Quantity row */
+  .product-form__quantity,
+  .quantity,
+  .qty-selector {
+    margin-bottom: 10px !important;
+    margin-top: 0 !important;
+  }
+
+  /* ATC button itself — keep full width */
+  .product-form__submit,
+  button[name="add"],
+  .btn--add-to-cart {
+    margin-bottom: 8px !important;
+    width: 100% !important;
+  }
+
+  /* Reviews row */
+  .product__rating,
+  .jdgm-widget,
+  .stamped-widget,
+  .spr-badge {
+    font-size: 12px !important;
+    margin-bottom: 6px !important;
+  }
+}
