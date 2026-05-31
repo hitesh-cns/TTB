@@ -7968,185 +7968,44 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
    ============================================================ */
 
 /* ============================================================
-   TTB TARGETED FIXES — real class names from source files
+   TTB FIXES v3 — consolidated, conflict-free
    ============================================================ */
 
-/* FIX A: Header logo text — force black color on all screens
-   .header-logo__link = logo anchor  (header.liquid line 363)
-   .logo-text         = text fallback (header.liquid line 393) */
-.header-logo__link,
-.header-logo__link *,
-.logo-text {
-  color: #000 !important;
-  -webkit-text-fill-color: #000 !important;
-  text-decoration: none;
-}
+/* ── ISSUE 1 FIX: TRANSPARENT HEADER
+   Root cause A: old FIX A set color + -webkit-text-fill-color: #000 globally (no media query),
+   which bled through on desktop even when later rules set color:#fff, because
+   -webkit-text-fill-color was never countered on desktop.
+   Root cause B: mobile transparent effect was making logo/icons invisible.
+   Fix: scope black logo to mobile only; restore full desktop transparent-header rules
+   including -webkit-text-fill-color. ── */
 
-/* FIX B: Sticky header — mobile only
-   #sticky-bar = wrapper in layout/theme.liquid line 297
-   containing both announcement-bar and header sections */
+/* Mobile: header always solid white, all elements always dark */
 @media (max-width: 767px) {
-  #sticky-bar {
-    position: sticky;
-    top: 0;
-    z-index: 200;
-    background: #fff;
-    width: 100%;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  }
-}
-
-/* FIX C: Header icons not clipping at 375px–390px — mobile only
-   .site-header    = outermost <header>   (header.liquid line 158)
-   .header-inner   = inner flex container (header.liquid line 159)
-   .header-actions = icons wrapper div    (header.liquid line 399)
-   .header-action  = each icon button/link (header.liquid lines 400, 406, 424) */
-@media (max-width: 480px) {
+  /* Solid white bg on mobile — never transparent */
   .site-header,
-  .header-inner {
-    overflow: visible;
-    box-sizing: border-box;
+  body.has-transparent-header:not(.header-scrolled) .site-header {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-bottom-color: var(--ivory-dk) !important;
   }
-
-  .header-inner {
-    padding-left: 10px;
-    padding-right: 6px;
+  /* Undo the negative main margin — only needed on desktop for hero overlap */
+  body.has-transparent-header #MainContent {
+    margin-top: 0 !important;
   }
-
-  .header-actions {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-  }
-
-  .header-action {
-    padding: 2px;
-    min-width: 28px;
-    flex-shrink: 0;
-  }
-
-  .header-logo__link,
-  .logo-text {
-    font-size: 15px;
-    letter-spacing: 0.01em;
-  }
-
-  .logo-img {
-    max-height: var(--logo-h-mobile, 28px);
-    width: auto;
-  }
-}
-
-/* FIX D: PDP image gallery — horizontal swipe carousel — mobile only
-   .gallery-main__inner = slideshow track container (product-hero.liquid line 79)
-   .gallery-slide       = each image slide           (product-hero.liquid line 81)
-   .gallery-image       = the <img> inside each slide (product-hero.liquid line 85) */
-@media (max-width: 767px) {
-  .gallery-main__inner {
-    display: flex;
-    flex-direction: row;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 0;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    scrollbar-width: none;
-  }
-
-  .gallery-main__inner::-webkit-scrollbar {
-    display: none;
-  }
-
-  .gallery-slide {
-    flex: 0 0 100%;
-    min-width: 100%;
-    scroll-snap-align: start;
-    box-sizing: border-box;
-  }
-
-  .gallery-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-  }
-}
-
-/* FIX E: Share icons inline with price — mobile only
-   .product-price-row    = outer flex row containing price + share (product-hero.liquid line 163)
-   .product-share-inline = share buttons wrapper                   (product-hero.liquid line 176)
-   .share-btn-sm         = individual share icon links/buttons     (product-hero.liquid line 178+) */
-@media (max-width: 767px) {
-  .product-price-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    gap: 8px;
-  }
-
-  .product-share-inline {
-    margin: 0;
-    flex-shrink: 0;
-  }
-
-  .share-btn-sm {
-    width: 28px;
-    height: 28px;
-    padding: 4px;
-  }
-}
-
-/* ============================================================
-   END TTB TARGETED FIXES
-   ============================================================ */
-
-/* ============================================================
-   TTB MOBILE FIX v2 — TARGETED OVERRIDES WITH CORRECT SELECTORS
-   All rules appended. Nothing above modified.
-   ============================================================ */
-
-/* FIX 1: HEADER OVERFLOW — override overflow:hidden on .header-inner at line ~1757
-   Using header.site-header prefix for higher specificity */
-@media (max-width: 480px) {
-  header.site-header .header-inner {
-    overflow: visible !important;
-    padding-left: 10px !important;
-    padding-right: 8px !important;
-    height: 56px !important;
-    box-sizing: border-box !important;
-  }
-  header.site-header .header-actions {
-    flex-shrink: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 2px !important;
-    overflow: visible !important;
-  }
-  header.site-header .header-action {
-    flex-shrink: 0 !important;
-    padding: 2px !important;
-    min-width: 26px !important;
-    min-height: 26px !important;
-  }
-}
-
-/* FIX 2: LOGO TEXT COLOR — force black on mobile, disable white transparent-header effect */
-@media (max-width: 767px) {
-  body.has-transparent-header .logo-text,
-  body.has-transparent-header:not(.header-scrolled) .logo-text,
-  body.has-transparent-header.header-scrolled .logo-text {
+  /* Logo + nav always dark on mobile */
+  .logo-text,
+  body.has-transparent-header:not(.header-scrolled) .logo-text {
     color: var(--espresso) !important;
     -webkit-text-fill-color: var(--espresso) !important;
   }
-  body.has-transparent-header .logo-img,
   body.has-transparent-header:not(.header-scrolled) .logo-img {
     filter: none !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .nav-link {
+    color: var(--espresso) !important;
+    -webkit-text-fill-color: var(--espresso) !important;
   }
   body.has-transparent-header:not(.header-scrolled) .header-action,
   body.has-transparent-header:not(.header-scrolled) .header-action svg {
@@ -8156,90 +8015,182 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   body.has-transparent-header:not(.header-scrolled) .mobile-menu-toggle span {
     background: var(--espresso) !important;
   }
-  body.has-transparent-header:not(.header-scrolled) .site-header {
-    background: #ffffff !important;
+  body.has-transparent-header:not(.header-scrolled) .cart-count {
+    background: var(--espresso) !important;
+    color: #fff !important;
   }
 }
 
-/* FIX 3: TRANSPARENT HEADER — keep effect on desktop only */
+/* Desktop: restore transparent-on-load, solid-on-scroll — including -webkit-text-fill-color */
 @media (min-width: 768px) {
   body.has-transparent-header:not(.header-scrolled) .site-header {
     background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom-color: transparent !important;
+    box-shadow: none !important;
   }
   body.has-transparent-header:not(.header-scrolled) .logo-text {
     color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
   }
   body.has-transparent-header:not(.header-scrolled) .logo-img {
     filter: brightness(0) invert(1) !important;
   }
+  body.has-transparent-header:not(.header-scrolled) .nav-link {
+    color: rgba(255,255,255,0.92) !important;
+    -webkit-text-fill-color: rgba(255,255,255,0.92) !important;
+  }
   body.has-transparent-header:not(.header-scrolled) .header-action {
+    color: rgba(255,255,255,0.92) !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .header-action svg {
+    stroke: rgba(255,255,255,0.92) !important;
     color: rgba(255,255,255,0.92) !important;
   }
   body.has-transparent-header:not(.header-scrolled) .mobile-menu-toggle span {
     background: rgba(255,255,255,0.92) !important;
   }
+  body.has-transparent-header:not(.header-scrolled) .cart-count {
+    background: rgba(255,255,255,0.92) !important;
+    color: #000000 !important;
+  }
 }
 
-/* FIX 4: STICKY HEADER ON MOBILE */
+/* ── ISSUE 2 FIX: CART ICON CLIPPED AT 375px
+   Root cause: line ~1757 sets overflow:hidden + fixed height:56px on .header-inner,
+   and each .header-action is width:36px (3 icons = 108px + gaps). At 375px with
+   default container padding the rightmost icon overflows the clipping box.
+   Fix: override overflow to visible and shrink icon tap targets slightly so all
+   three icons fit within the available width. ── */
+@media (max-width: 480px) {
+  header.site-header .header-inner {
+    overflow: visible !important;
+    padding-left: 8px !important;
+    padding-right: 4px !important;
+    box-sizing: border-box !important;
+  }
+  header.site-header .header-actions {
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+    gap: 0 !important;
+  }
+  header.site-header .header-action {
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
+    padding: 2px !important;
+  }
+  header.site-header .header-logo {
+    min-width: 0;
+    overflow: hidden;
+  }
+}
+
+/* ── ISSUE 3 FIX: PDP PRODUCT IMAGE INVISIBLE ON MOBILE
+   Root cause: previous FIX 5 added display:none !important to .gallery-scroll-stack,
+   which is the container that actually holds all images when gallery mode = "scroll".
+   Hiding it makes the gallery blank.
+   Fix: for all gallery modes on mobile, convert to a horizontal snap-scroll carousel.
+   Desktop behaviour (vertical scroll stack, slideshow, grid) is untouched. ── */
 @media (max-width: 767px) {
-  #sticky-bar {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 1000 !important;
-    background: #fff !important;
+  /* Hide thumbnails — not useful on small screens */
+  .product-gallery .gallery-thumbs {
+    display: none !important;
+  }
+
+  /* SCROLL MODE → horizontal carousel instead of vertical stack */
+  .product-gallery[data-gallery-mode="scroll"] .gallery-scroll-stack {
+    display: flex !important;          /* was display:none from old broken fix */
+    flex-direction: row !important;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0 !important;
     width: 100% !important;
+    scrollbar-width: none !important;
   }
-}
+  .product-gallery[data-gallery-mode="scroll"] .gallery-scroll-stack::-webkit-scrollbar {
+    display: none !important;
+  }
+  .product-gallery[data-gallery-mode="scroll"] .gallery-scroll-item {
+    flex: 0 0 100% !important;
+    min-width: 100% !important;
+    scroll-snap-align: start !important;
+    box-sizing: border-box !important;
+    border-radius: 0 !important;
+  }
+  .product-gallery[data-gallery-mode="scroll"] .gallery-image--scroll {
+    width: 100% !important;
+    aspect-ratio: 3/4 !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+  /* Keep the scroll-mode gallery-main sized for the carousel */
+  .product-gallery[data-gallery-mode="scroll"] .gallery-main {
+    aspect-ratio: unset !important;
+    overflow: visible !important;
+  }
 
-/* FIX 5: PDP GALLERY — HORIZONTAL SWIPE CAROUSEL ON MOBILE
-   Hide vertical scroll stack, force slideshow into snap-scroll carousel */
-@media (max-width: 767px) {
-  .product-gallery .gallery-scroll-stack {
-    display: none !important;
-  }
-  .product-gallery .gallery-grid-stack {
-    display: none !important;
-  }
-  .product-gallery[data-gallery-mode='scroll'] .gallery-main__inner,
-  .product-gallery[data-gallery-mode='grid'] .gallery-main__inner {
+  /* SLIDESHOW MODE → snap-scroll carousel (gallery-main__inner is the track) */
+  .gallery-main__inner {
     display: flex !important;
     flex-direction: row !important;
     overflow-x: scroll !important;
     overflow-y: hidden !important;
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
+    gap: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
     width: 100% !important;
     scrollbar-width: none !important;
   }
-  .product-gallery[data-gallery-mode='scroll'] .gallery-main__inner::-webkit-scrollbar,
-  .product-gallery[data-gallery-mode='grid'] .gallery-main__inner::-webkit-scrollbar {
-    display: none !important;
-  }
-  .product-gallery[data-gallery-mode='scroll'] .gallery-main {
-    overflow: hidden !important;
-    aspect-ratio: 3/4 !important;
-  }
-  .product-gallery[data-gallery-mode='scroll'] .gallery-arrow {
-    display: flex !important;
-  }
-  .gallery-main__inner .gallery-slide {
+  .gallery-main__inner::-webkit-scrollbar { display: none !important; }
+  .gallery-slide {
     flex: 0 0 100% !important;
     min-width: 100% !important;
     scroll-snap-align: start !important;
     box-sizing: border-box !important;
   }
-  .gallery-main__inner .gallery-image {
+  .gallery-image {
     width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
+    height: auto !important;
     display: block !important;
+    object-fit: cover !important;
   }
-  .product-gallery .gallery-thumbs {
+
+  /* GRID MODE → horizontal carousel */
+  .product-gallery[data-gallery-mode="grid"] .gallery-grid-stack {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0 !important;
+    width: 100% !important;
+    scrollbar-width: none !important;
+  }
+  .product-gallery[data-gallery-mode="grid"] .gallery-grid-stack::-webkit-scrollbar {
     display: none !important;
+  }
+  .product-gallery[data-gallery-mode="grid"] .gallery-grid-item {
+    flex: 0 0 100% !important;
+    min-width: 100% !important;
+    scroll-snap-align: start !important;
+    box-sizing: border-box !important;
+  }
+  .product-gallery[data-gallery-mode="grid"] .gallery-grid-item img {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    object-fit: cover !important;
   }
 }
 
-/* FIX 6: SHARE ICONS INLINE WITH PRICE — override 560px column-stack rule */
+/* Share icons inline with price — override 560px column rule */
 @media (max-width: 767px) {
   .template-product .product-price-row {
     display: flex !important;
@@ -8253,7 +8204,6 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     flex-shrink: 0 !important;
     margin: 0 !important;
     padding-bottom: 0 !important;
-    gap: 3px !important;
   }
   .template-product .share-btn-sm {
     width: 24px !important;
@@ -8267,5 +8217,5 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 }
 
 /* ============================================================
-   END TTB MOBILE FIX v2
+   END TTB FIXES v3
    ============================================================ */
