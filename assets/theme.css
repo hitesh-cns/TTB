@@ -7792,3 +7792,177 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     margin-bottom: 6px !important;
   }
 }
+
+/* ============================================================
+   TTB MOBILE FIXES — APPEND ONLY — DO NOT MODIFY ABOVE
+   ============================================================ */
+
+/* FIX 1: Header logo text color — restore black on all screens */
+@media (max-width: 767px) {
+  .header__heading a,
+  .header__heading-link,
+  .header__heading-link span,
+  .site-logo,
+  .header__logo a,
+  .header__logo span {
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+  }
+}
+@media (min-width: 768px) {
+  .header__heading a,
+  .header__heading-link,
+  .header__heading-link span,
+  .site-logo,
+  .header__logo a,
+  .header__logo span {
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+  }
+}
+
+/* FIX 2: STICKY HEADER — MOBILE ONLY */
+@media (max-width: 767px) {
+  #shopify-section-header {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: #fff;
+    width: 100%;
+  }
+}
+
+/* FIX 3: HEADER ICONS NOT CLIPPING — MOBILE ONLY (375px–480px) */
+@media (max-width: 480px) {
+  .header__wrapper,
+  .header__inner {
+    overflow: visible;
+    box-sizing: border-box;
+    padding-left: 10px;
+    padding-right: 6px;
+  }
+
+  .header__heading a,
+  .header__heading-link {
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+
+  .header__heading a img,
+  .header__logo img {
+    max-height: 28px;
+    width: auto;
+  }
+
+  .header__icon,
+  .header__icon--cart,
+  .header__icon--search,
+  .header__icon--account {
+    padding: 2px;
+    min-width: 28px;
+  }
+}
+
+/* FIX 4: PDP — REMOVE EXCESS SPACE ABOVE BREADCRUMB — MOBILE ONLY */
+/* Target only product template pages, not collection or homepage */
+@media (max-width: 767px) {
+  .template-product .breadcrumb,
+  .template-product nav.breadcrumb,
+  .template-product .product__breadcrumb,
+  .template-product .product-breadcrumbs,
+  .template-product nav[aria-label*="readcrumb"] {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .template-product .page-width:first-child,
+  .template-product .product-hero,
+  .template-product .product-section-hero,
+  .template-product section:first-of-type {
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
+
+/* FIX 5: PDP PRODUCT IMAGE — HORIZONTAL SWIPE CAROUSEL — MOBILE ONLY */
+@media (max-width: 767px) {
+  /* Carousel container */
+  .template-product .product__media-list,
+  .template-product ul.product__media-list,
+  .template-product .product__media-wrapper > ul {
+    display: flex;
+    flex-direction: row;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .template-product .product__media-list::-webkit-scrollbar,
+  .template-product ul.product__media-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Each slide = full width */
+  .template-product .product__media-list > li,
+  .template-product .product__media-list .product__media-item,
+  .template-product ul.product__media-list > li {
+    flex: 0 0 100%;
+    min-width: 100%;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+  }
+
+  /* Image fills slide */
+  .template-product .product__media-list img,
+  .template-product .product__media-list .product__media img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+}
+
+/* FIX 6: PDP — MOVE SHARE ICONS TO SAME LINE AS PRICE — MOBILE ONLY */
+@media (max-width: 767px) {
+  /* Wrap price + share in a flex row */
+  .template-product .product__info-wrapper .price__container,
+  .template-product .product__price-wrapper,
+  .template-product .price-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  /* Share button group sits to the right of price */
+  .template-product .product__share-buttons,
+  .template-product .share-buttons,
+  .template-product .social-sharing {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  /* Make individual share icons smaller on mobile */
+  .template-product .share-button,
+  .template-product .social-sharing a,
+  .template-product .product__share-buttons a {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+}
+
+/* ============================================================
+   END TTB MOBILE FIXES
+   ============================================================ */
