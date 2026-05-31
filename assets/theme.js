@@ -1052,10 +1052,10 @@
       dots.push(dot);
     });
 
-    // Insert immediately after .gallery-main
+    // Insert INSIDE .gallery-main so dots can be absolutely positioned over the image
     var galleryMain = document.getElementById('gallery-main');
-    if (galleryMain && galleryMain.parentNode) {
-      galleryMain.parentNode.insertBefore(dotsWrap, galleryMain.nextSibling);
+    if (galleryMain) {
+      galleryMain.appendChild(dotsWrap);
     }
 
     // Sync active dot as user scrolls

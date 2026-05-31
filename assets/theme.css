@@ -8320,3 +8320,89 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 /* ============================================================
    END TTB FIXES v4
    ============================================================ */
+
+/* ============================================================
+   TTB FIXES v5
+   ============================================================ */
+
+/* ISSUE 1: MOBILE — remove ALL sticky overlays from the header area
+   Root cause A: #shopify-section-header is position:sticky (line 7566, no media
+   query) creating a devtools purple-hatched overlay inside #sticky-bar on mobile.
+   Root cause B: .product-info is position:sticky (line 1929, no media query),
+   making it a sticky element on mobile PDP which can overlay header-adjacent space.
+   Fix: static both on mobile. */
+@media (max-width: 767px) {
+  #shopify-section-header {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    background: transparent !important;
+  }
+  .product-info {
+    position: static !important;
+    top: auto !important;
+  }
+}
+
+/* ISSUE 2: MOBILE — dot indicators overlaid inside .gallery-main, bottom-left
+   v4 had dots as a flex row BELOW the image (after gallery-main in DOM).
+   Now JS appends dots INSIDE gallery-main, so we use absolute positioning. */
+@media (max-width: 767px) {
+  .gallery-main {
+    position: relative !important; /* anchor for the absolutely-positioned dots */
+  }
+  /* Override v4 centered-below layout → absolute overlay at bottom-left */
+  .gallery-dots {
+    position: absolute !important;
+    bottom: 12px !important;
+    left: 16px !important;
+    width: auto !important;
+    padding: 0 !important;
+    justify-content: flex-start !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* ISSUE 3: MOBILE — qty-inline must not stretch; keep it compact
+   v4 set flex:1 1 auto which caused .qty-inline to grow across the full row.
+   Revert to flex:0 0 auto so it stays its natural pill width (~170px). */
+@media (max-width: 767px) {
+  .qty-atc-row .qty-inline {
+    flex: 0 0 auto !important;
+  }
+}
+
+/* ISSUE 4: DESKTOP — remove nested sticky from #shopify-section-header
+   Root cause: line 7566 sets #shopify-section-header { position:sticky; top:0 }
+   globally (no media query). Inside the already-sticky #sticky-bar this creates
+   a nested sticky that can interfere with the outer sticky in Chrome/Safari.
+   Fix: position:relative on desktop — only #sticky-bar remains sticky. */
+@media (min-width: 768px) {
+  #shopify-section-header {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+  }
+}
+
+/* ISSUE 5: DESKTOP PDP — fix blank left column
+   Root cause: .product-breadcrumb is the first auto-placed grid item in col 1
+   row 1. .product-gallery is in col 2 row 1 (0.9fr). .product-info ends up in
+   col 1 row 2 — only visible after the user scrolls past the full gallery height.
+   The left column appears blank because row 1 is as tall as the gallery images.
+   Fix A: span breadcrumb full-width (grid-column: 1/-1) so gallery and info
+          share row 2 side by side (gallery=col1 1.1fr, info=col2 0.9fr).
+   Fix B: hide .sticky-atc-bar on desktop — it's only functional on mobile. */
+@media (min-width: 768px) {
+  .product-breadcrumb {
+    grid-column: 1 / -1; /* full width above the two-column layout */
+  }
+  .sticky-atc-bar {
+    display: none !important; /* mobile-only element; hides the rogue grid row */
+  }
+}
+
+/* ============================================================
+   END TTB FIXES v5
+   ============================================================ */
