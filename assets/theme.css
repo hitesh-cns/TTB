@@ -8105,3 +8105,167 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 /* ============================================================
    END TTB TARGETED FIXES
    ============================================================ */
+
+/* ============================================================
+   TTB MOBILE FIX v2 — TARGETED OVERRIDES WITH CORRECT SELECTORS
+   All rules appended. Nothing above modified.
+   ============================================================ */
+
+/* FIX 1: HEADER OVERFLOW — override overflow:hidden on .header-inner at line ~1757
+   Using header.site-header prefix for higher specificity */
+@media (max-width: 480px) {
+  header.site-header .header-inner {
+    overflow: visible !important;
+    padding-left: 10px !important;
+    padding-right: 8px !important;
+    height: 56px !important;
+    box-sizing: border-box !important;
+  }
+  header.site-header .header-actions {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    overflow: visible !important;
+  }
+  header.site-header .header-action {
+    flex-shrink: 0 !important;
+    padding: 2px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+  }
+}
+
+/* FIX 2: LOGO TEXT COLOR — force black on mobile, disable white transparent-header effect */
+@media (max-width: 767px) {
+  body.has-transparent-header .logo-text,
+  body.has-transparent-header:not(.header-scrolled) .logo-text,
+  body.has-transparent-header.header-scrolled .logo-text {
+    color: var(--espresso) !important;
+    -webkit-text-fill-color: var(--espresso) !important;
+  }
+  body.has-transparent-header .logo-img,
+  body.has-transparent-header:not(.header-scrolled) .logo-img {
+    filter: none !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .header-action,
+  body.has-transparent-header:not(.header-scrolled) .header-action svg {
+    color: var(--espresso) !important;
+    stroke: var(--espresso) !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .mobile-menu-toggle span {
+    background: var(--espresso) !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .site-header {
+    background: #ffffff !important;
+  }
+}
+
+/* FIX 3: TRANSPARENT HEADER — keep effect on desktop only */
+@media (min-width: 768px) {
+  body.has-transparent-header:not(.header-scrolled) .site-header {
+    background: transparent !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .logo-text {
+    color: #ffffff !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .logo-img {
+    filter: brightness(0) invert(1) !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .header-action {
+    color: rgba(255,255,255,0.92) !important;
+  }
+  body.has-transparent-header:not(.header-scrolled) .mobile-menu-toggle span {
+    background: rgba(255,255,255,0.92) !important;
+  }
+}
+
+/* FIX 4: STICKY HEADER ON MOBILE */
+@media (max-width: 767px) {
+  #sticky-bar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    background: #fff !important;
+    width: 100% !important;
+  }
+}
+
+/* FIX 5: PDP GALLERY — HORIZONTAL SWIPE CAROUSEL ON MOBILE
+   Hide vertical scroll stack, force slideshow into snap-scroll carousel */
+@media (max-width: 767px) {
+  .product-gallery .gallery-scroll-stack {
+    display: none !important;
+  }
+  .product-gallery .gallery-grid-stack {
+    display: none !important;
+  }
+  .product-gallery[data-gallery-mode='scroll'] .gallery-main__inner,
+  .product-gallery[data-gallery-mode='grid'] .gallery-main__inner {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    scrollbar-width: none !important;
+  }
+  .product-gallery[data-gallery-mode='scroll'] .gallery-main__inner::-webkit-scrollbar,
+  .product-gallery[data-gallery-mode='grid'] .gallery-main__inner::-webkit-scrollbar {
+    display: none !important;
+  }
+  .product-gallery[data-gallery-mode='scroll'] .gallery-main {
+    overflow: hidden !important;
+    aspect-ratio: 3/4 !important;
+  }
+  .product-gallery[data-gallery-mode='scroll'] .gallery-arrow {
+    display: flex !important;
+  }
+  .gallery-main__inner .gallery-slide {
+    flex: 0 0 100% !important;
+    min-width: 100% !important;
+    scroll-snap-align: start !important;
+    box-sizing: border-box !important;
+  }
+  .gallery-main__inner .gallery-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+  .product-gallery .gallery-thumbs {
+    display: none !important;
+  }
+}
+
+/* FIX 6: SHARE ICONS INLINE WITH PRICE — override 560px column-stack rule */
+@media (max-width: 767px) {
+  .template-product .product-price-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+  .template-product .product-share-inline {
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    padding-bottom: 0 !important;
+    gap: 3px !important;
+  }
+  .template-product .share-btn-sm {
+    width: 24px !important;
+    height: 24px !important;
+    padding: 2px !important;
+  }
+  .template-product .share-btn-sm svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+}
+
+/* ============================================================
+   END TTB MOBILE FIX v2
+   ============================================================ */
