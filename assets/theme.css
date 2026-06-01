@@ -8723,3 +8723,55 @@ body {
 /* ============================================================
    END TTB FIXES v8
    ============================================================ */
+
+/* ============================================================
+   TTB FIXES v9 — mega-backdrop mobile, header gap, gallery radius
+   ============================================================ */
+
+/* ISSUE 1A: MOBILE HEADER — .mega-backdrop overlaying .header-actions
+   .mega-backdrop is position:fixed; inset:0; z-index:1099 — a full-viewport overlay
+   used only for the desktop mega menu hover. No CSS rule prevents it from rendering
+   or intercepting pointer events on mobile. display:none + pointer-events:none is
+   the only safe guarantee; the is-touch body class is set asynchronously by JS and
+   cannot serve as a reliable CSS-only guard. */
+@media (max-width: 767px) {
+  .mega-backdrop {
+    display: none !important;
+    pointer-events: none !important;
+  }
+}
+
+/* ISSUE 1B: MOBILE HEADER — .header-actions gap too wide between 481px–767px
+   Base CSS has gap:20px on .header-actions. The v3 fix only covers max-width:480px
+   (gap:0 via higher-specificity header.site-header .header-actions rule). Between
+   481px and 767px the 20px gap eats into available header width and can push the
+   cart icon partially out of view. Clamp to 4px for the full mobile range. */
+@media (max-width: 767px) {
+  .header-actions {
+    gap: 4px !important;
+  }
+}
+
+/* ISSUE 2: MOBILE PDP — gallery image container missing border-radius
+   v8 adds border-radius:var(--radius) to .gallery-main globally (no media query).
+   v6 adds overflow:hidden !important to .gallery-main at max-width:767px.
+   However, the grid-mode desktop rule (.product-gallery[data-gallery-mode="grid"]
+   .gallery-main { overflow:visible }) has specificity [0,3,0] vs v6's [0,1,0]+!important.
+   !important always wins over non-!important regardless of specificity, but some
+   mobile browsers exhibit inconsistency. Belt-and-suspenders: re-enforce both
+   properties with !important inside the mobile media query so neither can be lost. */
+@media (max-width: 767px) {
+  .gallery-main {
+    border-radius: var(--radius) !important;
+    overflow: hidden !important;
+  }
+  /* Discount badge on PDP — belt-and-suspenders !important for mobile */
+  .product-badge,
+  .product-badge--discount {
+    border-radius: var(--radius) !important;
+  }
+}
+
+/* ============================================================
+   END TTB FIXES v9
+   ============================================================ */
