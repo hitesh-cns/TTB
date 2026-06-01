@@ -8466,3 +8466,122 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 /* ============================================================
    END TTB FIXES v6
    ============================================================ */
+
+/* ============================================================
+   TTB FIXES v7 — Desktop: sticky header, PDP two-column, gallery slideshow
+   ============================================================ */
+
+/* ISSUE 1: DESKTOP — Header scrolls away instead of staying sticky
+   Root cause A: overflow-x:hidden on html (line 44) and body (line 56) implicitly
+   computes overflow-y:auto on both per CSS spec (visible + hidden pair → auto),
+   making html or body the scroll container. A scroll container with overflow:hidden
+   can trap position:sticky children so they never stick to the viewport.
+   Root cause B: v5 ISSUE 4 changed #shopify-section-header to position:relative on
+   desktop, removing the backup sticky that kept the header visible even when
+   #sticky-bar's outer sticky was unreliable.
+
+   Fix A: override html and body from overflow-x:hidden to overflow-x:clip.
+   clip is visually identical — it clips overflow — but does NOT create a scroll
+   container (per CSS Overflow Level 4 spec), so position:sticky on #sticky-bar
+   remains anchored to the viewport correctly.
+
+   Fix B: restore #shopify-section-header as position:sticky on desktop (overrides
+   v5's position:relative !important). v5's mobile fix (position:static) is in a
+   separate max-width:767px block and is NOT affected by this rule. The nested
+   sticky (#sticky-bar outer + #shopify-section-header inner) has no visual
+   downside on desktop — Chrome DevTools shows a purple hatch on sticky elements
+   as a dev-only indicator, not a user-facing overlay. */
+
+html,
+body {
+  overflow-x: clip; /* replaces overflow-x:hidden — no scroll container created */
+}
+
+@media (min-width: 768px) {
+  /* Reinforce outer sticky wrapper — must not be overridden by nested element */
+  #sticky-bar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+  }
+  /* Restore inner section wrapper as sticky fallback; overrides v5 position:relative */
+  #shopify-section-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 200 !important;
+  }
+}
+
+/* ISSUE 2: DESKTOP PDP — gallery visible but info column missing
+   Root cause: without explicit grid-column / grid-row assignments, CSS Grid
+   auto-placement may place items differently than expected. Explicitly assign
+   every .product-layout child to guarantee the two-column layout:
+     Row 1: breadcrumb (full width)
+     Row 2: gallery (col 1, wider) | info (col 2)
+     Row 3: sticky-atc-bar (hidden on desktop — mobile-only element)
+   Also restore position:sticky on both columns so gallery and info independently
+   scroll with the page while each one "sticks" within its own column bounds. */
+@media (min-width: 768px) {
+  .product-layout {
+    grid-template-columns: 1.1fr 0.9fr !important;
+  }
+  .product-breadcrumb {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+  }
+  .product-gallery {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    position: sticky !important;
+    top: calc(var(--sticky-bar-height, 80px) + 20px) !important;
+  }
+  .product-info {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    position: sticky !important;
+    top: calc(var(--sticky-bar-height, 80px) + 20px) !important;
+    display: block !important;
+  }
+  .sticky-atc-bar {
+    display: none !important;
+  }
+}
+
+/* ISSUE 3: DESKTOP PDP — gallery showing all images stacked instead of slideshow
+   Root cause: the mobile carousel rules in v3 (max-width:767px) and v6
+   (max-width:767px) set .gallery-main__inner to display:flex and .gallery-slide to
+   position:relative + opacity:1. On desktop these are already scoped out by the
+   media query. However, we add belt-and-suspenders desktop overrides to guarantee
+   the cross-fade slideshow pattern works regardless of any upstream CSS:
+     — .gallery-main__inner: display:block (NOT flex), position:relative
+     — .gallery-slide: position:absolute, inset:0, opacity:0 (stacked, invisible)
+     — .gallery-slide.is-active: opacity:1 (only active slide shown)
+   This restores the desktop cross-fade slideshow behaviour. The JS in product-page.js
+   toggles the .is-active class; CSS renders the fade transition. */
+@media (min-width: 768px) {
+  .gallery-main__inner {
+    display: block !important;       /* undo any flex from mobile rules */
+    width: 100% !important;
+    height: 100% !important;
+    position: relative !important;   /* containing block for absolute slides */
+  }
+  .gallery-slide {
+    position: absolute !important;   /* stack all slides at same position */
+    inset: 0 !important;             /* fills gallery-main */
+    opacity: 0 !important;           /* all invisible by default */
+    pointer-events: none !important;
+    transition: opacity 0.4s ease !important;
+    /* Cancel any mobile flex-sizing values that may leak */
+    flex: unset !important;
+    min-width: unset !important;
+    height: unset !important;
+  }
+  .gallery-slide.is-active {
+    opacity: 1 !important;           /* only active slide shown */
+    pointer-events: auto !important;
+  }
+}
+
+/* ============================================================
+   END TTB FIXES v7
+   ============================================================ */
