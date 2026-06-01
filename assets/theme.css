@@ -8406,3 +8406,63 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 /* ============================================================
    END TTB FIXES v5
    ============================================================ */
+
+/* ============================================================
+   TTB FIXES v6 — CRITICAL: slideshow carousel correctness on mobile
+   ============================================================ */
+
+/* ROOT CAUSE (discovered via read of lines 1828-1835):
+   The desktop gallery is a CSS cross-fade slideshow:
+     .gallery-slide { position: absolute; inset: 0; opacity: 0; }
+     .gallery-slide.is-active { opacity: 1; }
+   All slides are stacked absolutely and only the active one is visible.
+
+   v3 tried to convert this to a horizontal scroll carousel on mobile by
+   making .gallery-main__inner { display:flex; overflow-x:scroll } and
+   .gallery-slide { flex:0 0 100% }. BUT it never removed position:absolute
+   or opacity:0 — so slides remain invisible, out of the flex flow, and
+   the track has nothing scrollable. The dots click but nothing moves.
+
+   FIX: On mobile, reset slides to static/relative, show all of them
+   (scroll hides off-screen ones), and fill the gallery-main height. */
+
+@media (max-width: 767px) {
+  /* 1. Ensure gallery-main is the containing block (it already is via
+        original position:relative, but reinforce it here) */
+  .gallery-main {
+    position: relative !important;
+    overflow: hidden !important;    /* clips off-screen slides — keep */
+    aspect-ratio: 3/4 !important;  /* portrait box for product imagery */
+  }
+
+  /* 2. Track must fill the gallery-main height so flex cross-axis works */
+  .gallery-main__inner {
+    height: 100% !important;
+    align-items: stretch !important; /* slides stretch to full height */
+  }
+
+  /* 3. CRITICAL — break out of the absolute/opacity desktop slideshow */
+  .gallery-slide {
+    position: relative !important;   /* was: absolute (removed from flex flow) */
+    inset: auto !important;          /* was: inset:0 (stacked all slides at 0,0) */
+    opacity: 1 !important;           /* was: 0 (all invisible except .is-active) */
+    pointer-events: auto !important; /* allow touch swipe */
+    height: 100% !important;         /* fill flex cross-axis = gallery-main height */
+    transition: none !important;     /* no fade animation — scroll controls visibility */
+  }
+
+  /* 4. Image fills the slide box */
+  .gallery-image {
+    height: 100% !important;   /* was: auto — must fill the 3/4 gallery box */
+    cursor: default !important; /* no zoom on mobile */
+    transition: none !important;
+  }
+
+  /* 5. Hide desktop-only UI that makes no sense for a swipe carousel */
+  .gallery-zoom-hint { display: none !important; }
+  .gallery-arrow     { display: none !important; }
+}
+
+/* ============================================================
+   END TTB FIXES v6
+   ============================================================ */
