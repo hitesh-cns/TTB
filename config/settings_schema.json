@@ -122,5 +122,25 @@
         "default": 4
       }
     ]
+  },
+  {
+    "name": "Design",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Global Shape"
+      },
+      {
+        "type": "range",
+        "id": "border_radius",
+        "label": "Border Radius",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "px",
+        "default": 15,
+        "info": "Controls the corner roundness of cards, buttons, badges, inputs, and the gallery site-wide. 0 = sharp corners. 15 = softly rounded (default). 30 = pill-shaped."
+      }
+    ]
   }
 ]

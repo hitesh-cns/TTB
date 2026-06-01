@@ -8585,3 +8585,141 @@ body {
 /* ============================================================
    END TTB FIXES v7
    ============================================================ */
+
+/* ============================================================
+   TTB FIXES v8 — Modal z-index, gallery dedup, green space, global --radius
+   ============================================================ */
+
+/* ISSUE 1: MOBILE — .modal-overlay covering the sticky header
+   Root cause: .modal-overlay { position:fixed; inset:0; z-index:3000 } (line 3424).
+   Even when visibility:hidden + opacity:0, the element sits at z-level 3000 —
+   above #sticky-bar (1000) and the cart overlay (1999). On some mobile browsers
+   visibility:hidden does not fully suppress pointer-event capture, so taps on the
+   header area can be swallowed by the invisible overlay.
+   Fix A: reduce default z-index to 500 (below header, below cart, below everything).
+   Fix B: add pointer-events:none as belt-and-suspenders to guarantee zero event
+          interception when the modal is inactive.
+   Fix C: when aria-hidden="false" (modal actively open), restore z-index:3000
+          and pointer-events:auto so the modal overlays correctly above all content. */
+.modal-overlay {
+  z-index: 500;         /* below header (1000) when inactive */
+  pointer-events: none; /* no event capture when hidden */
+}
+.modal-overlay[aria-hidden="false"] {
+  z-index: 3000;        /* above all UI when the modal is open */
+  pointer-events: auto;
+}
+
+/* ISSUE 2: MOBILE PDP — product images appearing twice
+   Root cause A: the gallery thumbnail strip (.gallery-thumbs) is hidden on mobile
+   via max-width:767px (v3 rule). But the base CSS switches the product-gallery to
+   a single-column layout at max-width:768px (line 3103). At exactly 768px the
+   thumbnail strip is NOT hidden (our rule stops at 767px) — so both thumbs AND
+   the main gallery render, making every image appear twice.
+   Fix A: extend the .gallery-thumbs hide rule to match the single-column breakpoint
+   (max-width:768px) — consistent with the base CSS that already uses 768px.
+
+   Root cause B: belt-and-suspenders — explicitly hide the non-active gallery
+   containers per gallery mode on mobile, preventing any overlap where the wrong
+   container might render alongside the active one (e.g. both scroll-stack and
+   gallery-main__inner showing if mode detection fails). */
+@media (max-width: 768px) {
+  /* Hide thumbnail strip on ALL single-column viewports (≤768px) */
+  .product-gallery .gallery-thumbs {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Slideshow mode: only .gallery-main__inner is the scroll carousel */
+  .product-gallery[data-gallery-mode="slideshow"] .gallery-scroll-stack,
+  .product-gallery[data-gallery-mode="slideshow"] .gallery-grid-stack {
+    display: none !important;
+  }
+  /* Scroll mode: only .gallery-scroll-stack is the scroll carousel */
+  .product-gallery[data-gallery-mode="scroll"] .gallery-main__inner,
+  .product-gallery[data-gallery-mode="scroll"] .gallery-grid-stack {
+    display: none !important;
+  }
+  /* Grid mode: only .gallery-grid-stack is the scroll carousel */
+  .product-gallery[data-gallery-mode="grid"] .gallery-main__inner,
+  .product-gallery[data-gallery-mode="grid"] .gallery-scroll-stack {
+    display: none !important;
+  }
+}
+
+/* ISSUE 3: MOBILE PDP — green/sage blank space in product-hero padding-bottom
+   Root cause: .product-hero has no explicit background (line 1772 only sets padding).
+   It inherits the body background. When an adjacent section has any differing
+   background tone — or when Chrome DevTools visualises the 80px padding-bottom
+   in its standard green padding overlay — the area below the Shipping & Returns
+   accordion appears coloured.
+   Fix: add an explicit background to .product-hero matching the page colour so
+   the padding area is definitively the same ivory-white as the rest of the page.
+   (padding-bottom:80px is preserved — it is required for the sticky ATC bar.) */
+.product-hero {
+  background: var(--ivory, #ffffff);
+}
+
+/* ISSUE 4C: Global border-radius control
+   The Theme Editor setting settings.border_radius outputs --radius via a <style>
+   block in layout/theme.liquid, overriding the hardcoded --radius:4px in :root.
+   These rules apply var(--radius) to the interactive and visual elements the user
+   specified. They override existing hardcoded px values (e.g. var(--radius-lg),
+   2px, 16px) via source-order cascade (later rules win at equal specificity).
+   Circles (border-radius:50%) and structural layout elements are NOT changed. */
+
+/* Product image container (PDP gallery) */
+.gallery-main {
+  border-radius: var(--radius);
+}
+
+/* Scroll-mode stacked image items */
+.gallery-scroll-item {
+  border-radius: var(--radius);
+}
+
+/* Product badges — NEW ARRIVAL, SALE, % OFF */
+.product-badge,
+.product-badge--discount {
+  border-radius: var(--radius);
+}
+
+/* Product cards — collection page + homepage featured grid */
+.collection-card {
+  border-radius: var(--radius);
+}
+
+/* Pair-with card */
+.pair-with-card {
+  border-radius: var(--radius);
+}
+
+/* Cart drawer — left edge rounded (right is flush against viewport) */
+.cart-drawer {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+/* Search input form pill */
+.header-search-form {
+  border-radius: var(--radius);
+}
+
+/* Product savings badge ("Save ₹X" / "X% off" inline tag) */
+.product-savings {
+  border-radius: var(--radius);
+}
+
+/* Similar product card image wrapper */
+.similar-card__image-wrap {
+  border-radius: var(--radius);
+}
+
+/* Bundle nudge container */
+.product-bundle-nudge {
+  border-radius: var(--radius);
+}
+
+/* ============================================================
+   END TTB FIXES v8
+   ============================================================ */

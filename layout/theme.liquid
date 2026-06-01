@@ -277,6 +277,17 @@
   ======================================================== -->
   {{ 'theme.css' | asset_url | stylesheet_tag }}
 
+  {%- comment -%}
+    GLOBAL CSS VARIABLES — output Theme Editor settings as CSS variables so they
+    cascade AFTER theme.css (same :root block, later <style> tag wins).
+    --radius is controlled by Theme Editor → Design → Border Radius.
+  {%- endcomment -%}
+  <style>
+    :root {
+      --radius: {{ settings.border_radius | default: 15 }}px;
+    }
+  </style>
+
   <!-- ========================================================
     PERFORMANCE: DISCOUNT ENGINE
     Moved to defer — it doesn't need to run before page renders.
