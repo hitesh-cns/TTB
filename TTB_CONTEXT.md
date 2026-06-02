@@ -1,280 +1,413 @@
 # TTB_CONTEXT.md — Baby Elegance / The Tiny Bosses Theme
-**Branch:** `claude/frosty-driscoll-5727ac`  
-**Generated:** 2026-06-02  
-**Purpose:** Complete codebase context for Claude Code sessions — read this before touching any file.
+**Branch:** `claude/frosty-driscoll-5727ac`
+**Worktree:** `C:\Hitesh Downloads\baby-elegance-updated\.claude\worktrees\frosty-driscoll-5727ac\`
+**Generated:** 2026-06-02 (v9 — full read of every file)
+**Purpose:** Complete codebase context — read this file only. No other file needs to be read unless a specific line must be verified.
 
 ---
 
 ## 1. REPO FILE MAP
 
 ### assets/
-| File | Description |
-|------|-------------|
-| `theme.css` | Master stylesheet — 8 600+ lines. All base styles + all TTB fix blocks appended at bottom. **NEVER modify existing rules — only append to the end.** |
-| `theme.js` | Master JS — scroll handlers, header logic, cart drawer, mobile drawer, search bar, collection card carousels, size-sheet, sticky ATC bar, TTB gallery dots + variant switch IIFE |
-| `product-page.js` | PDP-only JS — gallery slideshow & scroll modes, variant selector, ATC form, quantity selector, accordions, wishlist, pair-with bundle logic, similar products carousel, reviews |
-| `animations.js` | IntersectionObserver scroll reveal, stagger grids, parallax hero, animated counters, mega menu (desktop hover + iPad touch), card tilt, heading reveal, auto-instrument |
-| `collection-filters.js` | Client-side collection filtering — parses `filter-*` tags, builds sidebar UI, applies filters via display toggle, URL sync |
-| `discount-engine.js` | Bundle discount engine — `window.DiscountEngine` — TIERS (Buy 2–5), applies discount via cart attributes and note on `cart:updated` event |
-| `swatches.json` | Color swatch definitions (name, label, hex, border) — white, baby-pink, sage (#8E9B90), oat, dusty-blue |
+| File | Lines | Description |
+|------|-------|-------------|
+| `theme.css` | ~7924 | Master stylesheet. Base styles + TTB fix blocks v3–v9 appended at bottom. **NEVER modify existing rules — only append to the end.** |
+| `theme.js` | 1181 | Master JS: 8 IIFEs — header scroll, cart drawer + discount UI + quick-add, global UI (search/drawer/back-to-top/lightbox), scroll dots, collection card carousels, size sheet + add-to-cart, TTB PDP gallery dots + variant switch, sticky ATC bar. |
+| `product-page.js` | 938 | PDP-only JS: gallery slideshow & scroll, variant selector + price, ATC form, qty, accordions, wishlist, pair-with bundle + variant popup, similar products carousel, reviews, size guide popup, gallery lightbox, notify-me. |
+| `animations.js` | 381 | IntersectionObserver scroll reveal (`[data-reveal]`→`.is-revealed`), stagger grids, parallax hero, animated counters (`[data-count-to]`), mega menu (desktop hover + iPad touch), card tilt, heading reveal (`.section-heading`), auto-instrument, page transitions (opt-in). |
+| `collection-filters.js` | 315 | Client-side collection filtering: reads `filter-*` tags from `#collection-tags-data`, builds sidebar UI, applies filters via display:none toggle, sort via URL reload. |
+| `discount-engine.js` | 57 | `window.DiscountEngine` IIFE: TIERS (2→5%, 3→10%, 4→15%, 5→20%), `getTier(itemCount)`, `applyDiscount(itemCount)` → updates cart attributes + note via `/cart/update.js`. Listens to `cart:updated` event. |
+| `swatches.json` | 35 | Color swatch definitions: white (#FFFFFF/#E5E5E5), baby-pink (#F4C2C2/#E8A0A0), sage (#8E9B90/#6E7D70), oat (#D1C6B8/#B8A89A), dusty-blue (#A8B8C8/#8899AA). Fields: name, label, hex, border. Fetched by collection-products.liquid inline script. |
 
 ### sections/
 | File | Description |
 |------|-------------|
-| `announcement-bar.liquid` | Scrolling ticker at top of every page — up to 3 messages with links, custom bg/text color, scroll speed |
-| `blog-article.liquid` | Single blog post — hero image, author, content, tags, share buttons, sidebar, comments |
-| `blog-listing.liquid` | Blog index — featured article hero + grid of articles |
-| `cart-drawer.liquid` | Slide-in cart panel (right side) — renders inside `#cart-drawer` in layout/theme.liquid |
-| `cart-page.liquid` | Full /cart page with line items, subtotal, checkout button |
-| `collection-products.liquid` | Collection page — hero banner, sticky filter bar, sidebar filters, product grid using collection-product-card snippet |
-| `customers-account.liquid` | Account dashboard — order list with account-nav snippet |
-| `customers-addresses.liquid` | Saved addresses management |
-| `customers-login.liquid` | Login / register / forgot password forms |
-| `customers-order.liquid` | Individual order detail page |
-| `customers-register.liquid` | New account registration form |
-| `customers-reset-password.liquid` | Password reset form |
-| `discount-carousel.liquid` | Bundle-and-save tier explainer with animated discount cards |
-| `discount-popup.liquid` | Fixed bottom-right popup showing cart progress toward next bundle tier |
-| `featured-collections.liquid` | Homepage category grid — up to 6 collection cards |
-| `footer.liquid` | Global footer — trust strip, brand info, social links, newsletter, 5 nav columns, contact, copyright |
-| `header.liquid` | Global header — mobile drawer, desktop nav with 3 mega-menu panels (Girls/Boys/Family), logo, search icon, account icon, cart icon |
-| `hero-banner.liquid` | Full-width hero section — image (with optional mobile image), overlay, heading, subheading, 2 CTAs, scroll indicator |
-| `image-gallery.liquid` | Standalone image gallery section — grid or masonry layout |
-| `image-with-text.liquid` | 50/50 split image + text section with button |
-| `multi-column.liquid` | Multi-column text/icon content section |
-| `newsletter-popup.liquid` | Email capture popup — fires after `delay_seconds`, suppressed for `redisplay_days`, stores flag in localStorage |
-| `page-about.liquid` | About Us page — hero, story text + image, values grid, stats, team, CTA |
-| `page-contact.liquid` | Contact page — contact form + info cards |
-| `page-faq.liquid` | FAQ page — accordion Q&A grouped by category, sticky sidebar |
-| `page-returns.liquid` | Returns & Exchanges page — policy summary cards + detailed sections |
-| `pair-with.liquid` | "Complete the Look" PDP section — renders companion products from `custom.pair_with` metafield; hidden if `pair_count == 0` |
-| `product-grid.liquid` | Reusable product grid section — uses collection-product-card snippet, supports multiple collections as blocks |
-| `product-hero.liquid` | Main PDP section — breadcrumb, gallery (3 modes), product info, size guide modal, variants JSON, sticky ATC bar |
-| `product-reviews.liquid` | PDP reviews section — star display, submit form, helpful votes, photo lightbox |
-| `product-spotlight.liquid` | Featured single product highlight section |
-| `promo-banner.liquid` | Promotional full-width text + CTA banner |
-| `rich-text.liquid` | Simple rich text content section |
-| `similar-products.liquid` | "Similar Pieces" PDP section — carousel of related products from metafield or same collection; ALWAYS renders (no guard) |
-| `subscribe-cta.liquid` | Email subscription call-to-action strip |
-| `testimonials.liquid` | Customer testimonials carousel |
-| `trust-cards.liquid` | Horizontal trust icon strip — shipping, returns, support, security |
+| `announcement-bar.liquid` | Scrolling ticker — up to 3 messages (text_1/2/3 + url_1/2/3), divider symbol, bg_color, text_color, CSS scroll speed. Items duplicated for seamless loop. |
+| `blog-article.liquid` | Single blog post — hero, author, content, tags, share, sidebar, comments. |
+| `blog-listing.liquid` | Blog index — featured article hero + article grid. |
+| `cart-drawer.liquid` | Slide-in cart panel. Injects `window.bxgyProductIds` from `custom.discount == 'BXGY'` metafield. Renders discount tier track (`#tier-node-1/2/3`), items list (`#cart-drawer-items`), empty state (`#cart-empty`), footer with subtotal (`#cart-subtotal-price`), checkout (`#checkout-btn`), discount applied badge (`#cart-discount-applied`). |
+| `cart-page.liquid` | Full /cart page — line items, subtotal, checkout. |
+| `collection-products.liquid` | Collection page: hero (`.coll-hero`), sticky filter bar (`#coll-filter-bar`), sidebar (`#collection-sidebar`), product grid (`#collection-grid`). Injects tags JSON into `#collection-tags-data`. Renders `.collection-product-card` with `data-tags`, `data-variants`, `data-size-option-index`. Renders global size sheet (`#size-sheet`, `#size-sheet-backdrop`). Fetches `swatches.json` for swatch colors. |
+| `customers-account.liquid` | Account dashboard — order list with `account-nav` snippet. |
+| `customers-addresses.liquid` | Saved addresses management. |
+| `customers-login.liquid` | Login / register / forgot-password forms. |
+| `customers-order.liquid` | Individual order detail page. |
+| `customers-register.liquid` | New account registration. |
+| `customers-reset-password.liquid` | Password reset form. |
+| `discount-carousel.liquid` | Bundle-and-save tier explainer: 4 animated discount cards, carousel (`#discount-track`, `#discount-prev/next/dots`), section progress bar (`#discount-progress-text`, `#discount-progress-fill`). |
+| `discount-popup.liquid` | Fixed bottom-right popup (`#discount-popup`) — close `#discount-popup-close`, heading `#discount-popup-heading`, text `#discount-popup-text`, fill bar `#discount-popup-fill`. Auto-dismisses after 6s. |
+| `featured-collections.liquid` | Homepage category grid — up to 6 collection blocks. |
+| `footer.liquid` | Global footer — trust strip (5 items), brand info, social, newsletter, 5 nav columns, contact, copyright. |
+| `header.liquid` | Mobile drawer (`#mobile-drawer`, `#mobile-drawer-overlay`), desktop mega menu (Girls/Boys/Family + menu-driven extras), logo (`.header-logo`), header actions (search `#search-toggle`, account `.header-account-wrap`, cart `#cart-toggle`). `#mega-backdrop` is last child inside `<header>` before search bar. Search bar: `#header-search-bar`. |
+| `hero-banner.liquid` | Full-width hero. Section gets id `hero-section` from Liquid. `.hero-bg` background image, `.hero-heading`, `.hero-subheading`, 2 CTAs, scroll indicator. |
+| `image-gallery.liquid` | Standalone image gallery — grid or masonry. |
+| `image-with-text.liquid` | 50/50 split image + text. |
+| `multi-column.liquid` | Multi-column text/icon content. |
+| `newsletter-popup.liquid` | Email capture modal — `delay_seconds`, suppressed by `redisplay_days` in localStorage. |
+| `page-about.liquid` | About Us — hero, story text + image, values grid, stats, team, CTA. |
+| `page-contact.liquid` | Contact form + info cards. |
+| `page-faq.liquid` | Accordion Q&A grouped by category, sticky sidebar. |
+| `page-returns.liquid` | Returns & Exchanges policy page. |
+| `pair-with.liquid` | "Complete the Look" on PDP. Data: `product.metafields.custom.pair_with.value` (list of products) OR Theme Editor blocks. **Only renders `<section>` if `pair_count > 0`** (current product excluded). Also renders `#variant-popup-overlay` modal for multi-variant paired products. |
+| `product-grid.liquid` | Reusable product grid — multi-block (each block = one collection). Uses `product-card` snippet. |
+| `product-hero.liquid` | Main PDP section — breadcrumb, gallery (3 modes controlled by `g_mode` Liquid var), product info panel, size guide modal (`#size-guide-overlay`), trust badge blocks, accordions, sticky ATC bar (`#sticky-atc-bar`). Outputs `<script type="application/json" id="product-variants-json">{{ product.variants | json }}</script>`. |
+| `product-reviews.liquid` | PDP reviews — star display, submit form (`#review-form`), helpful votes, photo lightbox. |
+| `product-spotlight.liquid` | Featured single product highlight section. |
+| `promo-banner.liquid` | Promotional full-width text + CTA banner. |
+| `rich-text.liquid` | Simple rich text content section. |
+| `similar-products.liquid` | "Similar Pieces" on PDP. **Always renders `<section>` (no guard)**. Data: `product.metafields.custom.similar_products.value` → fallback: same collection → fallback: 4 placeholder cards. Renders via `similar-card` snippet. Carousel: `#similar-track`, `#similar-prev/next`, `#similar-dots`. |
+| `subscribe-cta.liquid` | Email subscription CTA strip. |
+| `testimonials.liquid` | Customer testimonials carousel (`#testimonials-track`, `#testimonials-prev/next/dots`). |
+| `trust-cards.liquid` | Horizontal trust icon strip — icon blocks (shipping/returns/support/secure/star/heart), title, description. |
 
 ### snippets/
-| File | Description |
-|------|-------------|
-| `account-nav.liquid` | Sidebar navigation for customer account pages — avatar, links to orders/addresses/profile/sign-out |
-| `product-card.liquid` | Legacy product card with scrollable image strip — used in product-grid section |
-| `product-card-placeholder.liquid` | Placeholder card when no products available |
-| `similar-card.liquid` | Reusable similar-product card — primary + secondary hover image, badges, price, swatches, quick-add |
+| File | Rendered by | Description |
+|------|-------------|-------------|
+| `account-nav.liquid` | customers-account, customers-addresses, customers-order, customers-reset-password | Sidebar nav: avatar initials (`customer.first_name/last_name`), links to My Orders, Saved Addresses, Profile & Password, Sign Out. Active via `request.path`. |
+| `product-card.liquid` | product-grid.liquid | Legacy card: scrollable image strip (`.product-card__image-scroll`), scroll dots, badges, quick-add (`.btn-quick-add`), price, rating (from `metafields.reviews`), variant swatches. |
+| `product-card-placeholder.liquid` | product-grid.liquid | Placeholder card when no products available. |
+| `similar-card.liquid` | similar-products.liquid | Card accepting `p` variable: primary + secondary hover image, sale/new/discount badges, quick-add, price, mini swatches (up to 4 + count). |
 
 ### layout/
-| File | Description |
-|------|-------------|
-| `theme.liquid` | Global HTML wrapper — `<head>` with SEO/OG/JSON-LD/fonts/CSS, `<body>` with body classes, `#sticky-bar` (announcement-bar + header), `<main>`, footer, cart-drawer, popups, back-to-top, review-lightbox, gallery-lightbox, deferred scripts, CSS variable override `<style>` block |
+| File | Lines | Description |
+|------|-------|-------------|
+| `theme.liquid` | 383 | Global HTML wrapper. `<head>`: SEO/OG/Twitter Card meta, JSON-LD structured data (Product + BreadcrumbList for PDP, ClothingStore for index/page, Article), `{{ content_for_header }}`, Google Fonts (Cormorant Garamond + DM Sans), `theme.css` tag, `<style>:root{--radius:{{ settings.border_radius \| default:15 }}px}</style>`, `discount-engine.js` defer. `<body class="...template-{{ template \| handle }}...has-transparent-header(homepage only)">`: `#sticky-bar` (announcement-bar + header), `<main>`, footer, `#cart-drawer`, `#cart-overlay`, discount-popup, newsletter-popup, `#back-to-top`, `#review-lightbox`, globals script, `theme.js`+`animations.js` defer, conditional `product-page.js` (product template) + `collection-filters.js` (collection template), `#gallery-lightbox`. |
 
 ### templates/
-| File | Description |
-|------|-------------|
-| `index.json` | Homepage — hero-banner, featured-collections, discount-carousel, product-grid, trust-cards, testimonials, subscribe-cta |
-| `product.liquid` | Product page — product-hero, pair-with, similar-products, product-reviews |
-| `collection.liquid` | Collection page — collection-products |
-| `cart.liquid` | Cart page — cart-page |
-| `article.liquid` | Blog post — blog-article |
-| `blog.liquid` | Blog index — blog-listing |
-| `page.about.liquid` | About page — page-about |
-| `page.contact.liquid` | Contact page — page-contact |
-| `page.faq.liquid` | FAQ page — page-faq |
-| `page.returns.liquid` | Returns page — page-returns |
+| Template | Sections rendered |
+|----------|------------------|
+| `index.json` | hero-banner, featured-collections, discount-carousel, product-grid, trust-cards, testimonials, subscribe-cta |
+| `product.liquid` | product-hero, pair-with, similar-products, product-reviews |
+| `collection.liquid` | collection-products |
+| `cart.liquid` | cart-page |
+| `article.liquid` | blog-article |
+| `blog.liquid` | blog-listing |
+| `page.about.liquid` | page-about |
+| `page.contact.liquid` | page-contact |
+| `page.faq.liquid` | page-faq |
+| `page.returns.liquid` | page-returns |
 | `sitemap.liquid` | XML sitemap |
-| `templates/customers/*.liquid` | Each maps to a matching `customers-*.liquid` section |
+| `templates/customers/*.liquid` | Each maps to matching `customers-*.liquid` section |
 
 ### config/
 | File | Description |
 |------|-------------|
-| `settings_schema.json` | Theme Editor settings definition — 3 groups: Social Media & SEO, Product Pages, Design |
-| `settings_data.json` | Saved settings values for all sections and global theme settings |
+| `settings_schema.json` | 3 groups: **Social Media & SEO** (twitter_handle text, og_image image_picker, google_analytics_id text); **Product Pages** (global_gallery_mode select default "slideshow", grid_first_image_ratio select default "3/4", grid_secondary_ratio select default "1/1", grid_gap range 0–20 step 2 default 4); **Design** (border_radius range 0–30 step 1 unit px default 15). |
+| `settings_data.json` | Live values: announcement bar bg `#2c1f18` text `#f9f3ee`; header logo `IMG_0449.png` h36 w224; **product-hero gallery_mode `"grid"`** (section-level override), add_to_cart_text `"Add to Basket"`, scroll_gap 12; footer trust 1-4 populated, brand_desc set, contact `hello@thetinybosses.com`/Delhi; newsletter-popup delay 5s redisplay 30d; collection-products grid_columns `"3"`, products_per_page 24; discount-carousel 4 tiers (2/3/4/5+). |
 
 ### locales/
-| File | Description |
-|------|-------------|
-| `en.default.json` | Translation strings — only `products.product.add_to_cart: "Add to Cart"` |
+| File | Content |
+|------|---------|
+| `en.default.json` | Single key: `products.product.add_to_cart: "Add to Cart"` |
 
 ---
 
 ## 2. KEY SELECTORS & CLASS NAMES
 
 ### Header & Navigation
-| Component | Selector |
-|-----------|----------|
-| Sticky wrapper (THE sticky element) | `#sticky-bar` / `.sticky-bar` |
+| Component | Selector / Notes |
+|-----------|-----------------|
+| Sticky wrapper (THE sticky element) | `#sticky-bar` / `.sticky-bar` — `position:sticky; top:0; z-index:1000` |
 | Shopify section wrapper | `#shopify-section-header` |
 | Site header element | `header.site-header` / `#site-header` |
 | Header inner flex row | `.header-inner.container` |
-| Logo (image) | `.header-logo .logo-img` |
-| Logo (text) | `.header-logo .logo-text` |
 | Hamburger button | `#mobile-menu-toggle` / `.mobile-menu-toggle` |
-| Desktop nav list | `.header-nav ul.nav-list` |
-| Nav item with mega panel | `.nav-item--mega` |
+| Desktop nav | `.header-nav ul.nav-list` |
+| Nav item with mega | `.nav-item--mega` — IDs: `#mega-girls`, `#mega-boys`, `#mega-family` |
 | Nav link | `.nav-link` |
 | Nav chevron | `.nav-chevron` |
-| Mega menu panel | `.mega-panel` |
-| Mega category grid | `.mega-grid` |
+| Mega panel | `.mega-panel` |
+| Mega panel inner | `.mega-panel__inner.container` |
+| Mega panel hero | `.mega-panel__hero` / `.mega-panel__hero--girls/boys/family` |
+| Mega panel title | `.mega-panel__title` |
+| Mega panel desc | `.mega-panel__desc` |
+| Mega panel CTA | `.mega-panel__cta` |
+| Mega panel grid | `.mega-panel__grid` |
 | Mega card | `.mega-card` |
-| Header actions wrapper | `.header-actions` |
+| Mega card image wrap | `.mega-card__img-wrap` |
+| Mega card image | `.mega-card__img` |
+| Mega card placeholder | `.mega-card__img-placeholder` |
+| Mega card label | `.mega-card__label` |
+| Mega card arrow | `.mega-card__arrow` |
+| **Mega backdrop** | `.mega-backdrop` / `#mega-backdrop` — `position:fixed; inset:0; z-index:1099; opacity:0; visibility:hidden` — last child in `<header>` before search bar — desktop-only, **display:none on mobile (v9)** |
+| Header actions wrapper | `.header-actions` — base `gap:20px`, v9 mobile `gap:4px !important` |
 | Individual action button | `.header-action` |
-| Search toggle button | `#search-toggle` / `.search-toggle` |
-| Search bar panel | `#header-search-bar` / `.header-search-bar` |
-| Search input | `#header-search-input` |
-| Account icon | `.header-action` (links to `/account`) |
-| Cart icon/toggle | `#cart-toggle` |
-| Cart badge (item count) | `#cart-count` / `.cart-count` (also `[data-cart-count]`) |
-| Mobile drawer panel | `#mobile-drawer` / `.mobile-drawer` |
-| Mobile drawer overlay | `#mobile-drawer-overlay` |
+| Search toggle | `#search-toggle` / `.search-toggle` — also `.header-action` |
+| Search open dot | `.search-open-dot` (span injected by JS) |
+| Search bar panel | `#header-search-bar` / `.header-search-bar` — `aria-hidden` toggled |
+| Search bar inner | `.header-search-bar__inner.container` |
+| Search form | `.header-search-form` — `border-radius:var(--radius)` (v8) |
+| Search input | `#header-search-input` / `.header-search-input` — name="q" |
+| Search clear | `#header-search-clear` / `.header-search-clear` |
+| Account wrap | `.header-account-wrap` |
+| Account link | `.header-action` (links to `/account`) |
+| Account dropdown | `.header-account-dropdown` |
+| Account dropdown link | `.header-account-dropdown__link` / `.header-account-dropdown__link--cta` |
+| Cart toggle | `#cart-toggle` / `.cart-toggle` |
+| Cart badge | `#cart-count` / `.cart-count` / `[data-cart-count]` |
+| Logo container | `.header-logo` |
+| Logo link | `.header-logo__link` |
+| Logo image | `.logo-img` — inline style `height:{{ logo_h }}px; --logo-h-mobile:{{ logo_hm }}px` |
+| Logo text | `.logo-text` |
+| Mobile drawer panel | `#mobile-drawer` / `.mobile-drawer` — `aria-hidden` toggled |
+| Mobile drawer inner | `.mobile-drawer__inner` |
+| Mobile drawer header | `.mobile-drawer__header` |
+| Mobile drawer logo | `.mobile-drawer__logo` |
 | Mobile drawer close | `#mobile-drawer-close` / `.mobile-drawer__close` |
-| Mobile nav group | `.mobile-nav-group` |
-| Mobile nav group trigger | `.mobile-nav-group__trigger` |
+| Mobile drawer overlay | `#mobile-drawer-overlay` / `.mobile-drawer__overlay` — `.is-visible` |
+| Mobile drawer nav | `.mobile-drawer__nav` |
+| Mobile nav group | `.mobile-nav-group` / `.mobile-nav-group.is-open` |
+| Mobile nav trigger | `.mobile-nav-group__trigger` — `aria-expanded` |
+| Mobile nav children | `.mobile-nav-group__children` |
 | Mobile nav child link | `.mobile-nav-child` |
-| Scrolled state on sticky bar | `#sticky-bar.is-scrolled` |
-| Scrolled state on body | `body.header-scrolled` |
-| Transparent header body class | `body.has-transparent-header` |
-| Touch mode body class | `body.is-touch` (added by animations.js for iPad) |
+| Mobile nav child all | `.mobile-nav-child--all` |
+| Mobile nav simple link | `.mobile-nav-link` |
+| Mobile drawer pages | `.mobile-drawer__pages` |
+| Mobile drawer footer | `.mobile-drawer__footer` |
+| Mobile drawer footer link | `.mobile-drawer__footer-link` |
+| Body: is-scrolled | `header.is-scrolled` — scrollY > 40px |
+| Body: sticky scrolled | `#sticky-bar.is-scrolled` — scrollY > 4px |
+| Body: scrolled past hero | `body.header-scrolled` — JS toggles when scrollY ≥ (hero.offsetHeight − stickyH) |
+| Body: transparent header | `body.has-transparent-header` — homepage only (template == 'index') |
+| Body: touch mode | `body.is-touch` — set by animations.js on first touchstart or coarse pointer |
 
 ### Announcement Bar
 | Component | Selector |
 |-----------|----------|
-| Bar wrapper | `#announcement-bar` / `.announcement-bar` |
-| Scroll track | `.announcement-track` |
-| Items container (duplicated for loop) | `.announcement-items` |
-| Individual message | `.announcement-item` |
-| Clickable message | `.announcement-item--link` |
-| Divider between messages | `.announcement-divider` |
-
-### Hero Section
-| Component | Selector |
-|-----------|----------|
-| Section wrapper | `.hero-section` / `#hero-section` |
-| Background image | `.hero-bg` |
-| Background placeholder | `.hero-bg--placeholder` |
-| Hero content | `.hero-content` |
-| Text block | `.hero-text-block` |
-| Eyebrow | `.hero-eyebrow` |
-| Heading | `.hero-heading` |
-| Subheading | `.hero-subheading` |
-| CTA buttons wrapper | `.hero-ctas` |
+| Bar wrapper | `#announcement-bar` / `.announcement-bar` — inline style `background`, `color`, `--bar-speed` |
+| Track | `.announcement-track` |
+| Items (duplicated) | `.announcement-items` |
+| Message span | `.announcement-item` |
+| Message link | `.announcement-item--link` |
+| Divider | `.announcement-divider` |
 
 ### Product Gallery (all modes)
 | Component | Selector |
 |-----------|----------|
-| Gallery container (wraps thumbs + main) | `.product-gallery` |
-| Gallery mode attribute | `data-gallery-mode="slideshow|scroll|grid"` |
-| Thumbnail strip | `#gallery-thumbs` / `.gallery-thumbs` |
-| Individual thumb button | `.gallery-thumb` / `.gallery-thumb.is-active` |
-| Main image area | `#gallery-main` / `.gallery-main` |
+| Gallery container | `.product-gallery` — `data-gallery-mode="slideshow\|scroll\|grid"` — inline CSS vars `--scroll-gap`, `--scroll-aspect`, `--grid-first-ratio`, `--grid-sec-ratio` |
+| Sticky thumbs modifier | `.product-gallery.gallery--sticky-thumbs` (when scroll mode + sticky thumbs on) |
+| Thumbnail strip | `#gallery-thumbs` / `.gallery-thumbs` — hidden mobile ≤768px (v8) |
+| Individual thumb | `.gallery-thumb` / `.gallery-thumb.is-active` — `data-index` |
+| Main image area | `#gallery-main` / `.gallery-main` — `border-radius:var(--radius)` (v8) + `overflow:hidden !important` on mobile (v6+v9) |
 | **Slideshow track** | `#gallery-track` / `.gallery-main__inner` |
-| **Slideshow slide** | `.gallery-slide` / `.gallery-slide.is-active` |
+| **Slideshow slide** | `.gallery-slide` / `.gallery-slide.is-active` — `data-index`, `data-zoom` on img |
 | **Scroll stack container** | `#gallery-scroll-track` / `.gallery-scroll-stack` |
-| **Scroll stack item** | `.gallery-scroll-item` |
+| **Scroll stack item** | `.gallery-scroll-item` — `data-index`, `id="gallery-scroll-{index0}"` — `border-radius:var(--radius)` (v8) |
 | **Grid stack container** | `#gallery-grid-track` / `.gallery-grid-stack` |
-| **Grid item (full width)** | `.gallery-grid-item.gallery-grid-item--full` |
-| **Grid item (half width)** | `.gallery-grid-item.gallery-grid-item--half` |
+| **Grid item full** | `.gallery-grid-item.gallery-grid-item--full` — `data-index="0"` — first image |
+| **Grid item half** | `.gallery-grid-item.gallery-grid-item--half` — `data-index` |
 | Grid image | `.gallery-grid-img` |
-| Gallery image (any mode) | `.gallery-image` |
-| Scroll-mode image specifically | `.gallery-image.gallery-image--scroll` |
-| Prev/next arrow buttons | `#gallery-prev` / `#gallery-next` / `.gallery-arrow` |
-| Zoom hint tooltip | `.gallery-zoom-hint` |
-| Mobile dot indicators container | `.gallery-dots` (JS-injected into `#gallery-main`) |
-| Mobile individual dot | `.gallery-dot` / `.gallery-dot.is-active` |
-| Gallery lightbox overlay | `#gallery-lightbox` / `.gallery-lightbox` |
+| Generic gallery image | `.gallery-image` |
+| Scroll-mode image | `.gallery-image.gallery-image--scroll` |
+| Arrows | `#gallery-prev` / `#gallery-next` / `.gallery-arrow.gallery-arrow--prev/next` |
+| Zoom hint | `.gallery-zoom-hint` |
+| Mobile dots container | `.gallery-dots` (JS-injected into `#gallery-main`, `position:absolute`) |
+| Mobile dot | `.gallery-dot` / `.gallery-dot.is-active` |
+| Gallery placeholder | `.gallery-placeholder` |
+| Gallery lightbox | `#gallery-lightbox` / `.gallery-lightbox` / `.gallery-lightbox.is-open` |
+| Lightbox close | `#gallery-lightbox-close` / `.gallery-lightbox__close` |
+| Lightbox prev | `#gallery-lightbox-prev` / `.gallery-lightbox__prev` |
+| Lightbox next | `#gallery-lightbox-next` / `.gallery-lightbox__next` |
+| Lightbox img | `#gallery-lightbox-img` / `.gallery-lightbox__img` |
+| Lightbox counter | `#gallery-lightbox-counter` / `.gallery-lightbox__counter` |
 
 ### Product Layout & Info
 | Component | Selector |
 |-----------|----------|
-| PDP wrapper section | `.product-hero` |
+| PDP section | `.product-hero` — `background:var(--ivory,#ffffff)` (v8) |
 | Two-column grid | `.product-layout` |
-| Breadcrumb nav | `.product-breadcrumb` |
+| Breadcrumb | `.product-breadcrumb` |
 | Product info column | `#product-info` / `.product-info` |
-| Product title row | `.product-title-row` |
-| Product title h1 | `.product-title` |
+| Title row | `.product-title-row` |
+| H1 | `.product-title` |
 | Rating summary | `#product-rating-summary` / `.product-rating-summary` |
+| Stars display | `.stars-display` — `data-rating` |
+| Star span | `.star` / `.star--filled` |
+| Review count | `#review-count-summary` |
+| Rating link | `.rating-link` |
+| Rating divider | `.rating-divider` |
 | Price row | `.product-price-row` |
+| Price wrap | `.product-price-wrap` |
 | Price block | `.product-price-block` |
-| Main price | `#product-price` / `.product-price` |
-| Compare (strike-through) price | `#product-compare-price` / `.product-price--compare` |
-| Savings badge | `.product-savings` |
+| Main price | `#product-price` / `.product-price` / `.product-price--sale` |
+| Compare price | `#product-compare-price` / `.product-price--compare` |
+| Savings badge | `.product-savings` — `border-radius:var(--radius)` (v8) |
+| Tax note | `.product-tax-note` |
 | Share icons row | `.product-share-inline` |
-| Share button (sm) | `.share-btn-sm` |
-| Bundle nudge | `#bundle-nudge` / `.product-bundle-nudge` |
-| Product form wrapper | `.product-form-wrap` |
+| Share buttons | `.share-btn-sm` + `.share-btn--whatsapp/facebook/twitter/pinterest/email/copy` |
+| Copy link button | `#share-copy-link` — `data-url` |
+| Bundle nudge | `#bundle-nudge` / `.product-bundle-nudge` — `data-bxgy="true"` when metafield = BXGY — `border-radius:var(--radius)` (v8) |
+| Bundle nudge header | `.pbn-header` |
+| Bundle tier | `.pbn-tier` / `#pbn-tier-1/2/3` — `.is-active` when cart qty meets threshold |
+| Product form wrap | `.product-form-wrap` |
 | Product form | `#product-form` / `.product-form` |
-| Hidden variant ID input | `#variant-id` |
-| Variants JSON data | `#product-variants-json` (script type="application/json") |
-| Option block | `.option-block` |
+| Hidden variant input | `#variant-id` (name="id") |
+| Variants JSON | `#product-variants-json` (script type="application/json") |
+| Option block | `.option-block` — `data-option-index` |
 | Option label row | `.option-label-row` |
-| Color swatch radio input | `.color-swatch-input` |
-| Color swatch button | `.color-swatch` |
-| Size button radio input | `.size-btn-input` |
-| Size button label | `.size-btn` |
-| Quantity/ATC row | `#qty-atc-row` / `.qty-atc-row` |
-| Quantity selector wrapper | `.qty-inline` / `.qty-selector` |
-| Qty minus button | `#qty-minus` / `.qty-selector-btn` |
-| Qty plus button | `#qty-plus` / `.qty-selector-btn` |
-| Qty number input | `#product-quantity` / `.qty-selector-input` |
-| ATC button | `#add-to-cart-btn` / `.btn--add-to-cart` |
-| ATC button text span | `#add-to-cart-text` |
-| Wishlist button | `#wishlist-btn` / `.btn-wishlist` |
-| Notify me row (sold out) | `#notify-me-row` |
-| Accordion wrapper | `.accordion` / `.accordion.is-open` |
-| Accordion trigger button | `.accordion-trigger` |
+| Option label | `.option-label` |
+| Selected value display | `.option-selected-value` — `#selected-color`, `#selected-size` |
+| Color swatch radio | `.color-swatch-input` — `data-option-index`, `name="option{N}"` |
+| Color swatch label | `.color-swatch-label` |
+| Color swatch dot | `.color-swatch-dot` — inline `background-color` |
+| Swatch tooltip | `.swatch-tooltip` |
+| Size button radio | `.size-btn-input` — `data-option-index` |
+| Size button label | `.size-btn-label` / `.size-btn-label.is-sold-out` |
+| Size button display | `.size-btn` |
+| Size guide trigger | `#size-guide-trigger` / `.size-guide-link` |
+| Qty + ATC row | `#qty-atc-row` / `.qty-atc-row` |
+| Qty inline wrapper | `.qty-inline` |
+| Qty label | `.qty-inline__label` |
+| Qty selector | `.qty-selector` |
+| Qty minus/plus | `#qty-minus` / `#qty-plus` / `.qty-selector-btn` |
+| Qty input | `#product-quantity` / `.qty-selector-input` — name="quantity" |
+| ATC button | `#add-to-cart-btn` / `.btn--add-to-cart` — name="add" |
+| ATC text | `#add-to-cart-text` |
+| Wishlist button | `#wishlist-btn` / `.btn-wishlist` / `.btn-wishlist.is-active` |
+| Notify me row | `#notify-me-row` / `.notify-me-row` |
+| Notify me button | `#notify-me-btn` / `.notify-me-btn` |
+| Accordion | `.accordion` / `.accordion.is-open` |
+| Accordion trigger | `.accordion-trigger` |
+| Accordion icon | `.accordion-icon` |
 | Accordion body | `.accordion-body` |
-| Discount badge on PDP | `.product-badge` |
-| New arrival badge | `.product-badge--new` |
-| Sale badge | `.product-badge--sale` |
-| Percent-off badge | `.product-badge--discount` |
-| Trust badges (PDP) | `.product-trust-badges` / `.trust-badge` |
-| Sticky ATC bar (mobile) | `#sticky-atc-bar` / `.sticky-atc-bar` / `.sticky-atc-bar.is-visible` |
+| Product trust badges | `.product-trust-badges` / `.trust-badge` |
+| Sticky ATC bar | `#sticky-atc-bar` / `.sticky-atc-bar` / `.sticky-atc-bar.is-visible` — mobile only |
 | Sticky ATC button | `#sticky-atc-btn` / `.sticky-atc-bar__button` |
-| Size guide trigger | `.size-guide-trigger` (opens `#size-guide-overlay`) |
-| Size guide modal | `#size-guide-overlay` / `.modal-overlay` |
+| Variant required error | `.variant-required-error` (added by sticky ATC validation) |
+| Size guide overlay | `#size-guide-overlay` / `.modal-overlay` |
+| Size guide modal | `.size-guide-modal` / `.modal` |
+| Modal header | `.modal__header` |
+| Modal title | `#size-guide-title` / `.modal__title` |
+| Modal close | `#size-guide-close` / `.modal__close` |
+| Modal body | `.modal__body` |
+| PDP badges | `.product-badge` + `.product-badge--new` / `.product-badge--sale` / `.product-badge--discount` — source: `product.metafields.custom.badge_text` or auto-calc % |
 
 ### Cart Drawer
 | Component | Selector |
 |-----------|----------|
-| Cart drawer panel | `#cart-drawer` / `.cart-drawer` |
-| Cart overlay (backdrop) | `#cart-overlay` / `.cart-overlay.is-visible` |
-| Cart drawer inner | `.cart-drawer__inner` |
-| Cart header | `.cart-drawer__header` |
-| Cart title | `.cart-drawer__title` |
-| Cart close button | `#cart-drawer-close` |
-| Cart items list | `#cart-drawer-items` / `.cart-drawer__items` |
-| Empty state | `#cart-empty` / `.cart-drawer__empty` |
-| Cart footer | `#cart-drawer-footer` / `.cart-drawer__footer` |
-| Subtotal price | `#cart-subtotal-price` |
-| Checkout button | `.cart-drawer__checkout` |
+| Drawer panel | `#cart-drawer` / `.cart-drawer` — `aria-hidden` toggled — `border-radius:var(--radius) 0 0 var(--radius)` (v8) |
+| Overlay | `#cart-overlay` / `.cart-overlay.is-visible` |
+| Inner | `.cart-drawer__inner` |
+| Header | `.cart-drawer__header` |
+| Title | `.cart-drawer__title` |
+| Close | `#cart-drawer-close` / `.cart-drawer__close` |
+| Discount bar | `#cart-discount-bar` / `.cart-drawer__discount-bar` |
+| Discount message | `#cart-discount-message` / `.cart-discount-message` |
+| Discount fill bar | `#cart-discount-fill` / `.discount-tier-progress-fill` |
+| Tier nodes | `#tier-node-1/2/3` / `.discount-tier-node` / `.discount-tier-node.is-unlocked` |
+| Items list | `#cart-drawer-items` / `.cart-drawer__items` |
+| Empty state | `#cart-empty` / `.cart-empty` |
+| Cart item | `.cart-item` — `data-key` |
+| Remove btn | `.cart-remove-btn` — `data-key` |
+| Qty btn | `.qty-btn.qty-btn--minus/.qty-btn--plus` — `data-key`, `data-qty` |
+| Qty value | `.qty-value` |
+| Cart item price | `.cart-item__price` |
+| Footer | `#cart-drawer-footer` / `.cart-drawer__footer` |
+| Subtotal | `#cart-subtotal-price` |
+| Discount applied | `#cart-discount-applied` / `.cart-discount-applied` |
+| Discount label | `#cart-discount-label` |
+| Checkout btn | `#checkout-btn` — href `/checkout` or `/checkout?discount=CODE` |
 
 ### Collection Page
 | Component | Selector |
 |-----------|----------|
 | Collection hero | `.coll-hero` |
-| Filter bar | `#coll-filter-bar` / `.coll-filter-bar` |
-| Filter toggle (mobile) | `#filter-toggle-mobile` |
+| Filter bar | `#coll-filter-bar` / `.coll-filter-bar.filter-wrapper` |
+| Filter toggle | `#filter-toggle-mobile` / `.coll-filter-toggle` |
+| Filter count badge | `#filter-count-badge` / `.filter-count-badge` |
+| Clear all | `#sidebar-clear-all` |
+| Active chips | `#active-filter-chips` |
+| Active chip | `.filter-chip` |
+| Sort dropdown | `#collection-sort` / `.collection-sort` |
 | Filter sidebar | `#collection-sidebar` / `.collection-sidebar` |
-| Filter group | `.filter-group` |
-| Filter group head | `.filter-group__head` |
+| Filter panel | `.coll-filter-panel` |
+| Sidebar close | `#sidebar-close-btn` |
+| Filter groups | `#filter-groups` |
+| Filter group | `.filter-group` — `data-group` |
+| Filter group head | `.filter-group__head` — `aria-expanded` |
 | Filter group body | `.filter-group__body` |
 | Filter option | `.filter-option` / `.filter-option.is-active` |
-| Filter checkbox | `.filter-checkbox` |
-| Filter chip (active tag) | `.filter-chip` |
-| Active chips container | `#active-filter-chips` |
-| Sort dropdown | `#collection-sort` |
-| Collection grid | `#collection-grid` / `.collection-grid` |
-| Collection product card | `.collection-product-card` |
-| CPC image wrap | `.cpc-image-wrap` |
+| Filter checkbox | `.filter-checkbox` — `data-group`, `data-value` |
+| Tags data | `#collection-tags-data` (script type="application/json") |
+| Collection grid | `#collection-grid` / `.collection-grid` — `data-columns="2\|3\|4"` |
+| No results | `#collection-no-results` |
+| No results clear | `#no-results-clear` |
+| CPC card | `.collection-product-card` — `data-tags`, `data-variants='[{id,title,options,available}]'`, `data-size-option-index` |
+| CPC image wrap | `.cpc-image-wrap` — `data-images='["url",...]'` — `_carousel` object attached by JS |
 | CPC main image | `.cpc-img` |
-| CPC color swatch | `.cpc-color-swatch` / `.cpc-color-swatch.is-selected` |
-| CPC add button | `.cpc-add-btn` |
+| CPC discount badge | `.cpc-badge.cpc-badge--discount` |
+| CPC label badge | `.cpc-badge.cpc-badge--label` |
+| CPC carousel arrows | `.cpc-arrow.cpc-arrow--prev/.cpc-arrow--next` |
 | CPC dots | `.cpc-dots-container` / `.cpc-dot` / `.cpc-dot.is-active` |
-| Size sheet (bottom sheet) | `#size-sheet` / `.size-sheet` / `.size-sheet.is-open` |
-| Size sheet backdrop | `#size-sheet-backdrop` / `.size-sheet__backdrop` |
+| CPC add button | `.cpc-add-btn` — `data-variant-id`, `data-has-variants` |
+| CPC title | `.cpc-title` |
+| CPC price | `.cpc-price` / `.cpc-price--compare` / `.cpc-price--sale` |
+| CPC color swatch | `.cpc-color-swatch` / `.cpc-color-swatch.is-selected` — `data-color`, `data-variant-id`, `data-image`, `aria-pressed` |
+| Size sheet backdrop | `#size-sheet-backdrop` / `.size-sheet-backdrop` |
+| Size sheet | `#size-sheet` / `.size-sheet` / `.size-sheet.is-open` |
+| Size sheet thumb | `#size-sheet-thumb` |
+| Size sheet name | `#size-sheet-name` |
+| Size sheet color dot | `#size-sheet-color-dot` |
+| Size sheet color label | `#size-sheet-color-label` |
+| Size sheet grid | `#size-sheet-grid` |
+| Size pill | `.size-sheet__pill` / `.size-sheet__pill.is-selected` / `.size-sheet__pill.is-unavailable` |
+
+### Pair With Section
+| Component | Selector |
+|-----------|----------|
+| Section | `.pair-with-section` / `#pair-with` |
+| Carousel track | `#pair-track` / `.pair-with-carousel` |
+| Pair card | `.pair-card` |
+| Image wrap | `.pair-card__image-wrap` |
+| Primary image | `.pair-card__img.pair-card__img--primary` |
+| Secondary image | `.pair-card__img.pair-card__img--secondary` |
+| Tag | `.pair-card__tag` |
+| Hover actions | `.pair-card__hover-actions` |
+| Direct add btn | `.btn-pair-add` — `data-variant-id` |
+| Multi-variant btn | `.btn-pair-variants` — `data-variants`, `data-options`, `data-product-title/price/image` |
+| Carousel nav | `#pair-prev` / `#pair-next` / `#pair-dots` |
+| Variant popup | `#variant-popup-overlay` — `aria-hidden` toggled |
+| Popup close | `#variant-popup-close` |
+| Popup title | `#variant-popup-title` |
+| Popup price | `#variant-popup-price` |
+| Popup image | `#variant-popup-image` |
+| Popup body | `#variant-popup-body` |
+| Popup add btn | `#variant-popup-add` — `data-variant-id` set when valid |
+
+### Similar Products
+| Component | Selector |
+|-----------|----------|
+| Section | `.similar-products` / `#similar-products` |
+| Carousel track | `#similar-track` / `.similar-carousel` |
+| Similar card | `.similar-card` |
+| Image wrap | `.similar-card__image-wrap` — `border-radius:var(--radius)` (v8) |
+| Primary image | `.similar-card__img--primary` |
+| Secondary image | `.similar-card__img--secondary` |
+| Quick add | `.btn-quick-add` (inside `.similar-card__quick`) |
+| Info | `.similar-card__info` |
+| Title | `.similar-card__title` |
+| Price row | `.similar-card__price-row` |
+| Mini swatch | `.mini-swatch` / `.mini-swatch-more` |
+| Nav | `#similar-prev` / `#similar-next` / `#similar-dots` |
+
+### Product Card (legacy snippet)
+| Component | Selector |
+|-----------|----------|
+| Card | `.product-card` — `data-product-id` |
+| Image wrap | `.product-card__image-wrap` |
+| Image scroll | `.product-card__image-scroll` |
+| Image link | `.product-card__image-link` |
+| Scroll dots | `.product-card__scroll-dots` |
+| Scroll dot | `.scroll-dot` / `.scroll-dot.is-active` |
+| Badge | `.product-card__badge.product-card__badge--sale/new/discount` |
+| Actions | `.product-card__actions` |
+| Quick add | `.btn-quick-add` — `data-product-id`, `data-variant-id` |
+| Info | `.product-card__info` |
+| Title | `.product-card__title` |
+| Price | `.product-card__price` |
+| Rating | `.product-card__rating` |
+| Variants | `.product-card__variants` |
+| Variant swatch | `.variant-swatch` |
 
 ### Footer
 | Component | Selector |
@@ -283,50 +416,46 @@
 | Footer body | `.footer-body` |
 | Brand column | `.footer-brand` |
 | Nav columns | `.footer-nav-cols` |
-| Footer bottom bar | `.footer-bottom` |
+| Footer bottom | `.footer-bottom` |
 | Copyright | `.footer-copyright` |
 
-### Global / Misc
+### Global
 | Component | Selector |
 |-----------|----------|
-| Back to top button | `#back-to-top` / `#back-to-top.is-visible` |
-| Review photo lightbox | `#review-lightbox` / `.review-lightbox.is-open` |
-| Review lightbox image | `#review-lightbox-img` |
-| Modal overlay (size guide) | `.modal-overlay` / `.modal-overlay[aria-hidden="false"]` |
-| Modal box | `.modal` |
-| Section header block | `.section-header` |
-| Section eyebrow text | `.section-eyebrow` |
-| Section heading h2 | `.section-heading` / `.section-heading.is-revealed` |
-| Section spacing class | `.section-spacing` (padding: 100px 0 desktop, 64px 0 mobile) |
-| Data-reveal elements | `[data-reveal]` / `[data-reveal].is-revealed` |
-| Scroll-reveal stagger | `[data-stagger="0"]` … `[data-stagger="6"]` |
-| Container | `.container` (max-width: 1400px, padding: 0 40px) |
+| Back to top | `#back-to-top` / `#back-to-top.is-visible` — scrollY/total ≥ 0.7 |
+| Review lightbox | `#review-lightbox` / `.review-lightbox.is-open` |
+| Review lightbox img | `#review-lightbox-img` |
+| Review lightbox close | `#review-lightbox-close` |
+| Review photo thumb | `.review-image-thumb` |
+| Section header | `.section-header` |
+| Section eyebrow | `.section-eyebrow` |
+| Section heading | `.section-heading` / `.section-heading.is-revealed` |
+| Section subheading | `.section-subheading` |
+| Section spacing | `.section-spacing` |
+| Data-reveal | `[data-reveal]` / `[data-reveal].is-revealed` |
+| Stagger | `[data-stagger="0–6"]` |
+| Container | `.container` — max-width:1400px, padding:0 40px desktop / 0 20px mobile |
+| Quick add btn | `.btn-quick-add` — `data-variant-id`, `data-product-id` |
+| Carousel dot | `.carousel-dot` / `.carousel-dot.is-active` |
+| Price sale | `.price--sale` |
+| Price compare | `.price--compare` |
+| Account nav | `.acct-nav` / `.acct-nav__links` / `.acct-nav__link.is-active` |
 
 ---
 
 ## 3. CSS ARCHITECTURE
 
-### CSS Variables (:root in theme.css lines 9–39)
+### CSS Variables (`:root`, theme.css lines 9–39)
 ```
-Color palette:
-  --ivory:        #ffffff   (pure white — page background)
-  --ivory-dk:     #e8e8e8   (light grey border)
-  --blush:        #d4d4d4   (light grey)
-  --blush-dk:     #888888   (mid grey)
-  --rose:         #333333   (dark grey — hover/accent)
-  --sage:         #555555   (mid-dark grey)
-  --sage-lt:      #cccccc   (light grey)
-  --espresso:     #000000   (pure black)
-  --espresso-lt:  #333333   (dark grey)
-  --gold:         #000000   (black — replaces gold)
-  --gold-lt:      #dddddd   (light grey)
-  --white:        #ffffff
-
-Accent layer:
-  --accent:       #FFEB3B   (yellow — CTA buttons, highlights)
-  --accent-hover: #FDD835   (slightly deeper yellow)
-  --accent-soft:  #FFF9C4   (pale yellow backgrounds)
-  --price-sale:   #E8775A   (coral — sale prices)
+Color:
+  --ivory: #ffffff        --ivory-dk: #e8e8e8
+  --blush: #d4d4d4        --blush-dk: #888888
+  --rose: #333333         --sage: #555555
+  --sage-lt: #cccccc      --espresso: #000000
+  --espresso-lt: #333333  --gold: #000000
+  --gold-lt: #dddddd      --white: #ffffff
+  --accent: #FFEB3B       --accent-hover: #FDD835
+  --accent-soft: #FFF9C4  --price-sale: #E8775A
 
 Typography:
   --font-display: 'Cormorant Garamond', Georgia, serif
@@ -336,629 +465,641 @@ Motion:
   --transition:      0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)
   --transition-slow: 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)
 
-Shape (overridden by layout/theme.liquid <style> from settings.border_radius):
-  --radius:    4px   (overridden by settings to 15px by default)
-  --radius-lg: 10px  (not connected to settings — fixed value)
+Shape:
+  --radius:    4px  (overridden to 15px by layout/theme.liquid <style>)
+  --radius-lg: 10px (fixed, not connected to Theme Editor)
 
 Shadow:
   --shadow:    0 4px 20px rgba(0,0,0,0.07)
   --shadow-lg: 0 12px 48px rgba(0,0,0,0.13)
 
-Computed at runtime by JS:
-  --sticky-bar-height: measured from #sticky-bar.offsetHeight (JS sets on load + resize)
+Set at runtime by JS:
+  --sticky-bar-height  (px) — setStickyBarHeight() reads #sticky-bar.offsetHeight
+  --scroll-gap         (px) — inline style on .product-gallery
+  --scroll-aspect            — inline style on .product-gallery
+  --grid-first-ratio         — inline style on .product-gallery
+  --grid-sec-ratio           — inline style on .product-gallery
+  --bar-speed          (s)  — inline style on .announcement-bar
 ```
 
-### CSS Variables Override — layout/theme.liquid `<style>` block
+### CSS Variable Override in layout/theme.liquid
 ```css
-/* Outputs after theme.css link — overrides :root values */
-:root {
-  --radius: {{ settings.border_radius | default: 15 }}px;
-}
+/* Output AFTER theme.css link — overrides :root --radius */
+<style>
+  :root { --radius: {{ settings.border_radius | default: 15 }}px; }
+</style>
 ```
+Current live value: `15px`.
 
-### All Breakpoints (exact px values)
-| Breakpoint | Usage |
-|-----------|-------|
+### All Breakpoints (exact px)
+| Breakpoint | Key usage |
+|-----------|-----------|
 | `max-width: 400px` | Auth form single column |
-| `max-width: 480px` | Header inner tighten; product grid 1 col; ATC button fullwidth |
-| `max-width: 560px` | Blog grid 1 col; newsletter 1 col |
-| `max-width: 600px` | Policy grid 2→4 col |
-| `max-width: 640px` | Footer nav, footer body, about stats grid |
-| `max-width: 720px` | Order detail 1 col |
-| `max-width: 767px` | **MOBILE breakpoint** — all TTB fixes use exactly this |
-| `max-width: 768px` | **Base CSS mobile** — product-layout 1 col, gallery grid change, section-spacing 64px, container padding 20px |
-| `max-width: 800px` | FAQ layout, blog featured 1 col |
-| `max-width: 900px` | PDP grid, pair-with, similar carousel, contact layout |
+| `max-width: 480px` | Header tighten (`.header-actions {gap:4px}`), product grid 1-col, ATC fullwidth |
+| `max-width: 560px` | Blog 1-col, newsletter 1-col |
+| `max-width: 600px` | Policy grid |
+| `max-width: 640px` | Footer nav, footer body, about stats |
+| `max-width: 720px` | Order detail 1-col |
+| `max-width: 767px` | **TTB MOBILE** — all TTB fix blocks use exactly this |
+| `max-width: 768px` | **Base CSS mobile** — product-layout 1-col, gallery grid, container 20px, `.gallery-thumbs {display:none}` (v8) |
+| `max-width: 800px` | FAQ layout, blog featured 1-col |
+| `max-width: 900px` | PDP grid, pair-with, similar carousel, contact |
 | `max-width: 960px` | Collection cards |
-| `max-width: 1000px` | Policy layout, article layout |
+| `max-width: 1000px` | Policy, article layout |
 | `max-width: 1024px` | Footer trust grid, about layout |
-| `max-width: 1100px` | Footer body 2 col, footer nav cols |
-| `min-width: 768px` | **DESKTOP breakpoint** — all TTB desktop fixes use this |
-| `min-width: 768px` (4031) | Size sheet handle hidden |
+| `max-width: 1100px` | Footer body 2-col, footer nav cols |
+| `min-width: 768px` | **TTB DESKTOP** — all TTB desktop fixes use exactly this |
 
-### Major CSS Section Locations (approximate line numbers)
+### Major CSS Sections — Approximate Line Numbers (theme.css)
 | Section | Lines |
 |---------|-------|
-| :root variables | 9–39 |
+| `:root` variables | 9–39 |
 | Reset & base | 41–57 |
 | Container, typography, buttons | 64–210 |
 | Announcement bar | ~216 |
 | Header / site-header | 233–410 |
+| `.mega-backdrop` base definition | **404–411** |
+| `.header-actions { gap:20px }` | **448–452** |
 | Mobile drawer | ~411–500 |
 | Cart drawer | 1240–1270 |
 | Hero banner | ~1700+ |
-| Product page styles | 1770+ |
 | Product layout grid | 1774 |
-| Product gallery | 1782–1870 |
-| Gallery modes (scroll/grid) | 6840–7130 |
+| `.gallery-main` base (border-radius:var(--radius-lg)) | **1818–1824** |
+| `.gallery-slide` base (position:absolute; opacity:0) | **1828** |
+| Gallery scroll mode (desktop overflow:visible) | **6873** |
+| Gallery grid mode (desktop overflow:visible) | **7050** |
 | Product info | 1927+ |
-| Modals (size guide + variant) | 3420–3490 |
-| Sticky bar | 3227–3236 |
+| `.modal-overlay` base (z-index:3000) | **~3424** |
+| `#sticky-bar { position:sticky; top:0; z-index:1000 }` | **3227** |
 | Search bar | 3248–3310 |
-| Section spacing | 70 |
-| Footer | ~1500+ |
-| Collection page | ~3900+ |
-| Collection product card | ~3990+ |
-| Size sheet (bottom sheet) | ~4000–4031 |
-| Newsletter popup | ~5400+ |
-| Blog | ~5260+ |
-| Account | ~4980+ |
-| FAQ | ~5200+ |
-| Reviews | 2697+ |
-| Similar products | 2613+ |
-| Pair with | 2399+ |
-| Hero transparent header | 6123–6252 |
-| Scroll reveal / animations | ~6080 |
-| TTB MOBILE FIXES (old, harmless Dawn classes) | ~7796–7967 |
-| TTB FIXES v3 | 7970–8221 |
-| TTB FIXES v4 | 8223–8322 |
-| TTB FIXES v5 | 8324–8408 |
-| TTB FIXES v6 | 8410–8468 |
-| TTB FIXES v7 | 8470–8589 |
-| TTB FIXES v8 | 8591–8750+ |
+| `max-width:480px` header tighten (gap:4px on `.header-actions`) | **~1756–1764** |
+| TTB FIXES v3 (mobile gallery carousel, transparent header, cart icon) | ~6700s |
+| TTB FIXES v4 (desktop transparent header, mobile double-sticky, gallery dots base) | follows v3 |
+| TTB FIXES v5 (mobile sticky overlays, desktop PDP layout) | follows v4 |
+| TTB FIXES v6 (gallery-slide mobile override) | follows v5 |
+| `.gallery-main { overflow:hidden !important }` (v6 mobile) | **~8432** |
+| TTB FIXES v7 (overflow-x:clip, sticky header desktop, desktop gallery belt-and-suspenders) | follows v6 |
+| `html, body { overflow-x:clip }` | v7 (no media query) |
+| `@media(min-width:768px)` desktop gallery fixes | **~8561** |
+| TTB FIXES v8 (modal z-index, gallery dedup, green space, global border-radius) | follows v7 |
+| `@media(max-width:480px)` cart icon + `.header-actions {gap:0!important}` | **8066–8088** |
+| `.modal-overlay { z-index:500; pointer-events:none }` | v8 |
+| `.modal-overlay[aria-hidden="false"] { z-index:3000; pointer-events:auto }` | v8 |
+| `@media(max-width:768px) .gallery-thumbs { display:none!important }` | **~8626** |
+| `.gallery-main { border-radius:var(--radius) }` | **~8672** |
+| `.product-badge, .product-badge--discount { border-radius:var(--radius) }` | v8 |
+| **TTB FIXES v9** (mega-backdrop mobile, header gap 767px, gallery radius belt-and-suspenders) | **~7871 onward** |
+| `.mega-backdrop { display:none!important; pointer-events:none!important }` (max-width:767px) | v9 |
+| `.header-actions { gap:4px!important }` (max-width:767px) | v9 |
+| `.gallery-main { border-radius:var(--radius)!important; overflow:hidden!important }` (max-width:767px) | v9 |
+| `.product-badge, .product-badge--discount { border-radius:var(--radius)!important }` (max-width:767px) | v9 |
+| **END TTB FIXES v9** | **~7924** |
+
+### Critical Rules — Must Never Be Removed
+| Rule | Where |
+|------|-------|
+| `#sticky-bar { position:sticky; top:0; z-index:1000 }` | line ~3227 — THE sticky anchor |
+| `html, body { overflow-x:clip }` | v7 — prevents scroll container trapping sticky |
+| `#shopify-section-header { position:sticky; top:0 }` (desktop min-width:768px) | v7 — restored header stickiness |
+| `#shopify-section-header { position:static !important }` (mobile max-width:767px) | v5 — removes nested sticky on mobile |
+| `.gallery-main { overflow:hidden !important }` (mobile max-width:767px) | v6+v9 — clips carousel slides |
+| `body.has-transparent-header #MainContent { margin-top:calc(-1*var(--sticky-bar-height)) }` | base CSS — hero behind transparent header |
 
 ---
 
 ## 4. JAVASCRIPT ARCHITECTURE
 
-### theme.js — IIFEs and Event Listeners
+### theme.js — All 8 IIFEs (1181 lines)
 
-**IIFE 1: Header Scroll (lines 1–14)**
-- `window.scroll` → toggles `header.is-scrolled` when `scrollY > 40`
+---
 
-**IIFE 2: Mobile Menu (lines 16–24)**
-- `#mobile-menu-toggle click` → toggles `#mobile-menu.is-open`
+**IIFE 1: Header Scroll (lines 5–14)**
+```
+header = document.getElementById('site-header')
+window.scroll → header.classList.toggle('is-scrolled', scrollY > 40)
+```
 
-**IIFE 3: Search Overlay (lines 26–36)**
-- `searchToggle click` → `searchOverlay.classList.add('is-open')`
-- `searchClose click` / `searchOverlay click` → removes `is-open`
+---
 
-**IIFE 4: Cart Drawer (lines 38–115)**
-- `#cart-toggle click` → `openCart()` → sets `aria-hidden="false"`, adds `is-visible` to overlay, `body.overflow = 'hidden'`, calls `fetchCart()`
-- `#cart-drawer-close click` / `#cart-overlay click` → `closeCart()`
-- `fetchCart()` → `/cart.js` GET → `renderCart(cart)`, `updateDiscountUI(cart)`
+**IIFE 2: Cart Drawer + Discount UI + Quick-Add (lines 38–514)**
 
-**IIFE 5 (STICKY BAR — main scroll logic, lines 515–700)**
-- `setStickyBarHeight()` → reads `#sticky-bar.offsetHeight`, sets `--sticky-bar-height` on `documentElement`; fires on load + resize
-- `updateHeaderOnScroll()` on `window.scroll`:
-  - Toggles `#sticky-bar.is-scrolled` when `scrollY > 4`
-  - On homepage (`body.has-transparent-header`): finds `#hero-section`, computes `threshold = hero.offsetHeight - stickyH`, toggles `body.header-scrolled` when `scrollY >= threshold`
-- Search bar: `#search-toggle click` → `openSearch()` / `closeSearch()`, `Escape` key closes
-- Mobile drawer: `#mobile-menu-toggle click` → `openDrawer()`, sets `aria-hidden="false"`, `body.overflow = 'hidden'`; `#mobile-drawer-close` / `#mobile-drawer-overlay click` → `closeDrawer()`
-- Mobile nav accordion: `.mobile-nav-group__trigger click` → toggles parent `is-open`
-- Back to top: shows `#back-to-top.is-visible` when `scrollY / total >= 0.7`
-- Review lightbox: `.review-image-thumb click` → `#review-lightbox.classList.add('is-open')`
+DOM refs: `#cart-toggle`, `#cart-drawer`, `#cart-overlay`, `#cart-drawer-close`
 
-**IIFE 6: Scroll Dots (lines 704–757)**
-- IntersectionObserver on each `.product-card__image-link` / `.cpc-image-link` within its scroll parent
-- Updates `.scroll-dot.is-active` as images scroll into view
+Functions:
+- `openCart()` — aria-hidden="false" on `#cart-drawer`, `.is-visible` on `#cart-overlay`, `body.overflow='hidden'`, calls `fetchCart()`
+- `closeCart()` — reverses all above
+- `fetchCart()` — async GET `/cart.js` → JSON → `renderCart(cart)` + `updateDiscountUI(cart)`
+- `renderCart(cart)` — removes old `.cart-item` elements; updates `#cart-count`; shows/hides `#cart-empty`/`#cart-drawer-footer`; builds `.cart-item` HTML per item (image, title, variant, qty controls, remove btn, price); inserts before `#cart-empty`; attaches `.qty-btn` click → `updateCartItem(key, qty)` and `.cart-remove-btn` click → `updateCartItem(key, 0)`
+- `escHtml(str)` — `&`, `<`, `>`, `"` escaping
+- `updateCartItem(key, qty)` — POST `/cart/change.js` → `renderCart` + `updateDiscountUI`
+- `formatMoney(cents)` — uses `window.moneyFormat`; handles `{{amount}}`, `{{amount_no_decimals}}`, `{{amount_with_comma_separator}}`, `{{amount_no_decimals_with_comma_separator}}`
+- Quick-add: event delegation `.btn-quick-add` → POST `/cart/add.js` → `fetchCart()` + `openCart()`
+- `window.bxgyProductIds` — set by cart-drawer.liquid inline script (product IDs with `custom.discount == 'BXGY'`)
+- `DISCOUNT_TIERS` — `[{qty:2, pct:5, label:'5% off', code:'BUNDLE5'}, {qty:3, pct:10, ...}, {qty:5, pct:20, ...}]`
+- `getBxgyCount(cart)` — if `window.bxgyProductIds` empty → returns `cart.item_count`; else counts only eligible product IDs
+- `getCurrentTier(qty)` / `getNextTier(qty)` — iterate DISCOUNT_TIERS
+- `updateDiscountUI(cart)`:
+  - Lights up `#tier-node-1/2/3.is-unlocked` when qty ≥ 2/3/5
+  - Updates `#cart-discount-message` text
+  - Sets `#cart-discount-applied` display + `#cart-discount-label` text
+  - Updates checkout btn hrefs to `/checkout?discount=CODE`
+  - Activates `#pbn-tier-1/2/3.is-active` when qty ≥ 2/3/5
+  - Fills `#cart-discount-fill` width% (0%→50%→100% across 2/3/5 items)
+  - Updates `#discount-progress-text` and `#discount-progress-fill` (section bar)
+  - Calls `showDiscountPopup` when `nextTier.qty - qty === 1`
+- `showDiscountPopup(tier, totalPrice)` — sets `#discount-popup-heading/text/fill`, shows `#discount-popup` (aria-hidden="false"), auto-hides after 6s via `popupTimeout`
+- `initCarousel({trackId, prevId, nextId, dotsId, slidesPerView})`:
+  - `goTo(index)` — `transform:translateX(-${idx * slideWidth * slidesPerView}px)`, `updateDots()`
+  - `buildDots()` — creates `.carousel-dot` buttons in `dotsId` container
+  - `startAutoplay()` / `stopAutoplay()` — 5s interval
+  - Touch: `touchstart`/`touchend` swipe delta >40px → `goTo`
+  - Resize → `buildDots()` + `goTo(current)`
+- Inits: `#discount-track` carousel + `#testimonials-track` carousel
+- Exposes `window.fetchCart = fetchCart` and `window.renderCart = renderCart`
+- Calls `fetchCart()` on load
 
-**IIFE 7: Collection Card Carousels (lines 759–823)**
-- `initCarousel(wrap)` — for each `.cpc-image-wrap[data-images]`, creates prev/next arrows, `goTo(idx)` cross-fades image with 200ms opacity transition
-- Swatch click → `setImages()` to filter images by color name prefix
-- Arrow key nav when hovering a card
+---
 
-**IIFE 8: Size Sheet (lines 825–1002)**
-- `.cpc-add-btn click` → if `data-has-variants` → `openSheet(card, btn)` → populates sheet with title, thumbnail, size pills from `card.dataset.variants`
-- Size pill click → `confirmAddToCart(variantId, btn)` → `/cart/add.js` POST → opens cart drawer
-- Swatch click → updates `addBtn.dataset.variantId`, filters carousel images by color
+**IIFE 3: Global UI — Search, Mobile Drawer, Back-to-Top, Lightbox (lines 522–702)**
 
-**IIFE 9: TTB PDP Gallery (lines 1004–1123)**
-- Reads `data-gallery-mode` from `.product-gallery`
-- Mode "scroll": track = `#gallery-scroll-track`, items = `.gallery-scroll-item`
-- Mode "grid": track = `#gallery-grid-track`, items = `.gallery-grid-item`
-- Mode "slideshow": track = `#gallery-track`, items = `.gallery-slide`
+Functions:
+- `setStickyBarHeight()` — `document.documentElement.style.setProperty('--sticky-bar-height', bar.offsetHeight + 'px')`; fires on load + resize
+- `updateHeaderOnScroll()`:
+  - `#sticky-bar.is-scrolled` when `scrollY > 4`
+  - On `body.has-transparent-header`: `threshold = hero.offsetHeight - stickyH` (fallback 80px); `body.header-scrolled` when `scrollY >= threshold`
+- `openSearch()` — `.is-open` on `#header-search-bar`, aria-hidden="false", aria-expanded="true" on `#search-toggle`, `.is-open` on toggle; `searchInput.focus({preventScroll:true})` synchronously + rAF belt-and-suspenders for iOS virtual keyboard
+- `closeSearch()` — reverses all
+- `searchToggle` click → toggle `openSearch`/`closeSearch`; `Escape` keydown → `closeSearch()`
+- `openDrawer()` — `#mobile-drawer` aria-hidden="false", `#mobile-drawer-overlay.is-visible`, `aria-expanded="true"`, `body.overflow='hidden'`
+- `closeDrawer()` — reverses
+- `.mobile-nav-group__trigger` click → toggles parent `.mobile-nav-group.is-open`
+- Back to top: `#back-to-top.is-visible` when `scrollY / (scrollHeight - innerHeight) >= 0.7`; click → `window.scrollTo({top:0, behavior:'smooth'})`
+- Review lightbox: `.review-image-thumb` click → `#review-lightbox-img.src` = thumb img src with `300x300`→`1200x`; `#review-lightbox.is-open`; Escape/overlay click/close btn → remove `.is-open`
+
+---
+
+**IIFE 4: Scrollable Image Dots (lines 711–757)**
+- `initImageScrollDots(scrollEl, dotsEl)` — IntersectionObserver on `.product-card__image-link` / `.cpc-image-link`; threshold 0.6; updates `.scroll-dot.is-active`
+- `initAllCards()` — wires `.product-card__image-wrap` (scroll + dots) and `.cpc-image-wrap` (scroll + dots)
+
+---
+
+**IIFE 5: Collection Card Carousels (lines 762–823)**
+- `initCarousel(wrap)` — parses `wrap.dataset.images` JSON; opacity-fade via `img.style.opacity='0'` → setTimeout 200ms → `img.src=url; opacity='1'`; renders `.cpc-dot` spans via `renderDots()`
+- `wrap._carousel` = `{ goTo(idx), setImages(arr), get defaultImages() }`
+- Arrow key nav when hovering: `mouseover` tracks `hoveredCard`; ArrowLeft/Right → `.cpc-color-swatch` click
+- Swatch click normalization: `normColor(str)` = `str.toLowerCase().replace(/[-_\s]+/g,'')`
+
+---
+
+**IIFE 6: Collection Cards — Size Sheet + Add to Cart (lines 828–1002)**
+
+DOM refs: `#size-sheet-backdrop`, `#size-sheet`, `#size-sheet-thumb`, `#size-sheet-name`, `#size-sheet-color-dot`, `#size-sheet-color-label`, `#size-sheet-grid`
+
+Functions:
+- `updateCartBadge()` — GET `/cart.js` → updates all `[data-cart-count]` (text + display)
+- `confirmAddToCart(variantId, btn)` — POST `/cart/add.js` with `items:[{id:parseInt(variantId),quantity:1}]`; on success: calls `window.renderCart`, `updateCartBadge`, opens cart drawer
+- `closeSheet()` — removes `.is-open` from `#size-sheet`, `.is-visible` from `#size-sheet-backdrop`
+- `openSheet(card, btn)`:
+  - Reads title from `.cpc-title a`
+  - Gets active swatch color name and image
+  - Reads `card.dataset.variants` JSON + `card.dataset.sizeOptionIndex`
+  - Extracts unique sizes from variants; fallback to hardcoded NB/0-3M/.../18-24M
+  - Builds `.size-sheet__pill` buttons in `#size-sheet-grid`
+  - Pill click: `.is-selected`, `closeSheet()`, `confirmAddToCart(variantId, btn)`
+  - `requestAnimationFrame` triggers both `.is-visible` and `.is-open` simultaneously
+- `.cpc-add-btn` click: if `data-has-variants` → `openSheet`; else → `confirmAddToCart` directly
+- Swatch click: ring toggle, updates `addBtn.dataset.variantId`, `normColor` filter on carousel images
+
+---
+
+**IIFE 7: TTB PDP Gallery (lines 1004–1123)**
+- Guard: `document.querySelector('.template-product')` — only runs on product pages
+- Reads `gallery.getAttribute('data-gallery-mode')` → `track` + `items`:
+  - `scroll` → `#gallery-scroll-track`, `.gallery-scroll-item`
+  - `grid` → `#gallery-grid-track`, `.gallery-grid-item`
+  - `slideshow` (default) → `#gallery-track`, `.gallery-slide`
 - `isMobile = window.innerWidth <= 767`
-- `scrollToIndex(idx)` → `track.scrollTo({ left: track.offsetWidth * idx })`
-- `initDots()` — if mobile AND ≥2 items: creates `.gallery-dots` container with buttons, appends to `#gallery-main`, syncs active dot on track scroll
-- `initVariantImageSwitch()` — reads `#product-variants-json`, listens to `.color-swatch-input, .size-btn-input change` → finds matching variant → calls `scrollToIndex(variant.featured_image.position - 1)`
+- `scrollToIndex(idx)` — `track.scrollTo({left: track.offsetWidth * idx, behavior:'smooth'})`
+- `initDots()` — if `isMobile && items.length >= 2`: creates `.gallery-dots` div with `.gallery-dot` buttons (type="button", aria-label="Image N"); appends to `#gallery-main`; `track.scroll` (passive) → `Math.round(scrollLeft / offsetWidth)` → toggles `.is-active`
+- `initVariantImageSwitch()` — parses `#product-variants-json`; listens `.color-swatch-input, .size-btn-input change`; `getSelectedOptions()` reads all checked inputs with `data-option-index`; `findVariant(opts)` matches `v['option'+(idx+1)] === opts[idx]` for all keys; on match: updates `#variant-id.value`, calls `scrollToIndex(variant.featured_image.position - 1)`
 
-**IIFE 10: Sticky ATC Bar (lines 1125–1180)**
-- Only runs if `window.innerWidth <= 767`
-- IntersectionObserver on `[name="add"]` (native ATC button) → toggles `#sticky-atc-bar.is-visible` and `aria-hidden` when button scrolls out of view
-- `#sticky-atc-btn click` → validates all `fieldset[data-option-index]` and `select[data-option-index]` → clicks `nativeBtn` if valid, else scrolls to invalid and adds `.variant-required-error`
+---
 
-### product-page.js — Event Listeners
+**IIFE 8: Sticky ATC Bar (lines 1125–1181)**
+- Guard: `window.innerWidth > 767` → return (mobile only)
+- DOM: `#sticky-atc-bar`, `#sticky-atc-btn`, `[name="add"]` (native ATC button)
+- IntersectionObserver on native ATC btn → `#sticky-atc-bar.is-visible` + aria-hidden when btn out of view
+- `#sticky-atc-btn` click: validates `fieldset[data-option-index]` (must have checked radio) and `select[data-option-index]` (must have value); invalid → `scrollIntoView({block:'center'})` + `.variant-required-error`; valid → `nativeBtn.click()`
+
+---
+
+### product-page.js — Functions (938 lines)
 
 **Gallery:**
-- Slideshow mode: thumb click → `showSlide(idx)`, prev/next arrows → `showSlide()`, touch start/end → swipe detection → `showSlide()`
-- Scroll mode: thumb click → `window.scrollTo()` to `#gallery-scroll-{idx}`, IntersectionObserver syncs active thumb
+- `isScrollMode` = `galleryEl.dataset.galleryMode === 'scroll'`
+- Slideshow (`!isScrollMode`): `showSlide(index)` — toggles `.is-active` on `.gallery-slide` and `.gallery-thumb`; prev/next arrows; touch swipe (>40px delta) on `#gallery-main`
+- Scroll mode: thumb click → `window.scrollTo` to `#gallery-scroll-{idx}` offset by `--sticky-bar-height`; IntersectionObserver (`rootMargin:'-15% 0px -55% 0px'`) syncs active thumb
 
-**Variant selector:**
-- `.size-btn-input, .color-swatch-input change` → `findVariant()` → updates `#variant-id`, price display, availability (shows/hides `#qty-atc-row` vs `#notify-me-row`), triggers gallery scroll to variant image
+**Variants:**
+- `selectedOptions` object keyed by option index
+- `.size-btn-input, .color-swatch-input change` → updates `selectedOptions[idx]`, updates `.option-selected-value` label, calls `findVariant()`
+- `findVariant()` — matches `variantsData` where `v.options[i] === selectedValues[i]` for all indices; updates `#variant-id`, prices (`formatMoney(cents) = '$'+(cents/100).toFixed(2)`), availability (shows/hides `#qty-atc-row`/`#notify-me-row`)
 
-**Add to cart:**
-- `#product-form submit` → `/cart/add.js` → opens `#cart-drawer`, calls `fetchCart()`
+**ATC:**
+- `#product-form submit` → POST `/cart/add.js` → opens cart drawer (`#cart-drawer` aria-hidden="false", `#cart-overlay.is-visible`)
 
-**Quantity:**
-- `#qty-minus / #qty-plus click` → increments/decrements `#product-quantity`
+**Qty:**
+- `#qty-minus` / `#qty-plus` → clamp 1–99 on `#product-quantity`
 
 **Accordions:**
-- `.accordion-trigger click` → toggles `.is-open` on parent `.accordion`, toggles `body.style.display`
+- `.accordion-trigger click` → toggles `.accordion.is-open`, `aria-expanded`, `.accordion-body` display
 
 **Wishlist:**
-- `#wishlist-btn click` → toggles `.is-active`, fills heart SVG
+- `#wishlist-btn click` → toggles `.is-active`, fills SVG `fill`
 
-**Similar carousel:**
-- `#similar-prev / #similar-next click`, touch swipe → `goToSim()` → CSS transform on `#similar-track`
-- `getSlidesPerView()`: ≤480px → 1, ≤768px → 2, else → 4
+**Pair-With:**
+- `pairChecks` = `.pair-check` elements; `updateBundlePrice()` sums checked items + main price
+- `#add-bundle-btn` → POST `/cart/add.js` with main + checked variant IDs
+
+**Similar Carousel:**
+- `getSlidesPerView()` → ≤480px: 1, ≤768px: 2, else: 4
+- `goToSim(page)` → `transform:translateX(-${page * pv * cardWidth}px)` on `#similar-track`
+- Prev/next + touch swipe
 
 **Reviews:**
-- Write review: `#write-review-btn click` → sets `aria-hidden="false"` on `#review-form-wrap`
-- Star picker: hover fills stars, click sets `#review-rating`
-- Fit buttons: `.fit-btn click` → active state
-- Helpful votes: `.helpful-btn click` → increments count
+- `openReviewForm()` / `closeReviewForm()` — `#review-form-wrap` aria-hidden toggle
+- Star picker: `.star-pick` hover/click → `.is-filled`, updates `#review-rating`
+- Fit selector: `.fit-btn click` → `.is-active`, updates `#review-fit`
+- Helpful: `.helpful-btn click` → `.is-voted`, increments count in text
+- Form submit: simulated delay → `buildReviewCard(data)` → prepend to `#reviews-list`
+- `computeRatings()` — reads `.review-card[data-stars]`, computes avg, updates `#avg-score`, `#summary-stars`, `#total-reviews-count`, `#review-count-summary`, `.breakdown-fill[data-stars]`, `.breakdown-count[data-stars]`
+- Filter tabs: `.filter-tab click` → show/hide `.review-card` by `data-stars`
 
-### animations.js — Event Listeners / Observers
+**Size Guide Popup (separate IIFE):**
+- `#size-guide-trigger click` → `#size-guide-overlay` aria-hidden="false"
+- `#size-guide-close click` / overlay click / Escape → aria-hidden="true"
 
-- `IntersectionObserver` on `[data-reveal]` → adds `.is-revealed` (fires once, threshold: 0.12)
-- `IntersectionObserver` on `.section-heading` → adds `.is-revealed` (threshold: 0.3)
-- `IntersectionObserver` on `[data-count-to]` → animate counter 0 → N (threshold: 0.5)
-- `window.scroll` + `requestAnimationFrame` → parallax on `.hero-bg, .about-hero__img, .article-hero__img` (±40px max shift)
-- Mega menu: `touchstart` on document → `body.is-touch`; nav link click (touch mode) → toggle `.is-open` on `.nav-item--mega`; `mouseenter/leave` → `aria-expanded`; `touchstart` outside → `closeAll()`; `Escape` → `closeAll()`
-- Card tilt: `mousemove` on `.collection-product-card` → `perspective(1000px) rotateX rotateY`
-- Page transition (opt-in via `body.enable-page-transitions`): link click → fade out `body`, navigate
+**Pair-With Carousel + Variant Popup (separate IIFE):**
+- `#pair-track` carousel: `perView()` → ≤480:1, ≤768:2, ≤1100:3, else:4
+- `.btn-pair-variants click` → `openVP(btn)` reads `data-variants`, `data-options`, `data-product-title/price/image`; `renderOptions()` builds color swatches or size buttons; `updateBtn()` finds matching variant → enables `#variant-popup-add`
+- `#variant-popup-add click` → POST `/cart/add.js`
 
-### Scroll-based class toggles
+**Gallery Lightbox (nested IIFE in pair-with IIFE):**
+- `getImages()` — collects `.gallery-slide img` → `.gallery-scroll-item img` → `.gallery-grid-item img`
+- `openLightbox(index)` → shows `#gallery-lightbox.is-open`
+- `showImage(index)` — uses `img.dataset.zoom` or replaces size suffix with `_2000x`
+- All images get `cursor:zoom-in` + click handler
+- Prev/next arrows, keyboard ArrowLeft/Right/Escape, touch swipe >50px
+
+**Notify Me (end of pair-with IIFE):**
+- `#notify-me-btn click` → `mailto:` with product title + page URL
+
+---
+
+### animations.js — All Functions (381 lines)
+
+| Function | What it does |
+|----------|-------------|
+| `initScrollReveal()` | IntersectionObserver on `[data-reveal]`; threshold 0.12, rootMargin `0px 0px -40px 0px`; adds `.is-revealed`; fires once (unobserve) |
+| `initStaggerGrids()` | Finds `[data-stagger-children]`, auto-assigns `data-stagger="0–6"` to child `[data-reveal]` elements |
+| `initParallax()` | `window.scroll` + rAF on `.hero-bg, .about-hero__img, .article-hero__img`; `transform:translateY(${offset}px) scale(1.1)` where offset = ±40px max |
+| `initCounters()` | IntersectionObserver threshold 0.5 on `[data-count-to]`; cubic ease-out animation 0→N, uses `data-count-suffix`, `data-count-dur` |
+| `initMegaMenu()` | Touch detection via `window.matchMedia('(pointer:coarse)')` + first `touchstart`→ adds `body.is-touch`. Desktop: CSS :hover drives panels, JS only updates `aria-expanded`. Touch: link click → `e.preventDefault()`, toggle `.is-open` + `aria-expanded`; `touchstart` outside `.nav-item--mega` → `closeAll()`. `Escape` → `closeAll()` |
+| `initCardTilt()` | Skip if touch device. `.collection-product-card, .blog-featured` mousemove → `perspective(1000px) rotateX(${y*-5}deg) rotateY(${x*5}deg) translateY(-4px)`; mouseleave → reset |
+| `initHeadingReveal()` | IntersectionObserver threshold 0.3 on `.section-heading` → adds `.is-revealed` once |
+| `autoInstrument()` | Adds `data-reveal`, `data-stagger-children`, `data-stagger` attrs to: `.section-header`, grid cards, `.blog-featured`, `.testimonial-card`, `.policy-summary-card`, `.about-story__text/image`, `.contact-info-card`, `.footer-trust__item`, `.faq-item` |
+| `initPageTransition()` | Body `opacity:0` → `opacity:1` on load; internal link clicks → `opacity:0` → navigate after 280ms. Only active if `body.enable-page-transitions` |
+| `init()` | Calls all the above in order. Runs on `DOMContentLoaded` or immediately if already loaded. |
+
+---
+
+### collection-filters.js — Key Functions (315 lines)
+
+| Function | What it does |
+|----------|-------------|
+| `parseTags(tags)` | `"filter-Color:White"` → `{Color:['White',...]}` |
+| `countProducts(groupName, value)` | Count `.collection-product-card[data-tags]` containing `filter-GroupName:value` |
+| `renderFilters(groups)` | Builds `.filter-group` with `.filter-group__head` (toggle) and `.filter-group__body` (checkboxes + color dots) |
+| `toggleFilter(group, value, active)` | Updates `activeFilters` object → `applyFilters()` + `renderChips()` + `updateFilterBadge()` + `syncCheckboxStates()` |
+| `applyFilters()` | Shows/hides `.collection-product-card` cards; shows `#collection-no-results` if all hidden. Logic: AND across groups, OR within group values |
+| `renderChips()` | Builds `.filter-chip` buttons in `#active-filter-chips` |
+| `updateFilterBadge()` | Shows/hides `#filter-count-badge` with total count |
+| `syncCheckboxStates()` | Keeps `.filter-checkbox` `checked` state in sync after external clear |
+| `clearAll()` | Resets `activeFilters`, calls all update functions |
+| Sort dropdown | `#collection-sort change` → URL `?sort_by=VALUE` → `window.location.href` |
+| Filter panel toggle | `#filter-toggle-mobile click` → `#collection-sidebar.is-mobile-open`; outside click closes |
+
+---
+
+### discount-engine.js (57 lines)
+
+`window.DiscountEngine` IIFE exposing:
+- `TIERS = [{qty:2,pct:5,code:'BUNDLE5'}, {qty:3,pct:10,code:'BUNDLE10'}, {qty:4,pct:15,code:'BUNDLE15'}, {qty:5,pct:20,code:'BUNDLE20'}]`
+  - Note: 4-tier system (2/3/4/5) vs theme.js which uses 3-tier (2/3/5). Discount engine is the definitive source for cart attributes.
+- `getTier(itemCount)` — returns highest matching tier
+- `applyDiscount(itemCount)` — POST `/cart/update.js` with `attributes:{_bundle_discount_pct, _bundle_discount_items, _bundle_discount_code}` and `note`
+- Listens to `cart:updated` custom event
+
+---
+
+### Scroll-based Class Toggles (summary)
 | Class | Element | Threshold |
 |-------|---------|-----------|
-| `is-scrolled` | `header#site-header` | `scrollY > 40` |
-| `is-scrolled` | `#sticky-bar` | `scrollY > 4` |
-| `header-scrolled` | `body` | `scrollY >= hero.offsetHeight - stickyBarHeight` (homepage only, fallback 80px) |
-| `is-visible` | `#back-to-top` | `scrollY / totalScroll >= 0.7` |
-| `is-visible` | `#sticky-atc-bar` (mobile only) | native ATC button out of viewport (IntersectionObserver) |
+| `is-scrolled` | `header#site-header` | scrollY > 40 |
+| `is-scrolled` | `#sticky-bar` | scrollY > 4 |
+| `header-scrolled` | `body` | scrollY ≥ hero.offsetHeight − stickyBarHeight (homepage only) |
+| `is-visible` | `#back-to-top` | scrollY / totalScroll ≥ 0.7 |
+| `is-visible` | `#sticky-atc-bar` | native ATC btn scrolled out of viewport (IntersectionObserver, mobile only) |
 | `is-revealed` | `[data-reveal]` | 12% in viewport (IntersectionObserver) |
 | `is-revealed` | `.section-heading` | 30% in viewport (IntersectionObserver) |
+| `is-unlocked` | `#tier-node-1/2/3` | cart BXGY qty ≥ 2/3/5 |
+| `is-active` | `#pbn-tier-1/2/3` | cart BXGY qty ≥ 2/3/5 |
+| `is-open` | `.nav-item--mega` | touch tap (animations.js) |
+| `is-touch` | `body` | first touchstart or coarse pointer |
+| `is-open` | `#size-sheet` | add btn click on multi-variant card |
+| `is-mobile-open` | `#collection-sidebar` | filter toggle click |
 
 ---
 
 ## 5. LIQUID ARCHITECTURE
 
-### layout/theme.liquid Structure
+### layout/theme.liquid Body Classes
 ```
-<html>
-  <head>
-    SEO: title, meta description, canonical, robots
-    Open Graph tags (product, collection, article, default)
-    Twitter Card tags
-    JSON-LD (Product + BreadcrumbList for PDP, ClothingStore for index/page, Article)
-    {{ content_for_header }}  ← Shopify injects analytics, consent
-    Google Fonts: Cormorant Garamond + DM Sans
-    {{ 'theme.css' | asset_url | stylesheet_tag }}
-    <style>:root { --radius: {{ settings.border_radius | default: 15 }}px; }</style>
-    <script src="discount-engine.js" defer>
-  </head>
-  <body class="
-    [customer-logged-in if logged in]
-    template-{{ template | handle }}   ← e.g. template-product, template-index
-    [has-transparent-header if template == 'index']
-  ">
-    <div id="sticky-bar" class="sticky-bar">
-      {% section 'announcement-bar' %}   ← generates #shopify-section-announcement-bar
-      {% section 'header' %}             ← generates #shopify-section-header
-    </div>
-    <main id="MainContent" role="main" tabindex="-1">
-      {{ content_for_layout }}           ← renders template sections
-    </main>
-    {% section 'footer' %}
-    <div id="cart-drawer">{% section 'cart-drawer' %}</div>
-    <div class="cart-overlay" id="cart-overlay"></div>
-    {% section 'discount-popup' %}
-    {% section 'newsletter-popup' %}
-    <button id="back-to-top">...</button>
-    <div class="review-lightbox" id="review-lightbox">...</div>
-    window.shopName, window.cartUrl, window.moneyFormat globals
-    <script src="theme.js" defer>
-    <script src="animations.js" defer>
-    [if template == 'product'] <script src="product-page.js" defer>
-    [if template contains 'collection'] <script src="collection-filters.js" defer>
-    <div class="gallery-lightbox" id="gallery-lightbox">...</div>
-  </body>
-</html>
+customer-logged-in    — when {{ customer }} is truthy
+template-product      — always (from template handle)
+template-index        — always on homepage
+template-collection   — always on collection pages
+...etc
+has-transparent-header — only when template == 'index'
 ```
 
-### Body classes applied
-- `customer-logged-in` — when `{{ customer }}` is truthy
-- `template-product`, `template-index`, `template-collection`, etc. — always
-- `has-transparent-header` — only on homepage (`template == 'index'`)
+### Gallery Mode Resolution (product-hero.liquid lines 18–29)
+```liquid
+{% assign g_mode_raw = section.settings.gallery_mode | default: 'global' %}
+{% if g_mode_raw == 'global' or g_mode_raw == blank %}
+  {% assign g_mode = settings.global_gallery_mode | default: 'slideshow' %}
+{% else %}
+  {% assign g_mode = g_mode_raw %}
+{% endif %}
+```
+**Current live: `gallery_mode = "grid"` (section-level override in settings_data.json)**
 
-### Templates → Sections mapping
-| Template | Sections rendered |
-|----------|------------------|
-| `templates/index.json` | hero-banner, featured-collections, discount-carousel, product-grid, trust-cards, testimonials, subscribe-cta |
-| `templates/product.liquid` | product-hero, pair-with, similar-products, product-reviews |
-| `templates/collection.liquid` | collection-products |
-| `templates/cart.liquid` | cart-page |
-| `templates/article.liquid` | blog-article |
-| `templates/blog.liquid` | blog-listing |
-| `templates/page.about.liquid` | page-about |
-| `templates/page.contact.liquid` | page-contact |
-| `templates/page.faq.liquid` | page-faq |
-| `templates/page.returns.liquid` | page-returns |
-| `templates/customers/account.liquid` | customers-account |
-| `templates/customers/addresses.liquid` | customers-addresses |
-| `templates/customers/login.liquid` | customers-login |
-| `templates/customers/order.liquid` | customers-order |
-| `templates/customers/register.liquid` | customers-register |
-| `templates/customers/reset_password.liquid` | customers-reset-password |
+### Metafields Used
+| Namespace | Key | Type | Used by |
+|-----------|-----|------|---------|
+| `custom` | `badge_text` | text | product-hero.liquid, collection-products.liquid, similar-card.liquid, product-card.liquid — discount % badge |
+| `custom` | `discount` | text (value="BXGY") | cart-drawer.liquid — eligible for bundle tier |
+| `custom` | `pair_with` | product_reference list | pair-with.liquid — "Complete the Look" |
+| `custom` | `similar_products` | product_reference list | similar-products.liquid — "Similar Pieces" |
+| `reviews` | `rating` | rating | product-card.liquid — star rating |
+| `reviews` | `rating_count` | number | product-card.liquid — review count |
 
-### Settings flow: schema → Liquid → CSS
-1. `config/settings_schema.json` defines setting types, IDs, defaults
-2. Shopify admin writes user values to `config/settings_data.json`
-3. In Liquid: `{{ settings.setting_id }}` outputs the value
-4. In `layout/theme.liquid` `<style>` block: `--radius: {{ settings.border_radius }}px` → overrides CSS variable
-5. Gallery mode: `{{ settings.global_gallery_mode }}` used in `product-hero.liquid` to set `data-gallery-mode` attribute and conditionally render the correct gallery container
+### Global JS Variables (set in layout/theme.liquid)
+```javascript
+window.shopName    = {{ shop.name | json }};
+window.cartUrl     = {{ routes.cart_url | json }};
+window.moneyFormat = {{ shop.money_format | json }};  // e.g. "₹{{amount}}"
+```
 
-### Snippets and where rendered
-| Snippet | Rendered by |
-|---------|-------------|
-| `account-nav.liquid` | customers-account, customers-addresses, customers-order, customers-reset-password |
-| `product-card.liquid` | product-grid.liquid (legacy card) |
-| `product-card-placeholder.liquid` | product-grid.liquid (when no products) |
-| `similar-card.liquid` | similar-products.liquid |
+### BXGY Eligible Product IDs (set in cart-drawer.liquid)
+```javascript
+window.bxgyProductIds = [
+  // product IDs where metafields.custom.discount == 'BXGY'
+];
+```
+
+### Swatch Config (set in collection-products.liquid inline script)
+```javascript
+window.swatchConfig = { "name": { hex, border, label }, ... }
+// built from assets/swatches.json fetched at runtime
+```
 
 ---
 
 ## 6. THEME SETTINGS
 
-### settings_schema.json — All groups and settings
-
+### settings_schema.json — Complete
 **Group: Social Media & SEO**
-| ID | Type | Default |
-|----|------|---------|
-| `twitter_handle` | text | (none) |
-| `og_image` | image_picker | (none) |
-| `google_analytics_id` | text | (none) |
+| ID | Type | Notes |
+|----|------|-------|
+| `twitter_handle` | text | Default `@thetinybosses` |
+| `og_image` | image_picker | Default share image for non-product pages |
+| `google_analytics_id` | text | GA4 Measurement ID (G-XXXXXXXXXX) |
 
 **Group: Product Pages**
-| ID | Type | Default |
-|----|------|---------|
-| `global_gallery_mode` | select | `"slideshow"` |
-| `grid_first_image_ratio` | select | `"3/4"` |
-| `grid_secondary_ratio` | select | `"1/1"` |
-| `grid_gap` | range (0–20, step 2) | `4` |
+| ID | Type | Default | Notes |
+|----|------|---------|-------|
+| `global_gallery_mode` | select | `"slideshow"` | slideshow / scroll / grid |
+| `grid_first_image_ratio` | select | `"3/4"` | 3/4, 4/5, 1/1 |
+| `grid_secondary_ratio` | select | `"1/1"` | 1/1, 3/4, 4/5 |
+| `grid_gap` | range 0–20 step 2 | `4` | px |
 
-**Group: Design** *(added in v8 session)*
-| ID | Type | Default |
-|----|------|---------|
-| `border_radius` | range (0–30, step 1, unit px) | `15` |
+**Group: Design**
+| ID | Type | Default | Notes |
+|----|------|---------|-------|
+| `border_radius` | range 0–30 step 1 unit px | `15` | Controls `--radius` CSS variable site-wide |
 
-### Settings currently wired to CSS variables
-| Setting ID | CSS variable | Where output |
-|-----------|-------------|-------------|
-| `border_radius` | `--radius` | `layout/theme.liquid` `<style>` block |
-| `global_gallery_mode` | `data-gallery-mode` attribute | `product-hero.liquid` line ~32 |
+### Settings Wired to CSS/Liquid
+| Setting ID | Output | Where |
+|-----------|--------|-------|
+| `border_radius` | `--radius: Npx` | `layout/theme.liquid` `<style>` block |
+| `global_gallery_mode` | `data-gallery-mode` attribute | `product-hero.liquid` |
+| `grid_first_image_ratio` | `--grid-first-ratio` CSS var | `product-hero.liquid` inline style on `.product-gallery` |
+| `grid_secondary_ratio` | `--grid-sec-ratio` CSS var | `product-hero.liquid` inline style on `.product-gallery` |
+| `grid_gap` | `--scroll-gap` CSS var | `product-hero.liquid` inline style |
+| `twitter_handle` | `<meta name="twitter:site">` | `layout/theme.liquid` |
+| `google_analytics_id` | `gtag` script | `layout/theme.liquid` |
 
-### Live values in settings_data.json (current store)
-| Setting | Current value |
-|---------|--------------|
-| Announcement bar bg_color | `#2c1f18` (dark espresso) |
-| Announcement bar text_color | `#f9f3ee` |
-| Product hero gallery_mode | `"grid"` (section-level override) |
+### Live Values (settings_data.json)
+| Setting | Value |
+|---------|-------|
+| Announcement bar bg | `#2c1f18` |
+| Announcement bar text | `#f9f3ee` |
+| Header logo | `IMG_0449.png`, h:36, w:224 |
+| **Product hero gallery_mode** | **`"grid"`** (section override) |
 | Product hero add_to_cart_text | `"Add to Basket"` |
+| Product hero scroll_gap | `12` |
+| Collection products grid_columns | `"3"` |
+| Collection products products_per_page | `24` |
+| Newsletter popup delay | `5s` |
+| Newsletter popup redisplay | `30 days` |
+| Footer contact email | `hello@thetinybosses.com` |
 
 ---
 
-## 7. GALLERY SYSTEM
+## 7. GALLERY SYSTEM — Three Modes
 
-### Three Modes — Full Explanation
-
-The gallery mode is determined by:
-1. `section.settings.gallery_mode` (per-product, set in Theme Editor → Product Hero)
-2. Falls back to `settings.global_gallery_mode` (global default, currently `"slideshow"`)
-3. Falls back to `"slideshow"` if both are blank
-
-**Current live mode: `"grid"` (section-level override on product-hero)**
-
-The `data-gallery-mode` attribute is written to `.product-gallery` and read by both CSS and JS.
+### Mode Determination (Liquid)
+1. `section.settings.gallery_mode` (per-product override in Theme Editor)
+2. Falls back to `settings.global_gallery_mode` (global default)
+3. Falls back to `"slideshow"`
+4. **Current live: `"grid"`** (section-level override on product-hero)
 
 ### Mode 1: Slideshow (`data-gallery-mode="slideshow"`)
-**DOM structure:**
 ```
-.product-gallery
-  .gallery-thumbs          ← thumbnail strip (hidden on mobile)
-  #gallery-main.gallery-main
-    #gallery-track.gallery-main__inner   ← the scroll container on mobile
-      .gallery-slide.is-active           ← first image (visible)
-      .gallery-slide                     ← subsequent images (hidden)
-    .gallery-zoom-hint
-    #gallery-prev .gallery-arrow
-    #gallery-next .gallery-arrow
+.product-gallery[data-gallery-mode="slideshow"]
+  .gallery-thumbs                              ← hidden mobile ≤768px
+  #gallery-main.gallery-main                   ← overflow:hidden, aspect-ratio:3/4 (mobile), border-radius:var(--radius)
+    #gallery-track.gallery-main__inner         ← display:flex; overflow-x:scroll (mobile snap carousel)
+      .gallery-slide.is-active                 ← position:relative; opacity:1; flex:0 0 100% (mobile)
+      .gallery-slide                           ← same (all visible for scroll; CSS hides off-screen)
+    .gallery-zoom-hint                         ← hidden mobile
+    #gallery-prev / #gallery-next              ← hidden mobile
 ```
-**Desktop CSS:** Position:absolute cross-fade slideshow. All slides `position:absolute; inset:0; opacity:0`. Only `.is-active { opacity:1 }`. JS (product-page.js) toggles `is-active` on thumb/arrow click and swipe.
-
-**Mobile CSS (v3 + v6 + v7 belt-and-suspenders):**
-- `.gallery-main { overflow:hidden; aspect-ratio:3/4 }`
-- `.gallery-main__inner { display:flex; flex-direction:row; overflow-x:scroll; scroll-snap-type:x mandatory }`
-- `.gallery-slide { position:relative; opacity:1; flex:0 0 100%; height:100% }`
-- JS `initDots()` adds `.gallery-dots` container inside `#gallery-main`
+- **Desktop**: CSS cross-fade, `position:absolute; opacity:0`, only `.is-active { opacity:1 }`, JS (product-page.js) `showSlide()`
+- **Mobile**: v3+v6 converts to horizontal snap-scroll carousel; dots injected by TTB Gallery IIFE
 
 ### Mode 2: Scroll (`data-gallery-mode="scroll"`)
-**DOM structure:**
 ```
-.product-gallery
-  .gallery-thumbs          ← horizontal strip on mobile/tablet, vertical on desktop
-  #gallery-main.gallery-main   ← aspect-ratio unset, overflow:visible on desktop
-    #gallery-scroll-track.gallery-scroll-stack
-      .gallery-scroll-item (each image)
+.product-gallery[data-gallery-mode="scroll"]
+  .gallery-thumbs                              ← vertical/horizontal strip on desktop, hidden mobile
+  #gallery-main.gallery-main                   ← overflow:visible desktop; overflow:hidden!important mobile (v9)
+    #gallery-scroll-track.gallery-scroll-stack ← vertical stack desktop; flex snap-scroll mobile (v3)
+      .gallery-scroll-item                     ← border-radius:var(--radius) (v8)
+        img.gallery-image.gallery-image--scroll
 ```
-**Desktop:** Vertical stack of all images at full width, user scrolls through them naturally. Thumbnail syncs via IntersectionObserver. `.gallery-main__inner`, arrows, and zoom hint are `display:none !important`.
+- **Desktop**: Vertical image stack, natural page scroll, thumb syncs via IntersectionObserver (product-page.js)
+- **Mobile**: Horizontal snap-scroll carousel (v3 converts)
 
-**Mobile:** Converted to horizontal snap-scroll carousel by v3 CSS. Each `.gallery-scroll-item` gets `flex:0 0 100%; scroll-snap-align:start`.
-
-### Mode 3: Grid (`data-gallery-mode="grid"`)
-**DOM structure:**
+### Mode 3: Grid (`data-gallery-mode="grid"`) ← CURRENT LIVE MODE
 ```
-.product-gallery
-  .gallery-thumbs          ← hidden on desktop when grid mode active (via JS)
-  #gallery-main.gallery-main   ← aspect-ratio unset, overflow:visible on desktop
-    #gallery-grid-track.gallery-grid-stack
-      .gallery-grid-item.gallery-grid-item--full  ← first image, full width
-      .gallery-grid-item.gallery-grid-item--half  ← rest, 2-column grid
+.product-gallery[data-gallery-mode="grid"]
+  .gallery-thumbs                              ← hidden on desktop (JS hides), hidden mobile
+  #gallery-main.gallery-main                   ← overflow:visible desktop; overflow:hidden!important mobile (v6+v9)
+    #gallery-grid-track.gallery-grid-stack     ← CSS grid desktop; flex snap-scroll mobile (v3)
+      .gallery-grid-item.gallery-grid-item--full  ← first image, grid-column:1/-1 desktop
+      .gallery-grid-item.gallery-grid-item--half  ← rest, 2-col grid desktop
+        img.gallery-grid-img
 ```
-**Desktop:** CSS grid `grid-template-columns: 1fr 1fr`. First item `grid-column: 1/-1`. `.gallery-main__inner`, scroll-stack, arrows, and zoom hint are `display:none !important`.
+- **Desktop**: CSS grid `grid-template-columns:1fr 1fr`, first item full-width
+- **Mobile**: Horizontal snap-scroll carousel (v3 converts all `.gallery-grid-item` to `flex:0 0 100%`)
 
-**Mobile:** Converted to horizontal snap-scroll carousel by v3 CSS. All `.gallery-grid-item` get `flex:0 0 100%; scroll-snap-align:start`.
-
-### Classes shown/hidden per mode
-| Class | slideshow | scroll | grid |
-|-------|-----------|--------|------|
+### Classes Shown/Hidden Per Mode (desktop)
+| Container | slideshow | scroll | grid |
+|-----------|-----------|--------|------|
 | `.gallery-main__inner` | ✅ shown | ❌ `display:none!important` | ❌ `display:none!important` |
 | `.gallery-scroll-stack` | ❌ `display:none!important` | ✅ shown | ❌ `display:none!important` |
-| `.gallery-grid-stack` | ❌ (not in DOM) | ❌ (not in DOM) | ✅ shown |
-| `.gallery-thumbs` | ✅ desktop / ❌ mobile | ✅ desktop / ❌ mobile | ❌ `display:none` (JS hides on desktop) |
-| `.gallery-arrow` | ✅ desktop (CSS hover) | ❌ `display:none!important` | ❌ `display:none!important` |
+| `.gallery-grid-stack` | ❌ not in DOM | ❌ not in DOM | ✅ shown |
+| `.gallery-thumbs` | ✅ desktop | ✅ desktop | ❌ JS hides |
+| `.gallery-arrow` | ✅ desktop hover | ❌ `display:none!important` | ❌ `display:none!important` |
 | `.gallery-zoom-hint` | ✅ desktop | ❌ `display:none!important` | ❌ `display:none!important` |
 
-### Mobile vs Desktop gallery (after all fixes)
-**Desktop (≥768px):**
-- Slideshow: cross-fade opacity transition, JS controls via `is-active` class
-- Scroll: vertical image stack with IntersectionObserver thumb sync
-- Grid: CSS grid layout with first image full-width
-- All: thumbnail strip visible (v7 v8: explicitly desktop `display:block` belt-and-suspenders)
+---
 
-**Mobile (≤767px):**
-- ALL modes: horizontal snap-scroll carousel (one image per screen)
-- `.gallery-thumbs` hidden via `max-width:768px` rule (extended in v8)
-- Dot indicators injected by TTB PDP Gallery IIFE inside `#gallery-main` (absolute positioned at bottom-left)
-- `.gallery-main { overflow:hidden; aspect-ratio:3/4 }` (v6)
-- `.gallery-slide` in slideshow mode: `position:relative; opacity:1` (v6), `flex:0 0 100%; height:100%` (v3)
+## 8. ALL FIXES APPLIED
+
+### TTB FIXES v3 — Mobile gallery carousel, transparent header, cart icon
+- **Transparent header mobile**: solid white on mobile, transparent→solid on scroll desktop
+- **Cart icon clip at 375/480px**: `overflow:visible` on `.header-inner`, tighter padding
+- **PDP gallery mobile carousel**: converts all 3 gallery modes to horizontal snap-scroll: `.gallery-main__inner` / `.gallery-scroll-stack` / `.gallery-grid-stack` → `display:flex; overflow-x:scroll; scroll-snap-type:x mandatory`; items → `flex:0 0 100%; scroll-snap-align:start`; `.gallery-thumbs { display:none }` at max-width:767px
+
+### TTB FIXES v4 — Desktop transparent header, mobile double-sticky, gallery dots base
+- **Desktop transparent header**: `body.has-transparent-header:not(.header-scrolled)` clears background on `#sticky-bar` + `#shopify-section-header`
+- **Mobile double-sticky**: `#shopify-section-header { position:static !important }` on mobile
+- **Gallery dot indicators**: base CSS for `.gallery-dots` and `.gallery-dot`
+- **Wishlist inline**: flex row with `order` properties
+- **Product layout mobile gap**: `.product-layout { gap:12px }`
+
+### TTB FIXES v5 — Mobile sticky overlays, desktop PDP layout
+- Mobile: `#shopify-section-header { position:static }`, `.product-info { position:static }`
+- Mobile: dot indicators repositioned as `position:absolute` inside `#gallery-main`, bottom-left
+- Mobile: qty-inline compact
+- Desktop: `#shopify-section-header { position:relative }` (later partially reversed in v7)
+- Desktop PDP: `.product-breadcrumb { grid-column:1/-1 }`, `.sticky-atc-bar { display:none }`
+
+### TTB FIXES v6 — Critical gallery carousel fix (position:absolute bug)
+- **Root cause**: `.gallery-slide { position:absolute; opacity:0 }` from desktop cross-fade was never overridden for mobile; absolute children are removed from flex flow, so v3's flex carousel had no effect
+- **Fix (max-width:767px)**:
+  - `.gallery-main { position:relative!important; overflow:hidden!important; aspect-ratio:3/4 }` (`#8432`)
+  - `.gallery-main__inner { height:100%!important; align-items:stretch!important }`
+  - `.gallery-slide { position:relative!important; inset:auto!important; opacity:1!important; height:100%!important; transition:none!important }`
+  - `.gallery-slide.is-active { opacity:1!important; pointer-events:auto!important }`
+  - Hides `.gallery-zoom-hint` and `.gallery-arrow` on mobile
+
+### TTB FIXES v7 — Desktop header, PDP layout, gallery belt-and-suspenders
+- **Desktop header disappearing**: (a) `html, body { overflow-x:clip }` — replaces `overflow-x:hidden` to prevent scroll-container trapping sticky; (b) `#shopify-section-header { position:sticky; top:0; z-index:200 }` on desktop — overrides v5's `position:relative`; `#sticky-bar` reinforced with `!important`
+- **Desktop PDP layout**: explicit `grid-column` and `grid-row` on all `.product-layout` children
+- **Desktop gallery**: `@media(min-width:768px)` — `.gallery-main__inner { display:block!important }`, `.gallery-slide { position:absolute!important; opacity:0!important }`, `.gallery-slide.is-active { opacity:1!important }` — belt-and-suspenders for cross-fade
+
+### TTB FIXES v8 — Modal z-index, gallery dedup, green space, global border-radius
+- **Modal z-index**: `.modal-overlay { z-index:500; pointer-events:none }` (inactive); `.modal-overlay[aria-hidden="false"] { z-index:3000; pointer-events:auto }` (active)
+- **Gallery image dedup**: extended `.gallery-thumbs { display:none!important }` to `max-width:768px`; mode-specific hide rules at `max-width:767px` (e.g. slideshow hides scroll-stack and grid-stack, etc.)
+- **Green blank space**: `.product-hero { background:var(--ivory,#ffffff) }`
+- **Global border-radius** via `var(--radius)` applied to: `.gallery-main`, `.gallery-scroll-item`, `.product-badge`, `.product-badge--discount`, `.collection-card`, `.pair-with-card`, `.cart-drawer`, `.header-search-form`, `.product-savings`, `.similar-card__image-wrap`, `.product-bundle-nudge`
+- **settings_schema.json**: Added "Design" group with `border_radius` range setting
+- **layout/theme.liquid**: Added `<style>:root{--radius:...}</style>` after theme.css link
+- **Cart icon fix (max-width:480px)**: `header.site-header .header-inner { overflow:visible!important; padding:... }`, `header.site-header .header-actions { gap:0!important }`, `header.site-header .header-action { width:32px; height:32px }`
+
+### TTB FIXES v9 — Mega-backdrop mobile, header gap, gallery radius belt-and-suspenders
+- **ISSUE 1A (max-width:767px)**: `.mega-backdrop { display:none!important; pointer-events:none!important }` — prevents desktop-only mega backdrop from overlaying `.header-actions` on mobile
+- **ISSUE 1B (max-width:767px)**: `.header-actions { gap:4px!important }` — reduces 20px base gap for full mobile range 481–767px (480px and below already handled by v8 gap:0)
+- **ISSUE 2 (max-width:767px)**: `.gallery-main { border-radius:var(--radius)!important; overflow:hidden!important }` — belt-and-suspenders to ensure border-radius shows and grid-mode desktop `overflow:visible` cannot bleed through
+- **ISSUE 2 (max-width:767px)**: `.product-badge, .product-badge--discount { border-radius:var(--radius)!important }` — ensures discount badge radius on mobile
 
 ---
 
-## 8. KNOWN ISSUES & RECENT CHANGES
+## 9. SHOPIFY SECTION SCHEMA SETTINGS
 
-### All fixes applied (by version)
+### announcement-bar.liquid
+`text_1/2/3` (text), `url_1/2/3` (url), `divider` (text, default "✦"), `bg_color` (color, default "#FFEB3B"), `text_color` (color, default "#F9F3EE"), `speed` (range 15–80 step 5, default 35)
 
-#### TTB FIXES v3 (file: theme.css, lines 7970–8221)
-**What:** First consolidated fix block after session 1.
-- ISSUE 1: Transparent header — scoped to mobile (solid white) and desktop (transparent → solid on scroll). Fixed `-webkit-text-fill-color` leak.
-- ISSUE 2: Cart icon clipping at 375px/480px — `overflow:visible` on `.header-inner`, tighter padding.
-- ISSUE 3: PDP gallery carousel on mobile — converts all three gallery modes (slideshow/scroll/grid) to horizontal snap-scroll carousels. Hides `.gallery-thumbs`.
+### header.liquid
+`logo` (image_picker), `logo_icon` (image_picker), `logo_height` (range 24–80 step 2 default 48), `logo_width` (range 0–320 step 8 default 0), `logo_height_mobile` (range 20–60 step 2 default 36), `logo_width_mobile` (range 0–240 step 8 default 0), `menu` (link_list), `girls_menu/boys_menu/family_menu` (link_list), `girls_title/desc/cta/url`, `boys_title/desc/cta/url`, `family_title/desc/cta/url`, `mega_eyebrow`, `drawer_pages_heading`, `page1–4_label/url`, `search_placeholder`. **Blocks**: `mega_image` type (limit 30): `link_title` (exact match for category name), `image` (image_picker).
 
-#### TTB FIXES v4 (file: theme.css, lines 8223–8322)
-**What:** Session 2 fixes.
-- ISSUE 1: Desktop transparent header — clears background on `#sticky-bar` and `#shopify-section-header` when `body.has-transparent-header:not(.header-scrolled)`.
-- ISSUE 2: Mobile header double-sticky — `#shopify-section-header { position:static !important }` on mobile.
-- ISSUE 3: Gallery dot indicators — base CSS for `.gallery-dots` and `.gallery-dot`; JS injects into DOM.
-- ISSUE 5: Wishlist inline with qty — flex row with `order` properties.
-- ISSUE 6: `.product-layout { gap: 12px }` on mobile.
+### product-hero.liquid
+`tax_note`, `add_to_cart_text` (default "Add to Basket"), `sold_out_text`, `quantity_label`, `bundle_label`, `write_review_text`, `bxgy_note`, `gallery_mode` (global/slideshow/scroll/grid default "global"), `scroll_aspect` (3/4/1/1/4/5/auto default "3/4"), `scroll_gap` (range 0–32 step 2 default 6), `scroll_sticky_thumbs` (checkbox default true), `new_badge_text`, `care_instructions`, `shipping_info`, `badge_size` (range 12–28 step 2 default 16), share toggles (whatsapp/facebook/twitter/pinterest/instagram/tiktok/email/copy_link). **Blocks**: `trust_badge` type: `icon` (select 10 options), `custom_icon` (image_picker), `text`.
 
-#### TTB FIXES v5 (file: theme.css, lines 8324–8408)
-**What:** Session 2 fixes continued.
-- ISSUE 1: Mobile — remove all sticky overlays (`#shopify-section-header { position:static }`, `.product-info { position:static }`) on mobile.
-- ISSUE 2: Mobile — dot indicators repositioned as absolute inside `#gallery-main` at bottom-left.
-- ISSUE 3: Mobile — qty-inline compact (`flex:0 0 auto`).
-- ISSUE 4: Desktop — `#shopify-section-header { position:relative }` (removes nested sticky). **NOTE: This was later partially reversed in v7.**
-- ISSUE 5: Desktop PDP layout — `.product-breadcrumb { grid-column:1/-1 }`, `.sticky-atc-bar { display:none }` on desktop.
+### collection-products.liquid
+`filters_label`, `clear_label`, `sort_label`, `sort_featured`, `new_badge`, `sort_newest`, `products_per_page` (range 12–48 step 4 default 24), `grid_columns` (select 2/3/4 default "4"), `show_filters` (checkbox default true), `show_product_count` (checkbox default true).
 
-#### TTB FIXES v6 (file: theme.css, lines 8410–8468)
-**What:** Critical gallery carousel fix.
-- ROOT CAUSE: `.gallery-slide { position:absolute; opacity:0 }` (desktop cross-fade) was never overridden for mobile. The v3 flex carousel had no effect because absolute children are removed from flex flow.
-- FIX: On mobile → `.gallery-slide { position:relative; inset:auto; opacity:1; height:100% }`. Also hides `.gallery-zoom-hint` and `.gallery-arrow` on mobile.
+### pair-with.liquid
+`eyebrow`, `heading`, `subheading`. **Blocks**: `pair_product` type: `product` (product picker), `category_label` (text default "Pairs With").
 
-#### TTB FIXES v7 (file: theme.css, lines 8470–8589)
-**What:** Session 3 desktop header, PDP layout, gallery fixes.
-- ISSUE 1: Desktop header disappearing after scroll — Two fixes: (a) `html, body { overflow-x:clip }` replaces `overflow-x:hidden` to prevent scroll container trapping sticky; (b) `#shopify-section-header { position:sticky; top:0; z-index:200 }` restored on desktop (overrides v5's `position:relative`). `#sticky-bar` reinforced with `!important`.
-- ISSUE 2: Desktop PDP info column missing — Explicit `grid-column` and `grid-row` on all `.product-layout` children: breadcrumb→row1/1-1, gallery→row2/col1, info→row2/col2, sticky-atc→`display:none`.
-- ISSUE 3: Desktop gallery stacking — Belt-and-suspenders: `.gallery-main__inner { display:block }`, `.gallery-slide { position:absolute; opacity:0 }`, `.gallery-slide.is-active { opacity:1 }` on desktop.
+### similar-products.liquid
+`eyebrow`, `heading`, `collection` (collection picker fallback), `products_count` (range 4–12 step 2 default 8).
 
-#### TTB FIXES v8 (file: theme.css, lines 8591+)
-**What:** Session 4 fixes (modal z-index, image dedup, product-hero bg, global border-radius).
-- ISSUE 1: `.modal-overlay` covering header — default `z-index:500; pointer-events:none`; restored to `z-index:3000; pointer-events:auto` when `aria-hidden="false"`.
-- ISSUE 2: Image duplication on mobile — Extended `.gallery-thumbs { display:none }` to `max-width:768px` (was 767px). Added mode-specific belt-and-suspenders hiding on mobile.
-- ISSUE 3: Green blank space — `.product-hero { background:var(--ivory,#ffffff) }` (explicit white background to prevent color bleed in padding area).
-- ISSUE 4C: Global border-radius — applied `var(--radius)` to: `.gallery-main`, `.gallery-scroll-item`, `.product-badge`, `.product-badge--discount`, `.collection-card`, `.pair-with-card`, `.cart-drawer`, `.header-search-form`, `.product-savings`, `.similar-card__image-wrap`, `.product-bundle-nudge`.
+### cart-drawer.liquid
+`title`, `empty_text`, `empty_cta`, `subtotal_label`, `checkout_btn`, `view_cart_text`, `shipping_message`.
 
-#### TTB FIXES v8 — Additional file changes
-- **`layout/theme.liquid`** — Added `<style>:root { --radius:{{ settings.border_radius | default:15 }}px; }</style>` after theme.css link.
-- **`config/settings_schema.json`** — Added "Design" group with `border_radius` range setting (min:0, max:30, step:1, unit:px, default:15).
+### discount-carousel.liquid
+`eyebrow`, `heading`, `subheading`, `shop_url`, `shop_btn_text`, `popular_badge`, `unlock_text`, `tier1–4_title/pct/desc`.
 
-### Critical CSS Rules to be aware of
-| Rule | Location | Why important |
-|------|----------|---------------|
-| `#sticky-bar { position:sticky; top:0; z-index:1000 }` | line 3227 | THE sticky element — all header stickiness relies on this |
-| `#shopify-section-header { position:sticky; top:0; z-index:200 }` | line 7566 (no media query!) | Fallback sticky — restored on desktop in v7 |
-| `#shopify-section-header { position:static !important }` | v5 mobile block | Mobile only — correctly removes nested sticky on mobile |
-| `.gallery-slide { position:absolute; inset:0; opacity:0 }` | line 1828 | Desktop cross-fade slideshow — v6 overrides this for mobile |
-| `body.has-transparent-header #MainContent { margin-top:calc(-1*var(--sticky-bar-height)) }` | line 6142 | Pulls hero behind header on homepage only |
-| `.modal-overlay { z-index:3000 }` | line 3425 | Now overridden to 500 by v8 when modal is closed |
-| `html, body { overflow-x:clip }` | v7 (no media query) | Prevents scroll container from trapping position:sticky |
+### hero-banner.liquid
+`image`, `image_mobile`, `height` (small/medium/large/full), `overlay_opacity` (0–80), `text_align`, `content_position`, `eyebrow`, `heading`, `heading_size`, `subheading`, `cta_1_text/url`, `cta_2_text/url`, `show_scroll`, `scroll_label`.
 
-### Known remaining gaps / uncertainties
-- The `--sticky-bar-height` JS sets on load/resize. On first paint, the CSS variable may briefly be the fallback `80px`. Not a visible issue.
-- `#hero-section` ID is used by JS to calculate transparent header threshold. If the hero section changes ID, the fallback 80px kicks in.
-- `border_radius` global setting default is `15px` but the original `:root { --radius: 4px }` in theme.css will be overridden only when Liquid renders. In Shopify Theme Preview, the setting needs to be explicitly set once.
+### featured-collections.liquid
+`eyebrow`, `heading`, `subheading`, `cta_label`. **Blocks**: `collection` type: `collection`, `label`, `subtitle`, `url`.
+
+### testimonials.liquid
+**Blocks**: `testimonial` type: `quote`, `name`, `subtitle`, `rating` (1–5). Settings: `eyebrow`, `heading`, `subheading`, `bg_color`.
+
+### trust-cards.liquid
+**Blocks**: `card` type: `icon` (select shipping/returns/support/secure/star/heart), `title`, `description`.
+
+### product-reviews.liquid
+`eyebrow`, `heading`, `write_heading`, `submit_btn`, `cancel_btn`, `load_more_btn`, `empty_text`, `photo_label`, `verified_label`, `reviews_per_page` (3–20), `show_photos`, `show_helpful`.
+
+### subscribe-cta.liquid
+`heading`, `label`, `placeholder`, `button_text`, `success_message`.
 
 ---
 
-## 9. SHOPIFY SECTION ARCHITECTURE
-
-### Every section, its purpose, and schema settings
-
-#### announcement-bar.liquid
-**Purpose:** Auto-scrolling ticker at very top of every page (inside `#sticky-bar`).  
-**Schema settings:** `text_1, url_1, text_2, url_2, text_3, url_3` (messages with optional links), `divider` (symbol), `bg_color` (#FFEB3B default), `text_color` (#F9F3EE default), `speed` (15–80s, default 35).  
-**Used in:** All pages (global via layout/theme.liquid).
-
-#### header.liquid
-**Purpose:** Main navigation — mobile drawer, desktop mega-menu, logo, actions.  
-**Schema settings:** `logo` (image_picker), `logo_height/width` (range), `logo_height_mobile/width_mobile`, `menu` (link_list), `girls_menu/boys_menu/family_menu` (link_list), `girls_title/desc/cta/url`, `boys_title/desc/cta/url`, `family_title/desc/cta/url`, `mega_eyebrow`, `drawer_pages_heading`, `page1–4_label/url` (drawer extra pages), `search_placeholder`.  
-**Used in:** All pages (global via layout/theme.liquid).
-
-#### hero-banner.liquid
-**Purpose:** Full-width homepage hero with background image and CTAs.  
-**Schema settings:** `image` (image_picker), `image_mobile` (image_picker), `height` (small/medium/large/full), `overlay_opacity` (0–80), `text_align` (left/center/right), `content_position` (top/center/bottom), `eyebrow`, `heading`, `heading_size` (small/medium/large), `subheading`, `cta_1_text/url`, `cta_2_text/url`, `show_scroll` (bool), `scroll_label`.  
-**Used in:** `templates/index.json`.
-
-#### featured-collections.liquid
-**Purpose:** Homepage category grid — up to 6 collection cards.  
-**Schema blocks:** `collection` type with: `collection` (collection picker), `label`, `subtitle`, `url`.  
-**Schema settings:** `eyebrow`, `heading`, `subheading`, `cta_label`.  
-**Used in:** `templates/index.json`.
-
-#### discount-carousel.liquid
-**Purpose:** Bundle discount tier explainer with animated cards.  
-**Schema settings:** `eyebrow`, `heading`, `subheading`, `shop_url`, `shop_btn_text`, `popular_badge`, `unlock_text`, `tier1–4_title/pct/desc`.  
-**Used in:** `templates/index.json`.
-
-#### product-grid.liquid
-**Purpose:** Reusable product grid that can show multiple collections.  
-**Schema blocks:** `collection` type with: `collection`, `eyebrow`, `heading`, `view_all_text`, `products_count`, `columns`.  
-**Schema settings:** `eyebrow`, `heading`, `collection`, `products_count` (4–24), `columns` (2–5), `view_all_text`.  
-**Used in:** `templates/index.json`, potentially other templates.
-
-#### testimonials.liquid
-**Purpose:** Customer quote carousel.  
-**Schema blocks:** `testimonial` type with: `quote`, `name`, `subtitle`, `rating` (1–5).  
-**Schema settings:** `eyebrow`, `heading`, `subheading`, `bg_color`.  
-**Used in:** `templates/index.json`.
-
-#### trust-cards.liquid
-**Purpose:** Horizontal trust icon strip.  
-**Schema blocks:** `card` type with: `icon` (select: shipping/returns/support/secure/star/heart), `title`, `description`.  
-**Schema settings:** (none — all in blocks).  
-**Used in:** `templates/index.json`.
-
-#### subscribe-cta.liquid
-**Purpose:** Email subscription strip.  
-**Schema settings:** `heading`, `label`, `placeholder`, `button_text`, `success_message`.  
-**Used in:** `templates/index.json`.
-
-#### product-hero.liquid
-**Purpose:** Main PDP section — the central product display.  
-**Schema settings:** `tax_note`, `add_to_cart_text`, `sold_out_text`, `quantity_label`, `bundle_label`, `write_review_text`, `bxgy_note`, `gallery_mode` (global/slideshow/scroll/grid), `scroll_aspect` (3/4, 4/5, 1/1), `scroll_gap` (0–20), `scroll_sticky_thumbs` (bool), `new_badge_text`, `care_instructions`, `shipping_info`, `badge_size` (12–32), share toggles (whatsapp/facebook/twitter/pinterest/instagram/tiktok/email/copy_link).  
-**Schema blocks:** `trust_badge` type with: `icon` (10 options), `text`, `custom_icon`.  
-**Used in:** `templates/product.liquid`.
-
-#### pair-with.liquid
-**Purpose:** "Complete the Look" companion products (conditional — hidden if no pairs).  
-**Data source:** `product.metafields.custom.pair_with` (list of products) OR Theme Editor blocks.  
-**Schema settings:** `eyebrow`, `heading`, `subheading`.  
-**Schema blocks:** `pair_product` type with: `product` (product picker).  
-**Used in:** `templates/product.liquid`. Renders nothing if `pair_count == 0`.
-
-#### similar-products.liquid
-**Purpose:** "Similar Pieces" — always renders regardless of content.  
-**Data source:** `product.metafields.custom.similar_products` OR `section.settings.collection`.  
-**Schema settings:** `eyebrow`, `heading`, `collection` (collection picker), `products_count` (4–20).  
-**Used in:** `templates/product.liquid`. **Always renders the `<section>` tag**.
-
-#### product-reviews.liquid
-**Purpose:** Customer reviews section.  
-**Schema settings:** `eyebrow`, `heading`, `write_heading`, `submit_btn`, `cancel_btn`, `load_more_btn`, `empty_text`, `photo_label`, `verified_label`, `reviews_per_page` (3–20), `show_photos` (bool), `show_helpful` (bool).  
-**Used in:** `templates/product.liquid`.
-
-#### collection-products.liquid
-**Purpose:** Full collection page layout with filters and product grid.  
-**Filter system:** Products are filtered by tags in format `filter-{Group}:{Value}` (handled client-side by collection-filters.js).  
-**Schema settings:** `filters_label`, `clear_label`, `sort_label`, `sort_featured`, `new_badge`, `sort_newest`, `products_per_page` (8–48), `grid_columns` (2/3/4), `show_filters` (bool), `show_product_count` (bool).  
-**Used in:** `templates/collection.liquid`.
-
-#### cart-page.liquid
-**Purpose:** Full /cart page.  
-**Schema settings:** `title`, `summary_title`, `bundle_label`, `secure_label`, `returns_label`, `empty_heading`, `empty_sub`, `empty_cta`, `empty_url`.  
-**Used in:** `templates/cart.liquid`.
-
-#### cart-drawer.liquid
-**Purpose:** Slide-in cart panel. Rendered once in layout/theme.liquid inside `#cart-drawer`.  
-**Schema settings:** `subtotal_label`, `checkout_btn`, `empty_cta`, `title`, `empty_text`, `view_cart_text`, `shipping_message`.  
-**Used in:** layout/theme.liquid (global).
-
-#### discount-popup.liquid
-**Purpose:** Fixed bottom-right popup showing cart progress toward next bundle tier.  
-**Schema settings:** `heading`, `icon`, `cta_text`, `cta_url`.  
-**Used in:** layout/theme.liquid (global).
-
-#### newsletter-popup.liquid
-**Purpose:** Email capture modal popup. Fires after delay, stores suppression in localStorage.  
-**Schema settings:** `image`, `eyebrow`, `heading`, `subtext`, `show_offer` (bool), `incentive_text`, `offer_code`, `offer_text`, `button_text`, `delay_seconds` (0–30), `redisplay_days` (0–90).  
-**Used in:** layout/theme.liquid (global).
-
-#### footer.liquid
-**Purpose:** Global site footer.  
-**Schema settings:** `trust1–5_icon/label/sub` (5 trust items), `brand_desc`, `contact_email/phone/address/hours`, `instagram/pinterest/facebook/whatsapp` (social URLs), `newsletter_label/placeholder/success`, `col1–5_menu` (link_lists), `col1–5_heading`, `copyright_suffix`.  
-**Used in:** layout/theme.liquid (global).
-
-#### blog-article.liquid
-**Purpose:** Individual blog post.  
-**Schema settings:** (minimal — reads `article` object directly).  
-**Used in:** `templates/article.liquid`.
-
-#### blog-listing.liquid
-**Purpose:** Blog index with featured article + grid.  
-**Schema settings:** (reads `blog` object directly).  
-**Used in:** `templates/blog.liquid`.
-
-#### page-about.liquid, page-contact.liquid, page-faq.liquid, page-returns.liquid
-**Purpose:** Static informational pages.  
-**Schema settings:** Each has relevant content settings (headings, text, images, contact details, FAQ Q&A blocks).  
-**Used in:** Respective `templates/page.*.liquid`.
-
-#### customers-*.liquid (6 files)
-**Purpose:** Shopify customer account pages.  
-**Schema settings:** Labels, headings, form copy.  
-**Used in:** `templates/customers/*.liquid`.
-
-#### image-gallery.liquid, image-with-text.liquid, multi-column.liquid, product-spotlight.liquid, promo-banner.liquid, rich-text.liquid
-**Purpose:** Flexible content sections for any page template.  
-**Used in:** Available for Theme Editor sections but not currently in any template's default order.
-
----
-
-## QUICK REFERENCE — Strict Rules for Claude Code Sessions
+## QUICK REFERENCE — Strict Rules for All Future Sessions
 
 ```
 BRANCH:   claude/frosty-driscoll-5727ac only
 WORKTREE: C:\Hitesh Downloads\baby-elegance-updated\.claude\worktrees\frosty-driscoll-5727ac\
 
 CSS RULE 1:  Append ALL CSS to the END of assets/theme.css only. Never modify existing rules.
-CSS RULE 2:  Mobile-only rules → @media (max-width: 767px)
+CSS RULE 2:  Mobile-only rules  → @media (max-width: 767px)
 CSS RULE 3:  Desktop-only rules → @media (min-width: 768px)
-CSS RULE 4:  Never mix mobile and desktop rules in the same block.
+CSS RULE 4:  Never mix mobile and desktop rules in the same @media block.
+CSS RULE 5:  Each appended block must have a /* TTB FIXES vN */ header and /* END TTB FIXES vN */ footer.
+CSS RULE 6:  Current fix version: v9. Next fix block must be v10.
 
-GIT RULE:    Output git command as text — never run it.
-             Format:
+GIT RULE:    Output git command as text — NEVER run it.
+             Always output this exact 4-line format:
                cd "C:\Hitesh Downloads\baby-elegance-updated\.claude\worktrees\frosty-driscoll-5727ac"
                git add <files>
                git commit -m "<message>"
@@ -966,8 +1107,30 @@ GIT RULE:    Output git command as text — never run it.
 
 SILENT MODE: Output git commit command then say "Changes made."
 
-BODY CLASS   has-transparent-header → homepage only (template == 'index')
-TRUTH:       header-scrolled → added by JS when scrolled past hero threshold
-             is-scrolled → on #sticky-bar when scrollY > 4px
-             is-touch → on body when touch device detected
+BODY CLASSES TRUTH:
+  has-transparent-header → homepage only (template == 'index')
+  header-scrolled        → JS adds when scrolled past hero threshold
+  is-scrolled            → on #sticky-bar when scrollY > 4px
+  is-touch               → on body when touch device detected
+
+GALLERY MODE TRUTH:
+  CURRENT LIVE = "grid" (section.settings.gallery_mode = "grid" in settings_data.json)
+  Resolution order: section.settings.gallery_mode → settings.global_gallery_mode → "slideshow"
+
+METAFIELD TRUTH:
+  custom.badge_text      → text badge on product images (overrides auto-calc %)
+  custom.discount        → value "BXGY" = eligible for bundle tier discount
+  custom.pair_with       → list of products for pair-with section
+  custom.similar_products → list of products for similar-products section
+
+MEGA BACKDROP TRUTH:
+  #mega-backdrop is position:fixed; inset:0; z-index:1099 — desktop-only hover overlay
+  display:none!important on mobile (max-width:767px) since v9 — never makes it interactive on mobile
+
+NEVER:
+  - Modify existing CSS rules (only append)
+  - Add position:sticky to #shopify-section-header on mobile (breaks double-sticky)
+  - Remove overflow-x:clip from html,body (breaks sticky header)
+  - Remove overflow:hidden from .gallery-main on mobile (breaks carousel)
+  - Set display:flex on .gallery-main__inner on desktop (breaks slideshow cross-fade)
 ```
