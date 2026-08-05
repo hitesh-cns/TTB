@@ -57,6 +57,12 @@
     const heroImgs = document.querySelectorAll('.hero-bg, .about-hero__img, .article-hero__img');
     if (!heroImgs.length) return;
 
+    // Respect reduced-motion preference — skip the scroll-linked transform entirely
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Disable on mobile — perf/jank risk outweighs the visual benefit on small screens
+    if (window.innerWidth <= 767) return;
+
     let ticking = false;
 
     function onScroll() {
@@ -315,6 +321,16 @@
         el.setAttribute('data-reveal', 'up');
         el.setAttribute('data-stagger', Math.min(i, 6));
       }
+    });
+
+    // Discount carousel header (not caught by .section-header — different class)
+    document.querySelectorAll('.discount-section__header').forEach(el => {
+      if (!el.hasAttribute('data-reveal')) el.setAttribute('data-reveal', 'up');
+    });
+
+    // Subscribe CTA block
+    document.querySelectorAll('.subscribe-section__inner').forEach(el => {
+      if (!el.hasAttribute('data-reveal')) el.setAttribute('data-reveal', 'up');
     });
 
     // FAQ items — blur reveal
