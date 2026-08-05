@@ -76,8 +76,8 @@
             if (rect.bottom < 0 || rect.top > vh) return;   // off-screen
 
             const progress = (vh - rect.top) / (vh + rect.height);
-            const offset   = (progress - 0.5) * 80;  // ±40px max shift
-            img.style.transform = `translateY(${offset}px) scale(1.1)`;
+            const offset   = (progress - 0.5) * 160;  // ±80px max shift
+            img.style.transform = `translateY(${offset}px) scale(1.15)`;
           });
           ticking = false;
         });
