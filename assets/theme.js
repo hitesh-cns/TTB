@@ -477,10 +477,14 @@
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-  document.querySelectorAll('.product-card, .collection-card, .testimonial-card, .discount-card').forEach(el => {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('.product-card, .collection-card, .testimonial-card, .discount-card, .trust-card').forEach((el, i) => {
+    if (prefersReducedMotion) return;   // leave fully visible, no animated reveal
     el.style.opacity = '0';
     el.style.transform = 'translateY(24px)';
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    el.style.transitionDelay = (Math.min(i, 6) * 80) + 'ms';   // slight stagger instead of firing all at once
     observer.observe(el);
   });
 
