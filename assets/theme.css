@@ -599,6 +599,42 @@ body:not(.is-touch) .nav-item--mega:hover .nav-chevron,
   to { transform: scale(1); }
 }
 
+/* ============================================================
+   FIXED-BACKGROUND HERO  (desktop, motion allowed)
+   ============================================================
+   The hero image is painted as a background with
+   background-attachment: fixed, so it stays locked to the
+   viewport while the page — and the next section — scrolls up
+   and over it. A fixed background only paints inside its own
+   element's box, so it self-clips to the hero's height: once
+   .hero-section has scrolled past, the image simply stops
+   painting. No JS scroll listener, no bleed into later sections.
+
+   .featured-collections (the next section) has no background of
+   its own and sits on the opaque page background, so it visually
+   covers the stationary hero as it rises — the "reveal".
+
+   Mobile (<=767px) and prefers-reduced-motion are excluded here
+   and fall back to the static <img> above — position:fixed-style
+   backgrounds are unreliable / janky on mobile Safari.
+   ============================================================ */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .hero-bg:not(.hero-bg--placeholder) {
+    background-image: var(--hero-bg-image);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  /* The <picture>/<img> is now only the fallback — hide it so the
+     fixed background layer is what shows. */
+  .hero-bg:not(.hero-bg--placeholder) > picture,
+  .hero-bg:not(.hero-bg--placeholder) > .hero-image {
+    display: none;
+  }
+}
+
 .hero-bg--placeholder { background: linear-gradient(135deg, var(--blush) 0%, var(--ivory-dk) 50%, var(--sage-lt) 100%); }
 
 .hero-overlay {
@@ -5985,11 +6021,13 @@ a.contact-info-val:hover { color: var(--rose); }
    ============================================================ */
 
 /* GPU-accelerate elements that animate */
+/* NOTE: .hero-bg was removed here — it's no longer JS-transformed.
+   With background-attachment: fixed a permanent will-change hint just
+   pins an extra compositor layer for the whole page lifetime. */
 .mega-panel,
 .cart-drawer,
 .mobile-drawer,
-.nl-popup__card,
-.hero-bg {
+.nl-popup__card {
   will-change: transform, opacity;
 }
 

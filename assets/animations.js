@@ -49,12 +49,19 @@
     });
   }
 
-  // -- 3. PARALLAX HERO --
-  // Subtle vertical offset on hero background images as user scrolls.
-  // 30% of scroll distance = same Apple-ish depth without JS-jank.
+  // -- 3. PARALLAX HERO (about / article pages only) --
+  // Subtle vertical offset on secondary hero images as the user scrolls.
+  //
+  // NOTE: the HOME hero (.hero-bg) is deliberately NOT handled here any
+  // more. It now uses a pure-CSS fixed-background effect (see theme.css:
+  // "Fixed-background hero") so the image stays stationary while content
+  // scrolls over it. Driving .hero-bg from a JS scroll listener here was
+  // (a) redundant with that CSS and (b) a source of layout thrash that
+  // fought the header's scroll logic. On the home page this function now
+  // finds no elements and adds no scroll listener at all.
   // --
   function initParallax() {
-    const heroImgs = document.querySelectorAll('.hero-bg, .about-hero__img, .article-hero__img');
+    const heroImgs = document.querySelectorAll('.about-hero__img, .article-hero__img');
     if (!heroImgs.length) return;
 
     let ticking = false;

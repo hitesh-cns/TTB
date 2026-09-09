@@ -5,13 +5,15 @@
 (function () {
   'use strict';
 
-  /* ---- Header Scroll ---- */
-  const header = document.getElementById('site-header');
-  if (header) {
-    window.addEventListener('scroll', () => {
-      header.classList.toggle('is-scrolled', window.scrollY > 40);
-    }, { passive: true });
-  }
+  /* ---- Header Scroll ----
+     (removed) This used to toggle `.is-scrolled` on #site-header, but no
+     CSS rule ever matched `.site-header.is-scrolled` — the only shadow
+     rule is `#sticky-bar.is-scrolled .site-header`, driven by the
+     rAF-throttled handler in the GLOBAL UI block below. This listener was
+     dead weight: an unthrottled DOM write on every scroll event that,
+     together with the other scroll listeners, caused layout thrash and
+     the transparent→solid header flicker. All scroll-driven header state
+     now lives in one rAF-throttled handler further down this file. */
 
   /* ---- Mobile Menu ---- */
   const mobileToggle = document.getElementById('mobile-menu-toggle');
@@ -522,19 +524,45 @@
   window.addEventListener('resize', setStickyBarHeight, { passive: true });
 
   /* ============================================================
-     SCROLL STATE — Sticky-bar shadow + Transparent header
+     SCROLL STATE — one rAF-throttled handler for all header /
+     page-chrome state that reacts to scroll position:
+       1. Sticky-bar shadow after 4px            (all pages)
+       2. Transparent-header solidify past hero  (home page only)
+       3. Back-to-top button visibility          (all pages)
      ============================================================
-     Two things happen on scroll:
-     1. Shadow appears on sticky-bar after 4px (all pages)
-     2. On the home page (body.has-transparent-header):
-        - CSS starts header transparent
-        - Once user scrolls past the hero section, body gets
-          class "header-scrolled" which triggers the CSS
-          transition to the solid ivory background
-     ============================================================ */
-  const stickyBar = document.getElementById('sticky-bar');
+     WHY ONE HANDLER: previously these were three separate
+     unthrottled scroll listeners (plus a dead fourth on
+     #site-header). Each scroll tick did interleaved layout
+     reads/writes — including reading hero.offsetHeight *every
+     tick* — which forced repeated reflows and, together with the
+     old .hero-bg parallax transform writes, made
+     body.header-scrolled toggle on/off right at the threshold:
+     the transparent→solid header flicker.
 
-  function updateHeaderOnScroll() {
+     FIX: cache the hero threshold (recompute on load/resize only),
+     and run a single passive listener that batches every read +
+     class write into one requestAnimationFrame callback.
+     ============================================================ */
+  const stickyBar   = document.getElementById('sticky-bar');
+  const heroSection = document.getElementById('hero-section');
+  const backToTop   = document.getElementById('back-to-top');
+  const isTransparentHeader = document.body.classList.contains('has-transparent-header');
+
+  // Cached layout value — hero height minus sticky-bar height, i.e.
+  // the scrollY at which the hero image has fully left the viewport.
+  // Recomputed only on load/resize, never inside the scroll handler.
+  let heroThreshold = 80; // fallback until measured
+  function measureHeroThreshold() {
+    const stickyH = stickyBar ? stickyBar.offsetHeight : 0;
+    if (heroSection) heroThreshold = heroSection.offsetHeight - stickyH;
+  }
+  measureHeroThreshold();
+  window.addEventListener('resize', measureHeroThreshold, { passive: true });
+  window.addEventListener('load', measureHeroThreshold);
+
+  let scrollTicking = false;
+  function applyScrollState() {
+    scrollTicking = false;
     const scrollY = window.scrollY;
 
     // 1. Sticky-bar shadow (all pages)
@@ -542,25 +570,28 @@
       stickyBar.classList.toggle('is-scrolled', scrollY > 4);
     }
 
-    // 2. Transparent header state (home page only)
-    if (document.body.classList.contains('has-transparent-header')) {
-      // Threshold: when hero bottom reaches the top of the viewport
-      // Use 1px buffer so the transition fires just as hero exits
-      const hero = document.getElementById('hero-section');
-      const stickyH = stickyBar ? stickyBar.offsetHeight : 0;
-      let threshold = 80; // fallback
-      if (hero) {
-        // hero.offsetHeight already includes the padding-top we added
-        // so scrolling past it means the image is fully gone
-        threshold = hero.offsetHeight - stickyH;
-      }
-      document.body.classList.toggle('header-scrolled', scrollY >= threshold);
+    // 2. Transparent header → solid once the hero has scrolled past
+    //    (home page only). Compared against the cached threshold so
+    //    this branch does zero layout reads.
+    if (isTransparentHeader) {
+      document.body.classList.toggle('header-scrolled', scrollY >= heroThreshold);
+    }
+
+    // 3. Back-to-top button — visible past 70% of page height
+    if (backToTop) {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      backToTop.classList.toggle('is-visible', total > 0 && scrollY / total >= 0.7);
     }
   }
-
-  window.addEventListener('scroll', updateHeaderOnScroll, { passive: true });
+  function onScroll() {
+    if (!scrollTicking) {
+      scrollTicking = true;
+      requestAnimationFrame(applyScrollState);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
   // Run once immediately in case the page loads mid-scroll (e.g. back navigation)
-  updateHeaderOnScroll();
+  applyScrollState();
 
   /* -- SEARCH BAR --
      Clicking the search icon reveals a 100px bar below the header.
@@ -648,17 +679,11 @@
   });
 
   /* -- BACK TO TOP --
-     Shows in the bottom-right corner once the user has scrolled
-     past 70% of the page height.
-  -- */
-  const btt = document.getElementById('back-to-top');
-  if (btt) {
-    const onScroll = () => {
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      btt.classList.toggle('is-visible', total > 0 && window.scrollY / total >= 0.7);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+     Visibility (shows past 70% of page height) is handled by the
+     shared rAF-throttled scroll handler in the SCROLL STATE block
+     above. Here we only wire the click-to-scroll behaviour. -- */
+  if (backToTop) {
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 
   /* -- REVIEW LIGHTBOX --
