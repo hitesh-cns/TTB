@@ -1,0 +1,13 @@
+# Theme Check configuration
+# https://shopify.dev/docs/storefronts/themes/tools/theme-check
+#
+# Phase 0 of the OS 2.0 migration only adds this config so `shopify theme
+# check` can run in CI. Existing warnings are intentionally NOT addressed
+# in this pass — they are triaged in later migration phases.
+
+extends: theme-check:recommended
+
+ignore:
+  - node_modules/**
+  - .git/**
+  - .claude/**

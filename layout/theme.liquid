@@ -346,6 +346,15 @@
   ======================================================== -->
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
   <script src="{{ 'animations.js' | asset_url }}" defer></script>
+  {%- comment -%}
+    Theme Editor only — re-initialises the interactive JS and re-runs
+    section-local inline scripts when a section is added, reordered or
+    edited. Guarded by request.design_mode so the live storefront never
+    fetches or runs it.
+  {%- endcomment -%}
+  {%- if request.design_mode -%}
+    <script src="{{ 'section-reinit.js' | asset_url }}" defer></script>
+  {%- endif -%}
   {%- if template == 'product' -%}
     <script src="{{ 'product-page.js' | asset_url }}" defer></script>
   {%- endif -%}
