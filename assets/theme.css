@@ -7696,3 +7696,26 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+/* ============================================================
+   APPEND-ONLY OVERRIDE — DESKTOP MEGA-MENU HOVER FLICKER
+   ============================================================
+   .mega-backdrop is position:fixed inset:0 z-index:1099, shown via
+   .site-header:has(.nav-item--mega:hover) .mega-backdrop. It covers
+   the FULL viewport, header row included, so opening a mega menu
+   drops the overlay directly over the nav link that triggered it.
+   The overlay steals :hover -> backdrop hides -> cursor lands back
+   on the link -> it re-fires, ~every frame: an open/close loop that
+   reads as flicker and makes the menu near-impossible to hover open.
+
+   Fix: lift the nav row above the backdrop so the overlay can never
+   intercept pointer events over the header. Backdrop top/height are
+   untouched, so it still covers and dims everything below the header;
+   the mega-panel (z-index 1100) still sits above the dim.
+   Append-only — the existing .mega-backdrop and .header-inner rules
+   are left intact.
+   ============================================================ */
+.site-header .header-inner {
+  position: relative;
+  z-index: 1102;
+}
