@@ -121,6 +121,8 @@
   const comparePriceEl = document.getElementById('product-compare-price');
   const addToCartBtn = document.getElementById('add-to-cart-btn');
   const addToCartText = document.getElementById('add-to-cart-text');
+  const ADD_LABEL = (addToCartBtn && addToCartBtn.dataset.addLabel) || 'Add to Basket';
+  const SOLD_OUT_LABEL = (addToCartBtn && addToCartBtn.dataset.soldOutLabel) || 'Sold Out';
 
   let selectedOptions = {};
 
@@ -142,9 +144,40 @@
         if (label) label.textContent = input.value;
       }
 
+      updateSizeAvailability();
       findVariant();
     });
   });
+
+  /* Mark each size button sold-out/disabled from the ACTUAL variant formed
+     by (currently-selected other options + that size) for the current
+     colour — not a global "any variant with this size" check. Mirrors the
+     Liquid initial render and stays in sync on every option change. */
+  function candidateOptionValues(overrideIdx, overrideVal) {
+    const count = variantsData[0] ? variantsData[0].options.length
+                                  : Object.keys(selectedOptions).length;
+    const out = [];
+    for (let i = 0; i < count; i++) {
+      out[i] = (i === overrideIdx) ? overrideVal : selectedOptions[i];
+    }
+    return out;
+  }
+
+  function updateSizeAvailability() {
+    const sizeInputs = document.querySelectorAll('.size-btn-input');
+    if (!sizeInputs.length || !variantsData.length) return;
+    sizeInputs.forEach(input => {
+      const sizeIdx = parseInt(input.dataset.optionIndex);
+      const values  = candidateOptionValues(sizeIdx, input.value);
+      if (values.some(v => v === undefined)) return;
+      const variant   = variantsData.find(v => v.options.every((o, i) => o === values[i]));
+      const available = !!(variant && variant.available);
+      input.disabled = !available;
+      const label = input.closest('.size-btn-label');
+      if (label) label.classList.toggle('is-sold-out', !available);
+    });
+  }
+  updateSizeAvailability();
 
   function findVariant() {
     const selectedValues = Object.values(selectedOptions);
@@ -172,15 +205,19 @@
     var notifyMeRow  = document.getElementById('notify-me-row');
 
     if (match.available) {
-      // Variant in stock: show qty + ATC, hide Notify Me
+      // Variant in stock: show qty + ATC, hide Notify Me, restore the button
       if (qtyAtcRow)   qtyAtcRow.style.display   = '';
       if (notifyMeRow) notifyMeRow.style.display  = 'none';
       if (addToCartBtn) addToCartBtn.disabled = false;
-      if (addToCartText) addToCartText.textContent = 'Add to Basket';
+      if (addToCartText) addToCartText.textContent = ADD_LABEL;
     } else {
-      // Variant out of stock: hide qty + ATC, show Notify Me
+      // Variant out of stock: hide qty + ATC, show Notify Me (keeps the
+      // "currently out of stock" message), and put the ATC button itself
+      // into a disabled "Sold Out" state.
       if (qtyAtcRow)   qtyAtcRow.style.display   = 'none';
       if (notifyMeRow) notifyMeRow.style.display  = '';
+      if (addToCartBtn) addToCartBtn.disabled = true;
+      if (addToCartText) addToCartText.textContent = SOLD_OUT_LABEL;
     }
 
     // Update gallery to show variant image if available
@@ -218,7 +255,7 @@
       if (res.ok) {
         if (btnText) btnText.textContent = 'Added ✓';
         setTimeout(() => {
-          if (btnText) btnText.textContent = 'Add to Basket';
+          if (btnText) btnText.textContent = ADD_LABEL;
           btn.disabled = false;
         }, 2000);
 
@@ -232,7 +269,7 @@
       }
     } catch (err) {
       btn.disabled = false;
-      if (btnText) btnText.textContent = 'Add to Basket';
+      if (btnText) btnText.textContent = ADD_LABEL;
     }
   });
 
@@ -644,7 +681,15 @@
      HELPERS
      ============================================= */
   function formatMoney(cents) {
-    return '$' + (cents / 100).toFixed(2);
+    // Use the store's money format (the same string Shopify's `| money`
+    // filter uses for the initial Liquid render) so variant-change prices
+    // keep the shop currency symbol (e.g. "Rs."/₹) instead of a hardcoded "$".
+    var fmt = window.moneyFormat || '{{amount}}';
+    return fmt
+      .replace(/\{\{\s*amount_no_decimals_with_comma_separator\s*\}\}/, Math.round(cents / 100).toLocaleString('en-IN'))
+      .replace(/\{\{\s*amount_with_comma_separator\s*\}\}/, (cents / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }))
+      .replace(/\{\{\s*amount_no_decimals\s*\}\}/, Math.round(cents / 100).toString())
+      .replace(/\{\{\s*amount\s*\}\}/, (cents / 100).toFixed(2));
   }
 
   function escapeHtml(text) {

@@ -111,11 +111,11 @@
             <div class="product-badge product-badge--sale">Sale</div>
           {% endif %}
 
-          <!-- Discount badge (top-right) from Metafields Guru custom.badge_text -->
-          {% assign badge_text = product.metafields.custom.badge_text %}
-          {% if badge_text != blank %}
-            <div class="product-badge product-badge--discount">{{ badge_text }}</div>
-          {% elsif product.compare_at_price > product.price %}
+          <!-- Discount badge (top-right) — ONLY when the variant genuinely has a
+               compare-at price above its price. Not derived from bundle tiers or
+               the custom.badge_text metafield (that can hold a bundle % with no
+               matching compare_at_price). The bundle widget below is unaffected. -->
+          {% if product.compare_at_price > product.price %}
             {% assign saving_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
             <div class="product-badge product-badge--discount">{{ saving_pct }}% OFF</div>
           {% endif %}
@@ -256,11 +256,23 @@
                     </button>
                   </div>
                   <div class="size-buttons" role="radiogroup" aria-label="Select Size">
+                    {% assign sel_variant = product.selected_or_first_available_variant %}
                     {% for value in option.values %}
+                      {% comment %} A size is available only if the variant formed by
+                         (currently-selected other options + this size) exists AND is
+                         in stock — not a global "any variant with this size" check. {% endcomment %}
+                      {% assign size_opt_index = forloop.parentloop.index0 %}
                       {% assign size_available = false %}
                       {% for variant in product.variants %}
-                        {% if variant.options[forloop.parentloop.index0] == value and variant.available %}
-                          {% assign size_available = true %}
+                        {% if variant.available and variant.options[size_opt_index] == value %}
+                          {% assign others_match = true %}
+                          {% for pov in product.options_with_values %}
+                            {% assign k = forloop.index0 %}
+                            {% if k != size_opt_index and variant.options[k] != sel_variant.options[k] %}
+                              {% assign others_match = false %}
+                            {% endif %}
+                          {% endfor %}
+                          {% if others_match %}{% assign size_available = true %}{% endif %}
                         {% endif %}
                       {% endfor %}
                       <label class="size-btn-label {% unless size_available %}is-sold-out{% endunless %}">
@@ -298,7 +310,7 @@
                   <button type="button" class="qty-selector-btn" id="qty-plus">+</button>
                 </div>
               </div>
-              <button type="submit" name="add" id="add-to-cart-btn" class="btn btn--primary btn--add-to-cart qty-atc-row__btn" {% unless product.available %}disabled{% endunless %}>
+              <button type="submit" name="add" id="add-to-cart-btn" class="btn btn--primary btn--add-to-cart qty-atc-row__btn" data-add-label="{{ section.settings.add_to_cart_text | default: 'Add to Basket' }}" data-sold-out-label="{{ section.settings.sold_out_text | default: 'Sold Out' }}" {% unless product.available %}disabled{% endunless %}>
                 <span id="add-to-cart-text">{% if product.available %}{{ section.settings.add_to_cart_text | default: 'Add to Basket' }}{% else %}{{ section.settings.sold_out_text | default: 'Sold Out' }}{% endif %}</span>
                 <svg class="btn-cart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               </button>
@@ -345,6 +357,7 @@
 
         <!-- Accordions -->
         <div class="product-accordions">
+          {% if product.description != blank %}
           <div class="accordion is-open">
             <button class="accordion-trigger" aria-expanded="true">
               <span>Description</span>
@@ -354,6 +367,7 @@
               <div class="product-description rte">{{ product.description }}</div>
             </div>
           </div>
+          {% endif %}
           {% if section.settings.care_instructions != blank %}
             <div class="accordion">
               <button class="accordion-trigger" aria-expanded="false">
