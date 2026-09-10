@@ -77,6 +77,7 @@
         <div class="reviews-list" id="reviews-list">
           <!-- Sample seed reviews (shown when no metafield reviews exist) -->
           {% for block in section.blocks %}
+            {% if block.type == 'review' %}
             <article class="review-card" data-stars="{{ block.settings.rating }}" {{ block.shopify_attributes }}>
               <div class="review-card__header">
                 <div class="review-card__author-avatar">
@@ -134,6 +135,12 @@
                 </button>
               </div>
             </article>
+            {% endif %}
+          {% endfor %}
+
+          {% comment %} App-block slot (e.g. Judge.me review widget). Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
+          {% for block in section.blocks %}
+            {% if block.type == '@app' %}{% render block %}{% endif %}
           {% endfor %}
 
           <div class="reviews-empty" id="reviews-empty" style="display:none;">
@@ -243,7 +250,8 @@
         { "type": "checkbox",     "id": "verified",      "label": "Verified Purchase","default": true },
         { "type": "number",       "id": "helpful_count", "label": "Helpful Count",    "default": 0 }
       ]
-    }
+    },
+    { "type": "@app" }
   ],
   "settings": [
     { "type": "header",   "content": "Section Heading" },

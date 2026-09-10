@@ -1,0 +1,72 @@
+{
+  "sections": {
+    "product-hero": {
+      "type": "product-hero",
+      "settings": {
+        "tax_note": "Inclusive of all taxes",
+        "add_to_cart_text": "Add to Basket",
+        "sold_out_text": "Sold Out",
+        "quantity_label": "Qty",
+        "bundle_label": "Bundle and Save",
+        "write_review_text": "Write a review",
+        "bxgy_note": "Applies to Bundle and Save products",
+        "gallery_mode": "grid",
+        "scroll_aspect": "3/4",
+        "scroll_gap": 12,
+        "scroll_sticky_thumbs": true,
+        "new_badge_text": "New Arrival",
+        "care_instructions": "Machine wash cold with like colours. Gentle cycle. Do not bleach. Tumble dry low.",
+        "shipping_info": "",
+        "badge_size": 16,
+        "share_whatsapp": true,
+        "share_facebook": true,
+        "share_twitter": true,
+        "share_pinterest": true,
+        "share_instagram": false,
+        "share_tiktok": false,
+        "share_email": true,
+        "share_copy_link": true
+      }
+    },
+    "pair-with": {
+      "type": "pair-with",
+      "settings": {
+        "eyebrow": "Complete the Look",
+        "heading": "Pair It With",
+        "subheading": "Curated pieces that go beautifully together"
+      }
+    },
+    "similar-products": {
+      "type": "similar-products",
+      "settings": {
+        "eyebrow": "You May Also Love",
+        "heading": "Similar Pieces",
+        "collection": "",
+        "products_count": 8
+      }
+    },
+    "product-reviews": {
+      "type": "product-reviews",
+      "settings": {
+        "eyebrow": "Customer Reviews",
+        "heading": "What Parents Are Saying",
+        "write_heading": "Share Your Experience",
+        "submit_btn": "Submit Review",
+        "cancel_btn": "Cancel",
+        "load_more_btn": "Load More Reviews",
+        "empty_text": "No reviews yet. Be the first to share your experience!",
+        "photo_label": "Add a Photo (optional)",
+        "verified_label": "Verified Purchase",
+        "reviews_per_page": 6,
+        "show_photos": true,
+        "show_helpful": true
+      }
+    }
+  },
+  "order": [
+    "product-hero",
+    "pair-with",
+    "similar-products",
+    "product-reviews"
+  ]
+}

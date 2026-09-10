@@ -209,6 +209,11 @@
           {% endif %}
         </div>
 
+        {% comment %} App-block slot (e.g. app star-rating / badge widget). Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
+        {% for block in section.blocks %}
+          {% if block.type == '@app' %}{% render block %}{% endif %}
+        {% endfor %}
+
         <!-- Bundle nudge (BXGY) -->
         <div class="product-bundle-nudge" id="bundle-nudge"
           {% if product.metafields.custom.discount == 'BXGY' %}data-bxgy="true"{% endif %}>
@@ -465,7 +470,8 @@
           "default": "100% Organic Cotton"
         }
       ]
-    }
+    },
+    { "type": "@app" }
   ],
   "settings": [
     { "type": "header",   "content": "Buttons and Labels" },
