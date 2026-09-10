@@ -1,1 +1,443 @@
-{"name":"Baby Elegance","theme_store_id":null,"theme_version":"1.0.0","theme_author":"Baby Elegance Theme","theme_support_url":"","theme_documentation_url":"","theme_name":"Baby Elegance — Premium Baby Clothing Theme","current":{"sections":{"announcement-bar":{"type":"announcement-bar","settings":{"text_1":"Free shipping on orders over $75","url_1":"","text_2":"Buy 2 get 5% off · Buy 3 get 10% off · Buy 5 get 20% off","url_2":"","text_3":"Crafted with love for your little ones","url_3":"","divider":"✦","bg_color":"#2c1f18","text_color":"#f9f3ee","speed":35}},"header":{"type":"header","settings":{"logo":"shopify:\/\/shop_images\/IMG_0449.png","logo_height":36,"logo_width":224,"logo_height_mobile":36,"logo_width_mobile":0,"menu":"","girls_menu":"","boys_menu":"","family_menu":"","girls_title":"Girls","girls_desc":"Beautiful, playful clothing for every little girl.","girls_cta":"Shop All Girls","girls_url":"","boys_title":"Boys","boys_desc":"Comfortable, cool clothing for every little boy.","boys_cta":"Shop All Boys","boys_url":"","family_title":"Family","family_desc":"Matching sets and gifts for the whole family.","family_cta":"Shop All Family","family_url":"","mega_eyebrow":"Explore","drawer_pages_heading":"Explore","page1_label":"About Us","page1_url":"","page2_label":"Contact Us","page2_url":"","page3_label":"FAQs","page3_url":"","page4_label":"Returns & Exchanges","page4_url":"","search_placeholder":"Search for baby essentials…"}},"product-hero":{"type":"product-hero","settings":{"tax_note":"Inclusive of all taxes","add_to_cart_text":"Add to Basket","sold_out_text":"Sold Out","quantity_label":"Qty","bundle_label":"Bundle and Save","write_review_text":"Write a review","bxgy_note":"Applies to Bundle and Save products","gallery_mode":"grid","scroll_aspect":"3\/4","scroll_gap":12,"scroll_sticky_thumbs":true,"new_badge_text":"New Arrival","care_instructions":"Machine wash cold with like colours. Gentle cycle. Do not bleach. Tumble dry low.","shipping_info":"","badge_size":16,"share_whatsapp":true,"share_facebook":true,"share_twitter":true,"share_pinterest":true,"share_instagram":false,"share_tiktok":false,"share_email":true,"share_copy_link":true}},"pair-with":{"type":"pair-with","settings":{"eyebrow":"Complete the Look","heading":"Pair It With","subheading":"Curated pieces that go beautifully together"}},"similar-products":{"type":"similar-products","settings":{"eyebrow":"You May Also Love","heading":"Similar Pieces","collection":"","products_count":8}},"product-reviews":{"type":"product-reviews","settings":{"eyebrow":"Customer Reviews","heading":"What Parents Are Saying","write_heading":"Share Your Experience","submit_btn":"Submit Review","cancel_btn":"Cancel","load_more_btn":"Load More Reviews","empty_text":"No reviews yet. Be the first to share your experience!","photo_label":"Add a Photo (optional)","verified_label":"Verified Purchase","reviews_per_page":6,"show_photos":true,"show_helpful":true}},"footer":{"type":"footer","settings":{"trust1_icon":"shield","trust1_label":"100% Safe & Certified","trust1_sub":"OEKO-TEX certified fabrics","trust2_icon":"truck","trust2_label":"Free Shipping","trust2_sub":"On orders above ₹1500","trust3_icon":"refresh","trust3_label":"Easy Returns","trust3_sub":"15-day hassle-free returns","trust4_icon":"phone","trust4_label":"24h Support","trust4_sub":"Mon – Sat, 9am – 6pm IST","trust5_icon":"card","trust5_label":"","trust5_sub":"","brand_desc":"Thoughtfully designed clothing for your little ones. Made with certified organic fabrics and a whole lot of love.","contact_email":"hello@thetinybosses.com","contact_phone":"xxx.xxxx.xxx","contact_address":"Delhi","contact_hours":"Mon – Sat · 9am – 6pm IST","instagram":"","pinterest":"","facebook":"","whatsapp":"","newsletter_label":"Get exclusive offers","newsletter_placeholder":"your@email.com","newsletter_success":"✦ Welcome to the family!","col1_menu":"","col2_menu":"","col1_heading":"Shop","col2_heading":"Help","col3_heading":"Company","col4_heading":"My Account","col5_heading":"Get in Touch","copyright_suffix":". All rights reserved."}},"cart-drawer":{"type":"cart-drawer","settings":{"subtotal_label":"Subtotal","checkout_btn":"Proceed to Checkout","empty_cta":"Start Shopping","title":"Your Cart","empty_text":"Your cart is empty","view_cart_text":"View Full Cart","shipping_message":"Free shipping on orders over ₹1500 · Taxes calculated at checkout"}},"discount-popup":{"type":"discount-popup","settings":{"heading":"You're almost there!","icon":"🎁","cta_text":"Add More Items","cta_url":""}},"newsletter-popup":{"type":"newsletter-popup","settings":{"image":"shopify:\/\/shop_images\/PHOTO-2025-08-19-22-03-06_928ca797-f53b-452a-93a9-93b13417b3fa.jpg","eyebrow":"Join the Family","heading":"Little Ones, Big Love","subtext":"Subscribe for new arrivals, styling tips and exclusive member offers.","show_offer":true,"incentive_text":"Get 10% off your first order","offer_code":"WELCOME10","offer_text":"10% OFF","button_text":"Subscribe & Save","delay_seconds":5,"redisplay_days":30}},"page-about":{"type":"page-about","settings":{"story_eyebrow":"How It Started","values_eyebrow":"What We Stand For","eyebrow":"Our Story","hero_title":"Made with Love, Worn with Joy","hero_sub":"","mission_quote":"","mission_cite":"— The Tiny Bosses Team","story_title":"Our Story","story_text":"<p>As parents, the search for good quality, comfortable clothing for our babies never really ends.<\/p><p>When I was expecting my twins, I was excited to start building their wardrobe. But that excitement quickly turned into<br\/>disappointment. The Indian kidswear market felt completely misaligned—either the options were overly expensive luxury pieces, or they were made with poor-quality fabrics, often polyester blends, yet still overpriced.<\/p><p>As a new mom, comfort and safety were non-negotiable. But I found myself struggling to find clothing made with soft, breathable, skin-friendly fabrics that were also stylish and reasonably priced.<\/p><p>Another gap became clear over time—while there were still<br\/>decent options for girls, boys’ clothing lacked variety, design, and<br\/>thoughtfulness.<\/p><p>And as every parent knows, babies outgrow their clothes in no time. Paying premium prices for something worn only a handful of times simply didn’t make sense.<\/p><p>That’s when the idea was born.<\/p><p>What started as a personal need soon became a purpose—to create a brand that truly understands parents.<\/p><p>A brand that offers thoughtfully designed, comfortable, and fashionable clothing made using skin-friendly fabrics, at prices that feel right.<\/p><p>That brand became The Tiny Bosses.<\/p>","story_image":"shopify:\/\/shop_images\/1.jpg","values_heading":"Our Values","val1_title":"Safety First","val1_text":"Every fabric is OEKO-TEX certified  -  free from harmful chemicals, kind to sensitive newborn skin.","val2_title":"Made with Love","val2_text":"Small-batch production means every piece gets the attention to detail your baby deserves.","val3_title":"Built to Last","val3_text":"Machine washable, colour-fast, and still beautiful after 50 washes. Real baby life approved.","val4_title":"Thoughtfully Sourced","val4_text":"Ethical suppliers who share our belief that beautiful things can also be responsible ones.","stat1_num":"10,000+","stat1_label":"Happy Babies","stat2_num":"100%","stat2_label":"OEKO-TEX Certified","stat3_num":"50+","stat3_label":"Styles Available","stat4_num":"4.9★","stat4_label":"Average Rating","cta_sub":"Explore our latest collections and find that perfect outfit.","cta_primary_text":"Shop All","cta_primary_url":"","cta_secondary_text":"Get in Touch","cta_secondary_url":""}},"hero-banner":{"type":"hero-banner","settings":{"image":"shopify:\/\/shop_images\/95F04412-5B1B-4B0C-85CF-6533DA75EFC6.png","height":"small","overlay_opacity":65,"text_align":"left","content_position":"center","eyebrow":"New Collection","heading":"Dressed in Softness,\nWrapped in Love","heading_size":"large","subheading":"Premium organic cotton pieces for your little ones — gentle on skin, beautiful in every stitch.","cta_1_text":"Shop Now","cta_1_url":"","cta_2_text":"View Lookbook","cta_2_url":"","show_scroll":true,"scroll_label":"Scroll"}},"featured-collections":{"type":"featured-collections","settings":{"eyebrow":"Shop by Category","heading":"Our Collections","subheading":"","cta_label":"Explore"}},"discount-carousel":{"type":"discount-carousel","settings":{"eyebrow":"Bundle & Save","heading":"The More You Love, The More You Save","subheading":"Mix and match any items across our collection","shop_url":"","shop_btn_text":"Shop Now","popular_badge":"Popular","unlock_text":"Add items to unlock savings","tier1_title":"Buy 2","tier1_pct":"5% off","tier1_desc":"Perfect starter bundle for the new arrival","tier2_title":"Buy 3","tier2_pct":"10% off","tier2_desc":"Ideal for seasonal wardrobe refresh","tier3_title":"Buy 4","tier3_pct":"15% off","tier3_desc":"Build a complete nursery wardrobe","tier4_title":"Buy 5+","tier4_pct":"20% off","tier4_desc":"The ultimate luxury gift set or full collection"}},"product-grid":{"type":"product-grid","blocks":{"collection_dgU4Bp":{"type":"collection","settings":{"collection":"girls-tops","eyebrow":"","heading":"","view_all_text":"View all","products_count":8,"columns":"4"}},"collection_XNHe7f":{"type":"collection","settings":{"collection":"girls","eyebrow":"","heading":"","view_all_text":"View all","products_count":8,"columns":"4"}}},"block_order":["collection_dgU4Bp","collection_XNHe7f"],"settings":{"eyebrow":"New Arrivals","heading":"Crafted for Tiny Moments","collection":"","products_count":8,"columns":"4","view_all_text":"View all"}},"testimonials":{"type":"testimonials","settings":{"eyebrow":"Testimonials","heading":"Words from Our Little Family","subheading":"","bg_color":""}},"cart-page":{"type":"cart-page","settings":{"title":"Your Cart","summary_title":"Order Summary","bundle_label":"Bundle & Save","secure_label":"Secure Checkout","returns_label":"Free Returns","empty_heading":"Your cart is empty","empty_sub":"Looks like you haven't added anything yet.","empty_cta":"Start Shopping","empty_url":""}},"page-faq":{"type":"page-faq","blocks":{"question_NYNKXj":{"type":"question","settings":{"category":"Returns & Exchanges","question":"What is your return policy?","answer":"<p>We accept returns within 7 days of delivery if the item is unused, unwashed, and in its original packaging with tags intact.<\/p>"}},"question_D8bD9T":{"type":"question","settings":{"category":"Ordering & Shipping","question":"How long does delivery take?","answer":"<p>We ship within 1-2 business days. Standard delivery takes 3-7 business days depending on your location.<\/p>"}},"question_MzY9fB":{"type":"question","settings":{"category":"Ordering & Shipping","question":"Can I change or cancel my order after placing it?","answer":"<p>Orders can be modified or cancelled within 2 hours of placing them. Please contact our support team immediately if you need changes.<\/p>"}},"question_3repQf":{"type":"question","settings":{"category":"Ordering & Shipping","question":"How do I place an order?","answer":"<p>Simply browse our collection, select your preferred size and color, and click Add to Cart. When you’re ready, proceed to Checkout and complete the payment securely.<\/p>"}}},"block_order":["question_NYNKXj","question_D8bD9T","question_MzY9fB","question_3repQf"],"settings":{"eyebrow":"Got Questions?","heading":"Frequently Asked Questions","subheading":"","email":"hello@yourstore.com"}},"collection-products":{"type":"collection-products","settings":{"filters_label":"Filters","clear_label":"Clear all","sort_label":"Sort by","sort_featured":"Featured","new_badge":"New","sort_newest":"Newest","products_per_page":24,"grid_columns":"3","show_filters":true,"show_product_count":true}}},"content_for_index":[]}}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "Baby Elegance",
+  "theme_store_id": null,
+  "theme_version": "1.0.0",
+  "theme_author": "Baby Elegance Theme",
+  "theme_support_url": "",
+  "theme_documentation_url": "",
+  "theme_name": "Baby Elegance — Premium Baby Clothing Theme",
+  "current": {
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "settings": {
+          "text_1": "Free shipping on orders over $75",
+          "url_1": "",
+          "text_2": "Buy 2 get 5% off · Buy 3 get 10% off · Buy 5 get 20% off",
+          "url_2": "",
+          "text_3": "Crafted with love for your little ones",
+          "url_3": "",
+          "divider": "✦",
+          "bg_color": "#2c1f18",
+          "text_color": "#f9f3ee",
+          "speed": 35
+        }
+      },
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo": "shopify://shop_images/IMG_0449.png",
+          "logo_height": 36,
+          "logo_width": 224,
+          "logo_height_mobile": 36,
+          "logo_width_mobile": 0,
+          "menu": "",
+          "girls_menu": "",
+          "boys_menu": "",
+          "family_menu": "",
+          "girls_title": "Girls",
+          "girls_desc": "Beautiful, playful clothing for every little girl.",
+          "girls_cta": "Shop All Girls",
+          "girls_url": "",
+          "boys_title": "Boys",
+          "boys_desc": "Comfortable, cool clothing for every little boy.",
+          "boys_cta": "Shop All Boys",
+          "boys_url": "",
+          "family_title": "Family",
+          "family_desc": "Matching sets and gifts for the whole family.",
+          "family_cta": "Shop All Family",
+          "family_url": "",
+          "mega_eyebrow": "Explore",
+          "drawer_pages_heading": "Explore",
+          "page1_label": "About Us",
+          "page1_url": "",
+          "page2_label": "Contact Us",
+          "page2_url": "",
+          "page3_label": "FAQs",
+          "page3_url": "",
+          "page4_label": "Returns & Exchanges",
+          "page4_url": "",
+          "search_placeholder": "Search for baby essentials…"
+        }
+      },
+      "product-hero": {
+        "type": "product-hero",
+        "settings": {
+          "tax_note": "Inclusive of all taxes",
+          "add_to_cart_text": "Add to Basket",
+          "sold_out_text": "Sold Out",
+          "quantity_label": "Qty",
+          "bundle_label": "Bundle and Save",
+          "write_review_text": "Write a review",
+          "bxgy_note": "Applies to Bundle and Save products",
+          "gallery_mode": "grid",
+          "scroll_aspect": "3/4",
+          "scroll_gap": 12,
+          "scroll_sticky_thumbs": true,
+          "new_badge_text": "New Arrival",
+          "care_instructions": "Machine wash cold with like colours. Gentle cycle. Do not bleach. Tumble dry low.",
+          "shipping_info": "",
+          "badge_size": 16,
+          "share_whatsapp": true,
+          "share_facebook": true,
+          "share_twitter": true,
+          "share_pinterest": true,
+          "share_instagram": false,
+          "share_tiktok": false,
+          "share_email": true,
+          "share_copy_link": true
+        }
+      },
+      "pair-with": {
+        "type": "pair-with",
+        "settings": {
+          "eyebrow": "Complete the Look",
+          "heading": "Pair It With",
+          "subheading": "Curated pieces that go beautifully together"
+        }
+      },
+      "similar-products": {
+        "type": "similar-products",
+        "settings": {
+          "eyebrow": "You May Also Love",
+          "heading": "Similar Pieces",
+          "collection": "",
+          "products_count": 8
+        }
+      },
+      "product-reviews": {
+        "type": "product-reviews",
+        "settings": {
+          "eyebrow": "Customer Reviews",
+          "heading": "What Parents Are Saying",
+          "write_heading": "Share Your Experience",
+          "submit_btn": "Submit Review",
+          "cancel_btn": "Cancel",
+          "load_more_btn": "Load More Reviews",
+          "empty_text": "No reviews yet. Be the first to share your experience!",
+          "photo_label": "Add a Photo (optional)",
+          "verified_label": "Verified Purchase",
+          "reviews_per_page": 6,
+          "show_photos": true,
+          "show_helpful": true
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "trust1_icon": "shield",
+          "trust1_label": "100% Safe & Certified",
+          "trust1_sub": "OEKO-TEX certified fabrics",
+          "trust2_icon": "truck",
+          "trust2_label": "Free Shipping",
+          "trust2_sub": "On orders above ₹1500",
+          "trust3_icon": "refresh",
+          "trust3_label": "Easy Returns",
+          "trust3_sub": "15-day hassle-free returns",
+          "trust4_icon": "phone",
+          "trust4_label": "24h Support",
+          "trust4_sub": "Mon – Sat, 9am – 6pm IST",
+          "trust5_icon": "card",
+          "trust5_label": "",
+          "trust5_sub": "",
+          "brand_desc": "Thoughtfully designed clothing for your little ones. Made with certified organic fabrics and a whole lot of love.",
+          "contact_email": "hello@thetinybosses.com",
+          "contact_phone": "xxx.xxxx.xxx",
+          "contact_address": "Delhi",
+          "contact_hours": "Mon – Sat · 9am – 6pm IST",
+          "instagram": "",
+          "pinterest": "",
+          "facebook": "",
+          "whatsapp": "",
+          "newsletter_label": "Get exclusive offers",
+          "newsletter_placeholder": "your@email.com",
+          "newsletter_success": "✦ Welcome to the family!",
+          "col1_menu": "",
+          "col2_menu": "",
+          "col1_heading": "Shop",
+          "col2_heading": "Help",
+          "col3_heading": "Company",
+          "col4_heading": "My Account",
+          "col5_heading": "Get in Touch",
+          "copyright_suffix": ". All rights reserved."
+        }
+      },
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {
+          "subtotal_label": "Subtotal",
+          "checkout_btn": "Proceed to Checkout",
+          "empty_cta": "Start Shopping",
+          "title": "Your Cart",
+          "empty_text": "Your cart is empty",
+          "view_cart_text": "View Full Cart",
+          "shipping_message": "Free shipping on orders over ₹1500 · Taxes calculated at checkout"
+        }
+      },
+      "discount-popup": {
+        "type": "discount-popup",
+        "settings": {
+          "heading": "You're almost there!",
+          "icon": "🎁",
+          "cta_text": "Add More Items",
+          "cta_url": ""
+        }
+      },
+      "newsletter-popup": {
+        "type": "newsletter-popup",
+        "settings": {
+          "image": "shopify://shop_images/PHOTO-2025-08-19-22-03-06_928ca797-f53b-452a-93a9-93b13417b3fa.jpg",
+          "eyebrow": "Join the Family",
+          "heading": "Little Ones, Big Love",
+          "subtext": "Subscribe for new arrivals, styling tips and exclusive member offers.",
+          "show_offer": true,
+          "incentive_text": "Get 10% off your first order",
+          "offer_code": "WELCOME10",
+          "offer_text": "10% OFF",
+          "button_text": "Subscribe & Save",
+          "delay_seconds": 5,
+          "redisplay_days": 30
+        }
+      },
+      "page-about": {
+        "type": "page-about",
+        "settings": {
+          "story_eyebrow": "How It Started",
+          "values_eyebrow": "What We Stand For",
+          "eyebrow": "Our Story",
+          "hero_title": "Made with Love, Worn with Joy",
+          "hero_sub": "",
+          "mission_quote": "",
+          "mission_cite": "— The Tiny Bosses Team",
+          "story_title": "Our Story",
+          "story_text": "<p>As parents, the search for good quality, comfortable clothing for our babies never really ends.</p><p>When I was expecting my twins, I was excited to start building their wardrobe. But that excitement quickly turned into<br/>disappointment. The Indian kidswear market felt completely misaligned—either the options were overly expensive luxury pieces, or they were made with poor-quality fabrics, often polyester blends, yet still overpriced.</p><p>As a new mom, comfort and safety were non-negotiable. But I found myself struggling to find clothing made with soft, breathable, skin-friendly fabrics that were also stylish and reasonably priced.</p><p>Another gap became clear over time—while there were still<br/>decent options for girls, boys’ clothing lacked variety, design, and<br/>thoughtfulness.</p><p>And as every parent knows, babies outgrow their clothes in no time. Paying premium prices for something worn only a handful of times simply didn’t make sense.</p><p>That’s when the idea was born.</p><p>What started as a personal need soon became a purpose—to create a brand that truly understands parents.</p><p>A brand that offers thoughtfully designed, comfortable, and fashionable clothing made using skin-friendly fabrics, at prices that feel right.</p><p>That brand became The Tiny Bosses.</p>",
+          "story_image": "shopify://shop_images/1.jpg",
+          "values_heading": "Our Values",
+          "val1_title": "Safety First",
+          "val1_text": "Every fabric is OEKO-TEX certified  -  free from harmful chemicals, kind to sensitive newborn skin.",
+          "val2_title": "Made with Love",
+          "val2_text": "Small-batch production means every piece gets the attention to detail your baby deserves.",
+          "val3_title": "Built to Last",
+          "val3_text": "Machine washable, colour-fast, and still beautiful after 50 washes. Real baby life approved.",
+          "val4_title": "Thoughtfully Sourced",
+          "val4_text": "Ethical suppliers who share our belief that beautiful things can also be responsible ones.",
+          "stat1_num": "10,000+",
+          "stat1_label": "Happy Babies",
+          "stat2_num": "100%",
+          "stat2_label": "OEKO-TEX Certified",
+          "stat3_num": "50+",
+          "stat3_label": "Styles Available",
+          "stat4_num": "4.9★",
+          "stat4_label": "Average Rating",
+          "cta_sub": "Explore our latest collections and find that perfect outfit.",
+          "cta_primary_text": "Shop All",
+          "cta_primary_url": "",
+          "cta_secondary_text": "Get in Touch",
+          "cta_secondary_url": ""
+        }
+      },
+      "hero-banner": {
+        "type": "hero-banner",
+        "settings": {
+          "image": "shopify://shop_images/95F04412-5B1B-4B0C-85CF-6533DA75EFC6.png",
+          "height": "small",
+          "overlay_opacity": 65,
+          "text_align": "left",
+          "content_position": "center",
+          "eyebrow": "New Collection",
+          "heading": "Dressed in Softness,\nWrapped in Love",
+          "heading_size": "large",
+          "subheading": "Premium organic cotton pieces for your little ones — gentle on skin, beautiful in every stitch.",
+          "cta_1_text": "Shop Now",
+          "cta_1_url": "",
+          "cta_2_text": "View Lookbook",
+          "cta_2_url": "",
+          "show_scroll": true,
+          "scroll_label": "Scroll"
+        }
+      },
+      "featured-collections": {
+        "type": "featured-collections",
+        "settings": {
+          "eyebrow": "Shop by Category",
+          "heading": "Our Collections",
+          "subheading": "",
+          "cta_label": "Explore"
+        }
+      },
+      "discount-carousel": {
+        "type": "discount-carousel",
+        "settings": {
+          "eyebrow": "Bundle & Save",
+          "heading": "The More You Love, The More You Save",
+          "subheading": "Mix and match any items across our collection",
+          "shop_url": "",
+          "shop_btn_text": "Shop Now",
+          "popular_badge": "Popular",
+          "unlock_text": "Add items to unlock savings",
+          "tier1_title": "Buy 2",
+          "tier1_pct": "5% off",
+          "tier1_desc": "Perfect starter bundle for the new arrival",
+          "tier2_title": "Buy 3",
+          "tier2_pct": "10% off",
+          "tier2_desc": "Ideal for seasonal wardrobe refresh",
+          "tier3_title": "Buy 4",
+          "tier3_pct": "15% off",
+          "tier3_desc": "Build a complete nursery wardrobe",
+          "tier4_title": "Buy 5+",
+          "tier4_pct": "20% off",
+          "tier4_desc": "The ultimate luxury gift set or full collection"
+        }
+      },
+      "product-grid": {
+        "type": "product-grid",
+        "blocks": {
+          "collection_dgU4Bp": {
+            "type": "collection",
+            "settings": {
+              "collection": "girls-tops",
+              "eyebrow": "",
+              "heading": "",
+              "view_all_text": "View all",
+              "products_count": 8,
+              "columns": "4"
+            }
+          },
+          "collection_XNHe7f": {
+            "type": "collection",
+            "settings": {
+              "collection": "girls",
+              "eyebrow": "",
+              "heading": "",
+              "view_all_text": "View all",
+              "products_count": 8,
+              "columns": "4"
+            }
+          }
+        },
+        "block_order": [
+          "collection_dgU4Bp",
+          "collection_XNHe7f"
+        ],
+        "settings": {
+          "eyebrow": "New Arrivals",
+          "heading": "Crafted for Tiny Moments",
+          "collection": "",
+          "products_count": 8,
+          "columns": "4",
+          "view_all_text": "View all"
+        }
+      },
+      "testimonials": {
+        "type": "testimonials",
+        "settings": {
+          "eyebrow": "Testimonials",
+          "heading": "Words from Our Little Family",
+          "subheading": "",
+          "bg_color": ""
+        }
+      },
+      "cart-page": {
+        "type": "cart-page",
+        "settings": {
+          "title": "Your Cart",
+          "summary_title": "Order Summary",
+          "bundle_label": "Bundle & Save",
+          "secure_label": "Secure Checkout",
+          "returns_label": "Free Returns",
+          "empty_heading": "Your cart is empty",
+          "empty_sub": "Looks like you haven't added anything yet.",
+          "empty_cta": "Start Shopping",
+          "empty_url": ""
+        }
+      },
+      "page-faq": {
+        "type": "page-faq",
+        "blocks": {
+          "question_NYNKXj": {
+            "type": "question",
+            "settings": {
+              "category": "Returns & Exchanges",
+              "question": "What is your return policy?",
+              "answer": "<p>We accept returns within 7 days of delivery if the item is unused, unwashed, and in its original packaging with tags intact.</p>"
+            }
+          },
+          "question_D8bD9T": {
+            "type": "question",
+            "settings": {
+              "category": "Ordering & Shipping",
+              "question": "How long does delivery take?",
+              "answer": "<p>We ship within 1-2 business days. Standard delivery takes 3-7 business days depending on your location.</p>"
+            }
+          },
+          "question_MzY9fB": {
+            "type": "question",
+            "settings": {
+              "category": "Ordering & Shipping",
+              "question": "Can I change or cancel my order after placing it?",
+              "answer": "<p>Orders can be modified or cancelled within 2 hours of placing them. Please contact our support team immediately if you need changes.</p>"
+            }
+          },
+          "question_3repQf": {
+            "type": "question",
+            "settings": {
+              "category": "Ordering & Shipping",
+              "question": "How do I place an order?",
+              "answer": "<p>Simply browse our collection, select your preferred size and color, and click Add to Cart. When you’re ready, proceed to Checkout and complete the payment securely.</p>"
+            }
+          }
+        },
+        "block_order": [
+          "question_NYNKXj",
+          "question_D8bD9T",
+          "question_MzY9fB",
+          "question_3repQf"
+        ],
+        "settings": {
+          "eyebrow": "Got Questions?",
+          "heading": "Frequently Asked Questions",
+          "subheading": "",
+          "email": "hello@yourstore.com"
+        }
+      },
+      "collection-products": {
+        "type": "collection-products",
+        "settings": {
+          "filters_label": "Filters",
+          "clear_label": "Clear all",
+          "sort_featured": "Featured",
+          "new_badge": "New",
+          "sort_newest": "Newest",
+          "products_per_page": 24,
+          "grid_columns": "3",
+          "show_filters": true,
+          "show_product_count": true
+        }
+      }
+    },
+    "content_for_index": [],
+    "blocks": {
+      "14060646107696862457": {
+        "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "disabled": false,
+        "settings": {}
+      },
+      "13047258039897440615": {
+        "type": "shopify://apps/judge-me-reviews/blocks/cart_drawer_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "disabled": false,
+        "settings": {
+          "widget_type": "review-widget"
+        }
+      }
+    }
+  }
+}
