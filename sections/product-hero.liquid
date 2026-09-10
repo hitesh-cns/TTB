@@ -136,19 +136,9 @@
           <span>{{ product.title }}</span>
         </nav>
 
-        <!-- Title row: name left, rating right -->
+        <!-- Title row -->
         <div class="product-title-row">
           <h1 class="product-title">{{ product.title }}</h1>
-          <div class="product-rating-summary" id="product-rating-summary">
-            <div class="stars-display" data-rating="0">
-              {% for i in (1..5) %}<span class="star">★</span>{% endfor %}
-            </div>
-            <button class="rating-link" onclick="document.getElementById('reviews-section').scrollIntoView({behavior:'smooth'})">
-              <span id="review-count-summary">0 reviews</span>
-            </button>
-            <span class="rating-divider">·</span>
-            <button class="rating-link" onclick="document.getElementById('reviews-section').scrollIntoView({behavior:'smooth'})">{{ section.settings.write_review_text | default: 'Write a review' }}</button>
-          </div>
         </div>
 
         <!-- Price row: price left, share icons right -->
