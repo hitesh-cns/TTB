@@ -132,11 +132,19 @@
     </div>
   </div>
 
+  {% comment %} App-block slot. Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
+  {% for block in section.blocks %}
+    {% if block.type == '@app' %}{% render block %}{% endif %}
+  {% endfor %}
+
 </div>
 
 {% schema %}
 {
   "name": "Contact Page",
+  "blocks": [
+    { "type": "@app" }
+  ],
   "settings": [
     { "type": "text", "id": "form_heading", "label": "Form Heading", "default": "Send a Message" },
     { "type": "text", "id": "topic_product", "label": "Topic Product", "default": "Product Question" },
@@ -150,6 +158,9 @@
     { "type": "header", "content": "Form Labels" },
     { "type": "text",   "id": "label_name",   "label": "Name Field Label",   "default": "Your Name" },
     { "type": "text",   "id": "topic_order",  "label": "Topic Option 1",     "default": "Order Query" }
+  ],
+  "presets": [
+    { "name": "Contact Page" }
   ]
 }
 {% endschema %}

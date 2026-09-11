@@ -1,0 +1,56 @@
+{
+  "sections": {
+    "page-faq": {
+      "type": "page-faq",
+      "blocks": {
+        "question_NYNKXj": {
+          "type": "question",
+          "settings": {
+            "category": "Returns & Exchanges",
+            "question": "What is your return policy?",
+            "answer": "<p>We accept returns within 7 days of delivery if the item is unused, unwashed, and in its original packaging with tags intact.</p>"
+          }
+        },
+        "question_D8bD9T": {
+          "type": "question",
+          "settings": {
+            "category": "Ordering & Shipping",
+            "question": "How long does delivery take?",
+            "answer": "<p>We ship within 1-2 business days. Standard delivery takes 3-7 business days depending on your location.</p>"
+          }
+        },
+        "question_MzY9fB": {
+          "type": "question",
+          "settings": {
+            "category": "Ordering & Shipping",
+            "question": "Can I change or cancel my order after placing it?",
+            "answer": "<p>Orders can be modified or cancelled within 2 hours of placing them. Please contact our support team immediately if you need changes.</p>"
+          }
+        },
+        "question_3repQf": {
+          "type": "question",
+          "settings": {
+            "category": "Ordering & Shipping",
+            "question": "How do I place an order?",
+            "answer": "<p>Simply browse our collection, select your preferred size and color, and click Add to Cart. When you’re ready, proceed to Checkout and complete the payment securely.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_NYNKXj",
+        "question_D8bD9T",
+        "question_MzY9fB",
+        "question_3repQf"
+      ],
+      "settings": {
+        "eyebrow": "Got Questions?",
+        "heading": "Frequently Asked Questions",
+        "subheading": "",
+        "email": "hello@yourstore.com"
+      }
+    }
+  },
+  "order": [
+    "page-faq"
+  ]
+}

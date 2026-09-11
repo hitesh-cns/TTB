@@ -1,0 +1,44 @@
+{
+  "sections": {
+    "page-about": {
+      "type": "page-about",
+      "settings": {
+        "story_eyebrow": "How It Started",
+        "values_eyebrow": "What We Stand For",
+        "eyebrow": "Our Story",
+        "hero_title": "Made with Love, Worn with Joy",
+        "hero_sub": "",
+        "mission_quote": "",
+        "mission_cite": "— The Tiny Bosses Team",
+        "story_title": "Our Story",
+        "story_text": "<p>As parents, the search for good quality, comfortable clothing for our babies never really ends.</p><p>When I was expecting my twins, I was excited to start building their wardrobe. But that excitement quickly turned into<br/>disappointment. The Indian kidswear market felt completely misaligned—either the options were overly expensive luxury pieces, or they were made with poor-quality fabrics, often polyester blends, yet still overpriced.</p><p>As a new mom, comfort and safety were non-negotiable. But I found myself struggling to find clothing made with soft, breathable, skin-friendly fabrics that were also stylish and reasonably priced.</p><p>Another gap became clear over time—while there were still<br/>decent options for girls, boys’ clothing lacked variety, design, and<br/>thoughtfulness.</p><p>And as every parent knows, babies outgrow their clothes in no time. Paying premium prices for something worn only a handful of times simply didn’t make sense.</p><p>That’s when the idea was born.</p><p>What started as a personal need soon became a purpose—to create a brand that truly understands parents.</p><p>A brand that offers thoughtfully designed, comfortable, and fashionable clothing made using skin-friendly fabrics, at prices that feel right.</p><p>That brand became The Tiny Bosses.</p>",
+        "story_image": "shopify://shop_images/1.jpg",
+        "values_heading": "Our Values",
+        "val1_title": "Safety First",
+        "val1_text": "Every fabric is OEKO-TEX certified  -  free from harmful chemicals, kind to sensitive newborn skin.",
+        "val2_title": "Made with Love",
+        "val2_text": "Small-batch production means every piece gets the attention to detail your baby deserves.",
+        "val3_title": "Built to Last",
+        "val3_text": "Machine washable, colour-fast, and still beautiful after 50 washes. Real baby life approved.",
+        "val4_title": "Thoughtfully Sourced",
+        "val4_text": "Ethical suppliers who share our belief that beautiful things can also be responsible ones.",
+        "stat1_num": "10,000+",
+        "stat1_label": "Happy Babies",
+        "stat2_num": "100%",
+        "stat2_label": "OEKO-TEX Certified",
+        "stat3_num": "50+",
+        "stat3_label": "Styles Available",
+        "stat4_num": "4.9★",
+        "stat4_label": "Average Rating",
+        "cta_sub": "Explore our latest collections and find that perfect outfit.",
+        "cta_primary_text": "Shop All",
+        "cta_primary_url": "",
+        "cta_secondary_text": "Get in Touch",
+        "cta_secondary_url": ""
+      }
+    }
+  },
+  "order": [
+    "page-about"
+  ]
+}
