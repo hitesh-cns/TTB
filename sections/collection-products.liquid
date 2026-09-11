@@ -125,6 +125,11 @@
   </div>
 </div>
 
+{% comment %} App-block slot (e.g. filter / merchandising apps). Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
+{% for block in section.blocks %}
+  {% if block.type == '@app' %}{% render block %}{% endif %}
+{% endfor %}
+
 <!-- = PRODUCT GRID = -->
 <div class="container">
   {% paginate collection.products by section.settings.products_per_page %}
@@ -351,6 +356,9 @@
 {% schema %}
 {
   "name": "Collection Products",
+  "blocks": [
+    { "type": "@app" }
+  ],
   "settings": [
     { "type": "text", "id": "filters_label", "label": "Filters Label", "default": "Filters" },
     { "type": "text", "id": "clear_label",   "label": "Clear Label",   "default": "Clear all" },

@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "collection-products": {
+      "type": "collection-products",
+      "settings": {
+        "filters_label": "Filters",
+        "clear_label": "Clear all",
+        "sort_featured": "Featured",
+        "new_badge": "New",
+        "sort_newest": "Newest",
+        "products_per_page": 24,
+        "grid_columns": "3",
+        "show_filters": true,
+        "show_product_count": true
+      }
+    }
+  },
+  "order": [
+    "collection-products"
+  ]
+}
