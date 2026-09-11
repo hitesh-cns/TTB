@@ -7303,3 +7303,36 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   position: relative;
   z-index: 1102;
 }
+
+/* ============================================================
+   FIX: off-brand yellow discount/accent buttons
+   ============================================================
+   .btn--discount and .btn--accent (above) use var(--accent) /
+   var(--accent-hover) — a hardcoded bright yellow (#FFEB3B /
+   #FDD835) that clashes with the espresso/ivory palette.
+   --accent and --accent-hover are left untouched (still used
+   elsewhere) — only these two button types are restyled here,
+   to match .btn--primary: espresso background/border, ivory
+   text, espresso-lt on hover/focus/active. Append-only — the
+   base .btn--discount / .btn--accent rules are left intact;
+   these overrides win on cascade order (same specificity,
+   declared later in the file).
+   ============================================================ */
+.btn--discount,
+.btn--accent {
+  background: var(--espresso);
+  color: var(--ivory);
+  border-color: var(--espresso);
+}
+.btn--discount:hover,
+.btn--discount:focus,
+.btn--discount:focus-visible,
+.btn--discount:active,
+.btn--accent:hover,
+.btn--accent:focus,
+.btn--accent:focus-visible,
+.btn--accent:active {
+  background: var(--espresso-lt);
+  border-color: var(--espresso-lt);
+  color: var(--ivory);
+}
