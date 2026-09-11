@@ -253,6 +253,11 @@
 
     {% endif %}
 
+    {% comment %} App-block slot. Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
+    {% for block in section.blocks %}
+      {% if block.type == '@app' %}{% render block %}{% endif %}
+    {% endfor %}
+
   </div>
 </div>
 
@@ -292,6 +297,9 @@
 {% schema %}
 {
   "name": "Cart Page",
+  "blocks": [
+    { "type": "@app" }
+  ],
   "settings": [
     { "type": "text", "id": "title",          "label": "Page Title",             "default": "Your Cart" },
     { "type": "text", "id": "summary_title",  "label": "Order Summary Title",    "default": "Order Summary" },
@@ -302,6 +310,9 @@
     { "type": "text", "id": "empty_sub",      "label": "Empty Cart Sub-text",    "default": "Looks like you haven't added anything yet." },
     { "type": "text", "id": "empty_cta",      "label": "Empty Cart Button Text", "default": "Start Shopping" },
     { "type": "url",  "id": "empty_url",      "label": "Empty Cart Button URL" }
+  ],
+  "presets": [
+    { "name": "Cart Page" }
   ]
 }
 {% endschema %}

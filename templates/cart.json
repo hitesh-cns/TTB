@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "cart-page": {
+      "type": "cart-page",
+      "settings": {
+        "title": "Your Cart",
+        "summary_title": "Order Summary",
+        "bundle_label": "Bundle & Save",
+        "secure_label": "Secure Checkout",
+        "returns_label": "Free Returns",
+        "empty_heading": "Your cart is empty",
+        "empty_sub": "Looks like you haven't added anything yet.",
+        "empty_cta": "Start Shopping",
+        "empty_url": ""
+      }
+    }
+  },
+  "order": [
+    "cart-page"
+  ]
+}
