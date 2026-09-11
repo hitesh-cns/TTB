@@ -1,0 +1,46 @@
+{% comment %}
+  ============================================================
+  SECTION: MAIN SEARCH (generic)
+  ============================================================
+  Route stub for /search — this route previously had no theme
+  template file, so Shopify rendered its own built-in default
+  search page. Reproduces that: a search form plus a plain list
+  of matching results (or a no-results message).
+  EDIT: Theme Editor → Search
+  ============================================================
+{% endcomment %}
+<div class="container" style="padding: 40px 20px;">
+  <h1>{{ section.settings.heading | default: 'Search' }}</h1>
+
+  <form action="{{ routes.search_url }}" method="get" role="search" style="max-width: 480px; margin: 16px 0;">
+    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search…" class="auth-input" aria-label="Search">
+    <button type="submit" class="btn btn--primary" style="margin-top: 10px;">Search</button>
+  </form>
+
+  {% if search.performed %}
+    <p>{{ search.results_count }} result{{ search.results_count | pluralize: '', 's' }} for "{{ search.terms }}"</p>
+    {% if search.results.size > 0 %}
+      <ul>
+        {% for item in search.results %}
+          <li>
+            <a href="{{ item.url }}">{{ item.title }}</a>{% if item.object_type == 'product' %} — {{ item.price | money }}{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No results found.</p>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Main Search",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Search" }
+  ],
+  "presets": [
+    { "name": "Main Search" }
+  ]
+}
+{% endschema %}

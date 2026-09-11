@@ -1,0 +1,62 @@
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "settings": {
+        "text_1": "Free shipping on orders over $75",
+        "url_1": "",
+        "text_2": "Buy 2 get 5% off · Buy 3 get 10% off · Buy 5 get 20% off",
+        "url_2": "",
+        "text_3": "Crafted with love for your little ones",
+        "url_3": "",
+        "divider": "✦",
+        "bg_color": "#2c1f18",
+        "text_color": "#f9f3ee",
+        "speed": 35
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo": "shopify://shop_images/IMG_0449.png",
+        "logo_height": 36,
+        "logo_width": 224,
+        "logo_height_mobile": 36,
+        "logo_width_mobile": 0,
+        "menu": "",
+        "girls_menu": "",
+        "boys_menu": "",
+        "family_menu": "",
+        "girls_title": "Girls",
+        "girls_desc": "Beautiful, playful clothing for every little girl.",
+        "girls_cta": "Shop All Girls",
+        "girls_url": "",
+        "boys_title": "Boys",
+        "boys_desc": "Comfortable, cool clothing for every little boy.",
+        "boys_cta": "Shop All Boys",
+        "boys_url": "",
+        "family_title": "Family",
+        "family_desc": "Matching sets and gifts for the whole family.",
+        "family_cta": "Shop All Family",
+        "family_url": "",
+        "mega_eyebrow": "Explore",
+        "drawer_pages_heading": "Explore",
+        "page1_label": "About Us",
+        "page1_url": "",
+        "page2_label": "Contact Us",
+        "page2_url": "",
+        "page3_label": "FAQs",
+        "page3_url": "",
+        "page4_label": "Returns & Exchanges",
+        "page4_url": "",
+        "search_placeholder": "Search for baby essentials…"
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
+}

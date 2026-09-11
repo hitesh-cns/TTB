@@ -1,0 +1,49 @@
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "trust1_icon": "shield",
+        "trust1_label": "100% Safe & Certified",
+        "trust1_sub": "OEKO-TEX certified fabrics",
+        "trust2_icon": "truck",
+        "trust2_label": "Free Shipping",
+        "trust2_sub": "On orders above ₹1500",
+        "trust3_icon": "refresh",
+        "trust3_label": "Easy Returns",
+        "trust3_sub": "15-day hassle-free returns",
+        "trust4_icon": "phone",
+        "trust4_label": "24h Support",
+        "trust4_sub": "Mon – Sat, 9am – 6pm IST",
+        "trust5_icon": "card",
+        "trust5_label": "",
+        "trust5_sub": "",
+        "brand_desc": "Thoughtfully designed clothing for your little ones. Made with certified organic fabrics and a whole lot of love.",
+        "contact_email": "hello@thetinybosses.com",
+        "contact_phone": "xxx.xxxx.xxx",
+        "contact_address": "Delhi",
+        "contact_hours": "Mon – Sat · 9am – 6pm IST",
+        "instagram": "",
+        "pinterest": "",
+        "facebook": "",
+        "whatsapp": "",
+        "newsletter_label": "Get exclusive offers",
+        "newsletter_placeholder": "your@email.com",
+        "newsletter_success": "✦ Welcome to the family!",
+        "col1_menu": "",
+        "col2_menu": "",
+        "col1_heading": "Shop",
+        "col2_heading": "Help",
+        "col3_heading": "Company",
+        "col4_heading": "My Account",
+        "col5_heading": "Get in Touch",
+        "copyright_suffix": ". All rights reserved."
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

@@ -295,15 +295,14 @@
     This is the correct pattern — nested sticky elements break each other.
   {%- endcomment -%}
   <div id="sticky-bar" class="sticky-bar">
-    {% section 'announcement-bar' %}
-    {% section 'header' %}
+    {% sections 'header-group' %}
   </div>
 
   <main id="MainContent" role="main" tabindex="-1">
     {{ content_for_layout }}
   </main>
 
-  {% section 'footer' %}
+  {% sections 'footer-group' %}
 
   {%- comment -%}
     All elements below are position:fixed or position:absolute —

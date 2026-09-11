@@ -1,0 +1,78 @@
+{% comment %}
+  ============================================================
+  SECTION: CUSTOMERS ACTIVATE ACCOUNT
+  ============================================================
+  Account Activation — The /account/activate/* page, reached via
+  the invite link Shopify emails when an account is created in
+  Shopify Admin rather than by self-registration.
+  This route previously had no theme template (Shopify's own
+  built-in default page was shown). Added here so the route is
+  theme-controlled; reproduces Shopify's standard activation
+  form (set-password + confirm), styled to match the other
+  customer auth pages (reset-password / login).
+  EDIT: Theme Editor → Customer pages → Activate Account
+  ============================================================
+{% endcomment %}
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <p class="section-eyebrow">{{ section.settings.eyebrow | default: 'Account Activation' }}</p>
+      <h1 class="auth-heading">{{ section.settings.heading | default: 'Activate Account' }}</h1>
+      <p class="auth-sub">{{ section.settings.sub | default: 'Create a password to activate your account.' }}</p>
+    </div>
+
+    {% form 'activate_customer_password', class: 'auth-form' %}
+      {% if form.errors %}
+        <div class="auth-error" role="alert">
+          {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <div class="auth-field">
+        <label class="auth-label" for="activate-password">New Password</label>
+        <div class="auth-input-wrap">
+          <input class="auth-input" type="password" name="customer[password]" id="activate-password"
+                 autocomplete="new-password" minlength="5" required placeholder="Min 5 characters">
+          <button type="button" class="auth-eye" id="activate-eye" aria-label="Toggle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label" for="activate-confirm">Confirm Password</label>
+        <input class="auth-input" type="password" name="customer[password_confirmation]" id="activate-confirm"
+               autocomplete="new-password" minlength="5" required placeholder="Repeat your password">
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--full">{{ section.settings.submit_text | default: 'Activate Account' }}</button>
+    {% endform %}
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var eye = document.getElementById('activate-eye');
+  var pwd = document.getElementById('activate-password');
+  if (eye && pwd) {
+    eye.addEventListener('click', function () { pwd.type = pwd.type === 'password' ? 'text' : 'password'; });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Customer Activate Account",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Account Activation" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Activate Account" },
+    { "type": "text", "id": "sub",     "label": "Sub-text", "default": "Create a password to activate your account." },
+    { "type": "text", "id": "submit_text", "label": "Submit Button", "default": "Activate Account" }
+  ],
+  "presets": [
+    { "name": "Customer Activate Account" }
+  ]
+}
+{% endschema %}

@@ -223,6 +223,11 @@
 
   </div>
 
+  {% comment %} App-block slot. Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
+  {% for block in section.blocks %}
+    {% if block.type == '@app' %}{% render block %}{% endif %}
+  {% endfor %}
+
   <!-- -- Bottom bar -- -->
   <div class="footer-bottom">
     <div class="container footer-bottom__inner">
@@ -296,7 +301,7 @@
       { "type": "text", "id": "heading", "label": "Column Title", "default": "Shop" },
       { "type": "link_list", "id": "menu", "label": "Menu" }
     ]
-  }],
+  }, { "type": "@app" }],
   "presets": [{ "name": "Footer" }]
 }
 {% endschema %}

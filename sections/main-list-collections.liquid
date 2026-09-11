@@ -1,0 +1,31 @@
+{% comment %}
+  ============================================================
+  SECTION: MAIN LIST COLLECTIONS (generic)
+  ============================================================
+  Route stub for /collections — this route previously had no
+  theme template file, so Shopify rendered its own built-in
+  default listing. Reproduces that: a plain list linking to
+  every collection in the store.
+  EDIT: Theme Editor → All Collections page
+  ============================================================
+{% endcomment %}
+<div class="container" style="padding: 40px 20px;">
+  <h1>{{ section.settings.heading | default: 'Collections' }}</h1>
+  <ul style="margin-top: 16px;">
+    {% for collection in collections %}
+      <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "Main List Collections",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Collections" }
+  ],
+  "presets": [
+    { "name": "Main List Collections" }
+  ]
+}
+{% endschema %}

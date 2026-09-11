@@ -1,0 +1,30 @@
+{% comment %}
+  ============================================================
+  SECTION: MAIN 404 (generic)
+  ============================================================
+  Route stub for the "page not found" route — this route
+  previously had no theme template file, so Shopify rendered its
+  own built-in default 404 page. Reproduces that: a not-found
+  message and a link back to the homepage.
+  EDIT: Theme Editor → 404 page
+  ============================================================
+{% endcomment %}
+<div class="container" style="padding: 80px 20px; text-align: center;">
+  <h1>{{ section.settings.heading | default: '404 — Page Not Found' }}</h1>
+  <p>{{ section.settings.text | default: "The page you're looking for doesn't exist." }}</p>
+  <a href="{{ routes.root_url }}" class="btn btn--primary" style="margin-top: 20px; display: inline-block;">{{ section.settings.cta | default: 'Back to Home' }}</a>
+</div>
+
+{% schema %}
+{
+  "name": "Main 404",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "404 — Page Not Found" },
+    { "type": "text", "id": "text",    "label": "Text",     "default": "The page you're looking for doesn't exist." },
+    { "type": "text", "id": "cta",     "label": "Button Text", "default": "Back to Home" }
+  ],
+  "presets": [
+    { "name": "Main 404" }
+  ]
+}
+{% endschema %}
