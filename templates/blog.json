@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "blog-listing": {
+      "type": "blog-listing",
+      "settings": {}
+    }
+  },
+  "order": [
+    "blog-listing"
+  ]
+}

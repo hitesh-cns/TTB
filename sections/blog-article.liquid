@@ -205,6 +205,11 @@
           {% endform %}
         </div>
 
+        {% comment %} App-block slot. Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
+        {% for block in section.blocks %}
+          {% if block.type == '@app' %}{% render block %}{% endif %}
+        {% endfor %}
+
       </aside>
 
     </div><!-- /article-layout -->
@@ -215,6 +220,9 @@
 {% schema %}
 {
   "name": "Blog Article",
+  "blocks": [
+    { "type": "@app" }
+  ],
   "settings": [
     { "type": "header",   "content": "Labels" },
     { "type": "text",     "id": "breadcrumb_label", "label": "Breadcrumb Label",
@@ -237,6 +245,9 @@
     { "type": "checkbox", "id": "show_comments", "label": "Show Comments Section",   "default": true },
     { "type": "range",    "id": "related_count", "label": "Number of Related Articles",
       "min": 2, "max": 6, "step": 1, "default": 3 }
+  ],
+  "presets": [
+    { "name": "Blog Article" }
   ]
 }
 {% endschema %}

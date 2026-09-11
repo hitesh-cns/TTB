@@ -129,18 +129,29 @@
       {% endif %}
 
     {% endpaginate %}
+
+    {% comment %} App-block slot. Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
+    {% for block in section.blocks %}
+      {% if block.type == '@app' %}{% render block %}{% endif %}
+    {% endfor %}
   </div>
 </div>
 
 {% schema %}
 {
   "name": "Blog Listing",
+  "blocks": [
+    { "type": "@app" }
+  ],
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Stories & Guides" },
     { "type": "text", "id": "heading", "label": "Heading (fallback if no blog)", "default": "The Baby Elegance Journal" },
     { "type": "text", "id": "subheading", "label": "Subheading", "default": "Care guides, styling tips and stories for modern parents." },
     { "type": "checkbox", "id": "show_featured", "label": "Show first article as featured hero", "default": true },
     { "type": "range", "id": "articles_per_page", "label": "Articles per page", "min": 6, "max": 24, "step": 3, "default": 9 }
+  ],
+  "presets": [
+    { "name": "Blog Listing" }
   ]
 }
 {% endschema %}
