@@ -7336,3 +7336,16 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   border-color: var(--espresso-lt);
   color: var(--ivory);
 }
+
+/* ============================================================
+   FIX: invisible ghost buttons on light backgrounds
+   ============================================================
+   .btn--ghost has a transparent background and color:var(--ivory)
+   (white) — on light backgrounds (cart drawer "View Full Cart",
+   FAQ "Contact Us") the white label is invisible against the
+   light page, so the button looks like an empty outlined box.
+   Append-only — the existing .btn--ghost rule (background,
+   border, :hover) is left untouched; this only overrides the
+   base text color to espresso for legibility.
+   ============================================================ */
+.btn--ghost { color: var(--espresso); }
