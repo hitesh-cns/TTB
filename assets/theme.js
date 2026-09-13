@@ -77,7 +77,15 @@
     const countEl  = document.getElementById('cart-count');
     const subtotalEl = document.getElementById('cart-subtotal-price');
 
-    if (countEl) countEl.textContent = cart.item_count;
+    if (countEl) {
+      const prevCount = countEl.textContent;
+      countEl.textContent = cart.item_count;
+      if (cart.item_count > 0 && String(cart.item_count) !== prevCount) {
+        countEl.classList.remove('cart-count--bump');
+        void countEl.offsetWidth; // restart animation if already mid-bump
+        countEl.classList.add('cart-count--bump');
+      }
+    }
 
     // Remove all existing cart-item elements first
     itemsEl && itemsEl.querySelectorAll('.cart-item').forEach(el => el.remove());
@@ -401,6 +409,7 @@
     }
 
     function startAutoplay() {
+      clearInterval(autoplayInterval); // avoid stacking intervals if hover/focus overlap
       autoplayInterval = setInterval(() => goTo(current + 1), 5000);
     }
 
@@ -418,6 +427,18 @@
       if (Math.abs(delta) > 40) { delta < 0 ? goTo(current + 1) : goTo(current - 1); }
       startAutoplay();
     }, { passive: true });
+
+    // Pause auto-advance while the user is hovering or has keyboard focus
+    // inside the carousel (slides or arrow controls); resume on leave.
+    const carouselWrap = track.parentElement;
+    if (carouselWrap) {
+      carouselWrap.addEventListener('mouseenter', stopAutoplay);
+      carouselWrap.addEventListener('mouseleave', startAutoplay);
+      carouselWrap.addEventListener('focusin', stopAutoplay);
+      carouselWrap.addEventListener('focusout', (e) => {
+        if (!carouselWrap.contains(e.relatedTarget)) startAutoplay();
+      });
+    }
 
     buildDots();
     startAutoplay();

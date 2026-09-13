@@ -347,6 +347,30 @@
         el.setAttribute('data-stagger', Math.min(i % 6, 6));
       }
     });
+
+    // Featured collections grid (home page) — stagger
+    document.querySelectorAll('.collections-grid').forEach(grid => {
+      grid.setAttribute('data-stagger-children', '');
+      grid.querySelectorAll('.collection-card').forEach(card => {
+        if (!card.hasAttribute('data-reveal')) card.setAttribute('data-reveal', 'up');
+      });
+    });
+
+    // Trust cards strip (home page) — stagger
+    document.querySelectorAll('.trust-cards__grid').forEach(grid => {
+      grid.setAttribute('data-stagger-children', '');
+      grid.querySelectorAll('.trust-card').forEach(card => {
+        if (!card.hasAttribute('data-reveal')) card.setAttribute('data-reveal', 'up');
+      });
+    });
+
+    // Image-with-text / Rich text sections — outer wrapper reveal
+    document.querySelectorAll('.iwt-inner').forEach(el => {
+      if (!el.hasAttribute('data-reveal')) el.setAttribute('data-reveal', 'up');
+    });
+    document.querySelectorAll('.rich-text-inner').forEach(el => {
+      if (!el.hasAttribute('data-reveal')) el.setAttribute('data-reveal', 'up');
+    });
   }
 
   // -- 9. PAGE TRANSITION --

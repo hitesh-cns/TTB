@@ -7349,3 +7349,105 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
    base text color to espresso for legibility.
    ============================================================ */
 .btn--ghost { color: var(--espresso); }
+
+/* ============================================================
+   MOTION LAYER — carousel pause/zoom, card polish, buttons,
+   links, cart-count bump, smooth-scroll + load fade-in
+   ============================================================
+   Append-only. transform/opacity (+ box-shadow) only — no layout
+   properties are animated. Every effect below is neutralised
+   under prefers-reduced-motion: reduce in the consolidated media
+   query at the end of this block; content stays fully visible
+   with motion off.
+
+   Scroll-reveal ([data-reveal] / .is-revealed) already exists
+   above ("APPLE-STYLE SCROLL ANIMATIONS") — sections/cards newly
+   opted in here via animations.js reuse that existing system
+   rather than a duplicate one.
+   ============================================================ */
+
+/* -- Smooth scroll: only when motion is allowed (existing rule
+   at the top of this file sets it unconditionally) -- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* -- Carousel: gentle zoom on the one real photographic media
+   inside an auto-advancing carousel (testimonial avatars). The
+   home hero is a static image (fixed-background effect above),
+   not a carousel, so it is intentionally left untouched here. -- */
+.testimonial-avatar img { transition: transform 0.6s ease; }
+.testimonial-card:hover .testimonial-avatar img,
+.testimonial-card:focus-within .testimonial-avatar img {
+  transform: scale(1.04);
+}
+
+/* -- Product card hover polish: lift + image zoom + add-to-cart
+   fade already exist above; this adds the soft shadow. -- */
+.collection-product-card:hover { box-shadow: var(--shadow-lg); }
+
+/* -- Button micro-interactions -- */
+.btn:hover:not(:active) { transform: translateY(-2px); }
+.btn--outline:active,
+.btn--discount:active,
+.btn--accent:active {
+  transform: scale(0.98);
+  transition: transform 0.1s;
+}
+
+/* -- Text link underline-grow (footer legal links) -- */
+.footer-legal-link { position: relative; }
+.footer-legal-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+.footer-legal-link:hover::after,
+.footer-legal-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* -- Cart count "pop" — toggled by theme.js renderCart() whenever
+   the cart item count changes -- */
+@keyframes cartCountBump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.cart-count--bump { animation: cartCountBump 0.4s ease; }
+
+/* -- Progressive-enhancement page load fade-in --
+   page-fade-in.js adds `js` to <html> as soon as it runs, then
+   `is-loaded` to <body> on window load. No-JS/JS-blocked visitors
+   never get `.js`, so body keeps its default (visible) opacity. */
+html.js body {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+html.js body.is-loaded { opacity: 1; }
+
+/* -- Reduced motion: flatten every effect added in this block -- */
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-avatar img { transition: none; }
+  .testimonial-card:hover .testimonial-avatar img,
+  .testimonial-card:focus-within .testimonial-avatar img { transform: none; }
+  .collection-product-card:hover { box-shadow: none; }
+  .btn:hover:not(:active) { transform: none; }
+  .btn--outline:active,
+  .btn--discount:active,
+  .btn--accent:active { transform: none; transition: none; }
+  .footer-legal-link::after { transition: none; }
+  .cart-count--bump { animation: none; }
+  html.js body {
+    opacity: 1;
+    transition: none;
+  }
+}
