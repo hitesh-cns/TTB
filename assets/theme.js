@@ -997,6 +997,8 @@
   }
 
   backdrop && backdrop.addEventListener('click', closeSheet);
+  const sheetCloseBtn = document.getElementById('size-sheet-close');
+  sheetCloseBtn && sheetCloseBtn.addEventListener('click', closeSheet);
 
   document.addEventListener('click', async e => {
     const btn = e.target.closest('.cpc-add-btn');

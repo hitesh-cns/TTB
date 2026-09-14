@@ -3572,14 +3572,15 @@ a.footer-contact-item:hover { color: var(--ivory); }
 }
 
 /* Desktop: centered fixed panel */
-@media (min-width: 768px) {
+@media (min-width: 750px) {
   .size-sheet {
     bottom: auto;
     top: 50%;
     left: 50%;
     right: auto;
-    width: min(480px, 90vw);
+    width: min(600px, 92vw);
     border-radius: 20px;
+    padding-top: 24px;
     transform: translate(-50%, calc(-50% + 30px));
     opacity: 0;
     transition: transform 200ms ease-out, opacity 150ms ease-out, visibility 0s 200ms;
@@ -3598,25 +3599,50 @@ a.footer-contact-item:hover { color: var(--ivory); }
   border-radius: 2px;
   margin: 12px auto 16px;
 }
-@media (min-width: 768px) { .size-sheet__handle { display: none; } }
+@media (min-width: 750px) { .size-sheet__handle { display: none; } }
 
-/* Product context row */
-.size-sheet__context {
+.size-sheet__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  justify-content: center;
+  background: var(--ivory);
+  border: none;
+  border-radius: 50%;
+  color: var(--espresso-lt);
+  cursor: pointer;
+  z-index: 1;
 }
+.size-sheet__close:hover { background: var(--blush); color: var(--espresso); }
+
+/* Two-column card: large image left, product name/colour/size options right.
+   Collapses to a single stacked column (image on top) at <=749px — see the
+   .size-sheet__body rules in the responsive block further down this file. */
+.size-sheet__body {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.size-sheet__media { flex: 0 0 200px; }
 .size-sheet__thumb {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
   object-fit: contain;
   background: var(--ivory-dk);
-  flex-shrink: 0;
   display: block;
 }
-.size-sheet__info { flex: 1; min-width: 0; }
+.size-sheet__options {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.size-sheet__info { margin-bottom: 16px; }
 .size-sheet__product-name {
   font-family: var(--font-body);
   font-size: 14px;
@@ -3766,6 +3792,13 @@ a.footer-contact-item:hover { color: var(--ivory); }
   .collection-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .pair-card { flex: 0 0 78vw; }
   #back-to-top { bottom: 20px; right: 20px; width: 44px; height: 44px; }
+}
+
+/* Size sheet: single stacked column, image on top, below 750px */
+@media (max-width: 749px) {
+  .size-sheet__body { flex-direction: column; gap: 16px; }
+  .size-sheet__media { flex: none; width: 100%; }
+  .size-sheet__thumb { height: 180px; }
 }
 
 /* ============================================================
@@ -7424,16 +7457,6 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 }
 .cart-count--bump { animation: cartCountBump 0.4s ease; }
 
-/* -- Progressive-enhancement page load fade-in --
-   page-fade-in.js adds `js` to <html> as soon as it runs, then
-   `is-loaded` to <body> on window load. No-JS/JS-blocked visitors
-   never get `.js`, so body keeps its default (visible) opacity. */
-html.js body {
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-html.js body.is-loaded { opacity: 1; }
-
 /* -- Reduced motion: flatten every effect added in this block -- */
 @media (prefers-reduced-motion: reduce) {
   .testimonial-avatar img { transition: none; }
@@ -7446,8 +7469,4 @@ html.js body.is-loaded { opacity: 1; }
   .btn--accent:active { transform: none; transition: none; }
   .footer-legal-link::after { transition: none; }
   .cart-count--bump { animation: none; }
-  html.js body {
-    opacity: 1;
-    transition: none;
-  }
 }
