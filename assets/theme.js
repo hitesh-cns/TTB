@@ -869,8 +869,10 @@
   const sheet           = document.getElementById('size-sheet');
   const sheetThumb      = document.getElementById('size-sheet-thumb');
   const sheetName       = document.getElementById('size-sheet-name');
+  const sheetColorRow   = document.getElementById('size-sheet-color-row');
   const sheetColorDot   = document.getElementById('size-sheet-color-dot');
   const sheetColorLabel = document.getElementById('size-sheet-color-label');
+  const sheetColorsEl   = document.getElementById('size-sheet-colors');
   const sheetGrid       = document.getElementById('size-sheet-grid');
 
   let currentAddBtn = null;
@@ -925,50 +927,51 @@
 
     currentAddBtn = btn;
 
-    // Populate product context synchronously before animation
     const title = (card.querySelector('.cpc-title a') || card.querySelector('.cpc-title'))?.textContent?.trim() || '';
-    const activeSwatch = card.querySelector('.cpc-color-swatch.is-selected');
-    const colorName = activeSwatch ? (activeSwatch.dataset.color || '') : '';
-    const activeImg = card.querySelector('.cpc-img');
+    if (sheetName) sheetName.textContent = title;
 
-    if (sheetName)       sheetName.textContent        = title;
-    if (sheetColorLabel) sheetColorLabel.textContent   = colorName;
-    if (sheetThumb && activeImg) { sheetThumb.src = activeImg.src; sheetThumb.alt = title; }
-    if (sheetColorDot && activeSwatch) {
-      sheetColorDot.style.backgroundColor = activeSwatch.style.backgroundColor || colorName.toLowerCase().replace(/\s+/g, '');
-      sheetColorDot.style.borderColor = activeSwatch.style.borderColor || 'rgba(0,0,0,0.12)';
-    }
-
-    // Extract sizes from variants data
-    const sizeIdx = parseInt(card.dataset.sizeOptionIndex ?? '-1', 10);
+    const sizeIdx  = parseInt(card.dataset.sizeOptionIndex ?? '-1', 10);
+    const colorIdx = parseInt(card.dataset.colorOptionIndex ?? '-1', 10);
     let variants = [];
     try { variants = JSON.parse(card.dataset.variants || '[]'); } catch(e) {}
 
-    const seenSizes = new Set();
-    const sizes = [];
-    variants.forEach(v => {
-      let size;
-      if (sizeIdx >= 0 && Array.isArray(v.options) && v.options[sizeIdx] !== undefined) {
-        size = v.options[sizeIdx];
-      } else if (v.title && v.title !== 'Default Title') {
-        size = v.title;
-      }
-      if (size && !seenSizes.has(size)) {
-        seenSizes.add(size);
-        sizes.push({ size, variantId: v.id, available: v.available !== false });
-      }
-    });
+    const cardSwatches = Array.from(card.querySelectorAll('.cpc-color-swatch'));
+    let selectedColor = null;
 
-    if (!sizes.length) {
-      ['NB', '0-3M', '3-6M', '6-12M', '12-18M', '18-24M'].forEach(s => {
-        sizes.push({ size: s, variantId: btn.dataset.variantId, available: true });
+    // Resolve every size (+ its variant id/availability) for a given colour.
+    // With no colour option, this behaves exactly as before — one size list
+    // built across all variants.
+    function sizesForColor(color) {
+      const seenSizes = new Set();
+      const sizes = [];
+      variants.forEach(v => {
+        if (colorIdx >= 0 && color) {
+          const vColor = Array.isArray(v.options) ? v.options[colorIdx] : undefined;
+          if (vColor !== color) return;
+        }
+        let size;
+        if (sizeIdx >= 0 && Array.isArray(v.options) && v.options[sizeIdx] !== undefined) {
+          size = v.options[sizeIdx];
+        } else if (v.title && v.title !== 'Default Title') {
+          size = v.title;
+        }
+        if (size && !seenSizes.has(size)) {
+          seenSizes.add(size);
+          sizes.push({ size, variantId: v.id, available: v.available !== false });
+        }
       });
+      if (!sizes.length) {
+        ['NB', '0-3M', '3-6M', '6-12M', '12-18M', '18-24M'].forEach(s => {
+          sizes.push({ size: s, variantId: btn.dataset.variantId, available: true });
+        });
+      }
+      return sizes;
     }
 
-    // Build size pills synchronously
-    if (sheetGrid) {
+    function renderSizePills(color) {
+      if (!sheetGrid) return;
       sheetGrid.innerHTML = '';
-      sizes.forEach(({ size, variantId, available }) => {
+      sizesForColor(color).forEach(({ size, variantId, available }) => {
         const pill = document.createElement('button');
         pill.className = 'size-sheet__pill' + (available ? '' : ' is-unavailable');
         pill.textContent = size;
@@ -988,6 +991,64 @@
         sheetGrid.appendChild(pill);
       });
     }
+
+    function updateContextForColor(color) {
+      const sw  = cardSwatches.find(s => s.dataset.color === color);
+      const img = (sw && sw.dataset.image) || (card.querySelector('.cpc-img') || {}).src || '';
+      if (sheetThumb && img) { sheetThumb.src = img; sheetThumb.alt = title; }
+      if (sheetColorRow) sheetColorRow.hidden = !color;
+      if (sheetColorLabel) sheetColorLabel.textContent = color || '';
+      if (sheetColorDot) {
+        sheetColorDot.style.backgroundColor = (sw && sw.style.backgroundColor) || (color ? color.toLowerCase().replace(/\s+/g, '') : '');
+        sheetColorDot.style.borderColor = (sw && sw.style.borderColor) || 'rgba(0,0,0,0.12)';
+      }
+    }
+
+    function selectColor(color) {
+      selectedColor = color;
+      if (sheetColorsEl) {
+        sheetColorsEl.querySelectorAll('.size-sheet__color-swatch').forEach(dot => {
+          const match = dot.dataset.color === color;
+          dot.classList.toggle('is-selected', match);
+          dot.setAttribute('aria-pressed', match ? 'true' : 'false');
+        });
+      }
+      updateContextForColor(color);
+      renderSizePills(color);
+    }
+
+    // Colour swatches — mirror the card's own swatches so picking a colour
+    // here re-filters sizes/availability and updates the image, same as on
+    // the card.
+    if (sheetColorsEl) {
+      sheetColorsEl.innerHTML = '';
+      if (colorIdx >= 0 && cardSwatches.length) {
+        sheetColorsEl.hidden = false;
+        cardSwatches.forEach(sw => {
+          const isSelected = sw.classList.contains('is-selected');
+          if (isSelected) selectedColor = sw.dataset.color;
+          const dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = 'size-sheet__color-swatch' + (isSelected ? ' is-selected' : '');
+          dot.style.backgroundColor = sw.style.backgroundColor;
+          if (sw.style.borderColor) dot.style.borderColor = sw.style.borderColor;
+          dot.dataset.color = sw.dataset.color || '';
+          dot.title = sw.title || sw.dataset.color || '';
+          dot.setAttribute('aria-label', sw.getAttribute('aria-label') || ('Select ' + (sw.dataset.color || '')));
+          dot.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+          dot.addEventListener('click', () => selectColor(dot.dataset.color));
+          sheetColorsEl.appendChild(dot);
+        });
+      } else {
+        sheetColorsEl.hidden = true;
+      }
+    }
+    if (!selectedColor && colorIdx >= 0 && cardSwatches.length) {
+      selectedColor = cardSwatches[0].dataset.color || null;
+    }
+
+    updateContextForColor(selectedColor);
+    renderSizePills(selectedColor);
 
     // Start both transitions simultaneously in a single rAF
     requestAnimationFrame(() => {

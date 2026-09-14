@@ -34,18 +34,6 @@
   {% endfor %}
 {% endfor %}
 
-<!-- = COLLECTION HERO BANNER = -->
-<div class="coll-hero"
-  {% if collection.image %}
-    style="background-image: linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('{{ collection.image | img_url: '1600x' }}'); background-size: cover; background-position: center;"
-  {% endif %}
->
-  <h1 class="coll-hero__title">{{ collection.title }}</h1>
-  {% if collection.description != blank %}
-    <p class="coll-hero__desc">{{ collection.description | strip_html | truncate: 200 }}</p>
-  {% endif %}
-</div>
-
 <!-- = STICKY FILTER BAR = -->
 <div class="coll-filter-bar filter-wrapper" id="coll-filter-bar">
   <div class="container">
@@ -138,7 +126,8 @@
       <div class="collection-grid" id="collection-grid" data-columns="{{ section.settings.grid_columns }}">
         {% for product in collection.products %}
           {% assign size_opt_idx = '' %}{% for _o in product.options %}{% if _o == 'Size' or _o == 'size' %}{% assign size_opt_idx = forloop.index0 %}{% endif %}{% endfor %}
-          <div class="collection-product-card" data-tags="{{ product.tags | join: ',' | escape }}" data-variants='[{% for variant in product.variants %}{"id":{{ variant.id }},"title":"{{ variant.title | escape }}","options":{{ variant.options | json }},"available":{{ variant.available }}}{% unless forloop.last %},{% endunless %}{% endfor %}]'{% if size_opt_idx != '' %} data-size-option-index="{{ size_opt_idx }}"{% endif %}>
+          {% assign color_opt_idx = '' %}{% for _o in product.options %}{% if _o == 'Color' or _o == 'Colour' %}{% assign color_opt_idx = forloop.index0 %}{% endif %}{% endfor %}
+          <div class="collection-product-card" data-tags="{{ product.tags | join: ',' | escape }}" data-variants='[{% for variant in product.variants %}{"id":{{ variant.id }},"title":"{{ variant.title | escape }}","options":{{ variant.options | json }},"available":{{ variant.available }}}{% unless forloop.last %},{% endunless %}{% endfor %}]'{% if size_opt_idx != '' %} data-size-option-index="{{ size_opt_idx }}"{% endif %}{% if color_opt_idx != '' %} data-color-option-index="{{ color_opt_idx }}"{% endif %}>
 
             <!-- Image area with badges, carousel, and add to cart -->
             <div class="cpc-image-wrap" data-images='[{% for img in product.images limit: 6 %}"{{ img | img_url: "600x" }}"{% unless forloop.last %},{% endunless %}{% endfor %}]'>
@@ -213,18 +202,11 @@
               </div>
 
               <!-- Colour swatches -->
-              {% assign color_option_index = nil %}
-              {% for option in product.options %}
-                {% if option == 'Color' or option == 'Colour' %}
-                  {% assign color_option_index = forloop.index0 %}
-                {% endif %}
-              {% endfor %}
-
-              {% if color_option_index != nil %}
-                <div class="cpc-color-row" data-option-index="{{ color_option_index }}">
+              {% if color_opt_idx != '' %}
+                <div class="cpc-color-row" data-option-index="{{ color_opt_idx }}">
                   {% assign shown_colors = '' %}
                   {% for variant in product.variants %}
-                    {% assign color_val = variant.options[color_option_index] %}
+                    {% assign color_val = variant.options[color_opt_idx] %}
                     {% unless shown_colors contains color_val %}
                       {% assign shown_colors = shown_colors | append: color_val | append: ',' %}
                       <button
@@ -304,11 +286,12 @@
     <div class="size-sheet__options">
       <div class="size-sheet__info">
         <p class="size-sheet__product-name" id="size-sheet-name"></p>
-        <p class="size-sheet__color-row">
+        <p class="size-sheet__color-row" id="size-sheet-color-row">
           <span class="size-sheet__color-dot" id="size-sheet-color-dot"></span>
           <span id="size-sheet-color-label"></span>
         </p>
       </div>
+      <div class="size-sheet__colors" id="size-sheet-colors" hidden></div>
       <p class="size-sheet__label">Select Size</p>
       <div class="size-sheet__grid" id="size-sheet-grid"></div>
     </div>
