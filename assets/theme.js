@@ -80,6 +80,7 @@
     if (countEl) {
       const prevCount = countEl.textContent;
       countEl.textContent = cart.item_count;
+      countEl.classList.toggle('is-empty', cart.item_count === 0);
       if (cart.item_count > 0 && String(cart.item_count) !== prevCount) {
         countEl.classList.remove('cart-count--bump');
         void countEl.offsetWidth; // restart animation if already mid-bump
