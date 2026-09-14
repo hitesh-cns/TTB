@@ -7526,3 +7526,108 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .footer-legal-link::after { transition: none; }
   .cart-count--bump { animation: none; }
 }
+
+/* ============================================================
+   PHASE 1 — MOBILE + TABLET RESPONSIVE FIXES
+   ============================================================
+   Append-only. Every rule below lives inside a phone (<=767px)
+   or tablet (768px-1024px) media query — no desktop rule is
+   touched, and nothing here applies above 1024px.
+   ============================================================ */
+
+/* ---- PHONES (<=767px) ---- */
+@media (max-width: 767px) {
+
+  /* 1) Safety net: body must never scroll sideways */
+  html, body { overflow-x: hidden; }
+
+  /* 2) Tap targets: header icons (search/account/cart) + hamburger >= 44x44
+     (base .header-action / .mobile-menu-toggle are sized for a mouse pointer) */
+  .header-action { width: 44px; height: 44px; }
+  .mobile-menu-toggle { width: 44px; height: 44px; }
+
+  /* Mobile drawer sub-links: base padding (10px) is a bit short of 44px tall */
+  .mobile-nav-child { padding: 14px 36px; }
+
+  /* Footer link lists: comfortable tap height without doubling footer height
+     (padding replaces the list gap so links don't end up double-spaced) */
+  .footer-col-list { gap: 0; }
+  .footer-col-link { display: block; padding: 11px 0; }
+  .footer-legal-links { row-gap: 4px; }
+  .footer-legal-link { display: inline-block; padding: 10px 0; }
+
+  /* 4) Announcement bar: comfortable single line, already shrinks font-size
+     and hides overflow above this breakpoint — this just tightens the line-box */
+  .announcement-items { line-height: 1.2; }
+
+  /* 5) Discount ("you're so close") popup — compact, bottom-anchored bar
+     instead of a bottom-right floating card, with a real 44x44 close target */
+  .discount-popup {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    padding: 20px 18px;
+  }
+  .discount-popup__close {
+    top: 6px;
+    right: 6px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 5) Newsletter popup — bottom sheet instead of a centered modal that can
+     run taller than the viewport; image panel dropped so only the compact
+     form half shows (existing rules for this already applied at <=640px —
+     these extend the same treatment across the full phone range and add
+     the sheet's own scroll/close handling) */
+  .nl-popup { align-items: flex-end; padding: 0; }
+  .nl-popup__card {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: none;
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    transform: translateY(100%);
+  }
+  .nl-popup.is-open .nl-popup__card { transform: translateY(0); }
+  .nl-popup__image { display: none; }
+  .nl-popup__close { width: 44px; height: 44px; }
+  .nl-popup__skip { padding: 10px; }
+
+  /* 6) Footer: fully stack (was still 2-column up to 1100px wide);
+     wrap payment icons so they never force a horizontal scroll */
+  .footer-body { grid-template-columns: 1fr; }
+  .footer-payments { flex-wrap: wrap; justify-content: center; }
+
+  /* 7) Back-to-top: off the bottom-right corner, where the discount and
+     newsletter popups above are anchored, so it never sits under them
+     (or, near checkout, gets crowded against the footer) */
+  #back-to-top {
+    left: 16px;
+    right: auto;
+    bottom: 16px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ---- TABLETS (768px - 1024px) ---- */
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  html, body { overflow-x: hidden; }
+
+  /* Touch-friendly header icons on iPad-class devices */
+  .header-action { width: 44px; height: 44px; }
+
+  /* Footer: .footer-body's 2-column tablet layout (set <=1100px) leaves
+     the contact column wrapping to a half-width row under it — give it
+     its own full-width row instead */
+  .footer-contact-col { grid-column: 1 / -1; }
+
+  .footer-payments { flex-wrap: wrap; }
+}
