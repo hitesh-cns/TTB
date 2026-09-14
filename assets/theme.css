@@ -182,7 +182,9 @@ ul { list-style: none; }
   color: var(--espresso);
   padding: 12px 0;
   overflow: hidden;
+  cursor: grab;
 }
+.announcement-bar.is-dragging { cursor: grabbing; }
 
 .announcement-track { position: relative; }
 
@@ -223,6 +225,12 @@ ul { list-style: none; }
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+
+/* No auto-scroll under reduced motion — manual drag (theme.js) still works,
+   it fully replaces the animation with an inline transform while dragging. */
+@media (prefers-reduced-motion: reduce) {
+  .announcement-items { animation: none; }
 }
 
 /* ============================================

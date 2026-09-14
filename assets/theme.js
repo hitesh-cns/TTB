@@ -1100,3 +1100,109 @@
   });
 
 })();
+
+/* ================================================================
+   ANNOUNCEMENT BAR — pause on hover/focus, drag to scrub
+   ================================================================ */
+(function () {
+  'use strict';
+
+  const bar = document.getElementById('announcement-bar');
+  if (!bar) return;
+  const track = bar.querySelector('.announcement-items');
+  if (!track) return;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  let isDown = false;
+  let dragged = false;
+  let startX = 0;
+  let startTranslate = 0;
+  let loopWidth = 0;
+  let durationSec = 30;
+
+  function currentTranslateX() {
+    const st = window.getComputedStyle(track).transform;
+    if (!st || st === 'none') return 0;
+    const match = st.match(/matrix.*\((.+)\)/);
+    if (!match) return 0;
+    const parts = match[1].split(',').map(Number);
+    return parts.length === 16 ? parts[12] : parts[4]; // matrix3d vs matrix
+  }
+
+  function wrap(x, w) {
+    if (!w) return 0;
+    x = x % w;
+    if (x > 0) x -= w;
+    return x;
+  }
+
+  function pause() {
+    if (reduceMotion.matches) return;
+    track.style.animationPlayState = 'paused';
+  }
+  function resume() {
+    if (isDown || reduceMotion.matches) return;
+    track.style.animationPlayState = 'running';
+  }
+
+  bar.addEventListener('mouseenter', pause);
+  bar.addEventListener('mouseleave', resume);
+  bar.addEventListener('focusin', pause);
+  bar.addEventListener('focusout', e => { if (!bar.contains(e.relatedTarget)) resume(); });
+
+  function onDown(clientX) {
+    isDown = true;
+    dragged = false;
+    startX = clientX;
+    loopWidth = track.scrollWidth / 2;
+    durationSec = parseFloat(window.getComputedStyle(track).animationDuration) || 30;
+    startTranslate = currentTranslateX();
+    // Fully stop (not just pause) the CSS animation so the inline
+    // transform set while dragging actually takes visual effect.
+    track.style.animation = 'none';
+    track.style.transform = `translateX(${startTranslate}px)`;
+    bar.classList.add('is-dragging');
+  }
+
+  function onMove(clientX) {
+    if (!isDown) return;
+    const delta = clientX - startX;
+    if (Math.abs(delta) > 3) dragged = true;
+    track.style.transform = `translateX(${wrap(startTranslate + delta, loopWidth)}px)`;
+  }
+
+  function onUp() {
+    if (!isDown) return;
+    isDown = false;
+    bar.classList.remove('is-dragging');
+
+    if (reduceMotion.matches) return; // leave the manual scrub position, no auto-scroll
+
+    // Resume the marquee from the exact spot the user left it: convert the
+    // current offset into a negative animation-delay so there's no jump.
+    const progress = loopWidth ? ((-currentTranslateX() / loopWidth) % 1 + 1) % 1 : 0;
+    track.style.transform = '';
+    track.style.animation = `marquee ${durationSec}s linear infinite`;
+    track.style.animationDelay = `-${progress * durationSec}s`;
+    track.style.animationPlayState = 'running';
+  }
+
+  bar.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    onDown(e.clientX);
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => onMove(e.clientX));
+  window.addEventListener('mouseup', onUp);
+
+  bar.addEventListener('touchstart', e => onDown(e.touches[0].clientX), { passive: true });
+  bar.addEventListener('touchmove', e => onMove(e.touches[0].clientX), { passive: true });
+  bar.addEventListener('touchend', onUp);
+  bar.addEventListener('touchcancel', onUp);
+
+  // A drag that moved past the click threshold shouldn't also follow the link.
+  bar.addEventListener('click', e => {
+    if (dragged) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+})();
