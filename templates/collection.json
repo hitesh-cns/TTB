@@ -1,5 +1,21 @@
 {
   "sections": {
+    "collection-banner": {
+      "type": "collection-banner",
+      "settings": {
+        "use_collection_image": true,
+        "overlay_opacity": 30,
+        "min_height": 360,
+        "show_heading": true,
+        "heading": "",
+        "subheading": "",
+        "heading_font": "heading",
+        "heading_size": "large",
+        "text_color": "#FFFFFF",
+        "text_align": "center",
+        "text_position": "middle"
+      }
+    },
     "collection-products": {
       "type": "collection-products",
       "settings": {
@@ -16,6 +32,7 @@
     }
   },
   "order": [
+    "collection-banner",
     "collection-products"
   ]
 }

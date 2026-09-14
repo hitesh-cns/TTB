@@ -34,18 +34,6 @@
   {% endfor %}
 {% endfor %}
 
-<!-- = COLLECTION HERO BANNER = -->
-<div class="coll-hero"
-  {% if collection.image %}
-    style="background-image: linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('{{ collection.image | img_url: '1600x' }}'); background-size: cover; background-position: center;"
-  {% endif %}
->
-  <h1 class="coll-hero__title">{{ collection.title }}</h1>
-  {% if collection.description != blank %}
-    <p class="coll-hero__desc">{{ collection.description | strip_html | truncate: 200 }}</p>
-  {% endif %}
-</div>
-
 <!-- = STICKY FILTER BAR = -->
 <div class="coll-filter-bar filter-wrapper" id="coll-filter-bar">
   <div class="container">

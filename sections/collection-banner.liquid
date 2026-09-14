@@ -1,0 +1,114 @@
+{% comment %}
+  ============================================================
+  SECTION: COLLECTION BANNER
+  ============================================================
+  The banner shown at the top of a collection page, above the
+  product grid. Native OS 2.0 section — every control lives in
+  the theme editor schema below (no metafields).
+
+  Background priority: the collection's own Image field (Shopify
+  Admin → Collections → [collection] → Image) → the "Image"
+  setting below as a fallback/override → the plain dark
+  background when neither is set.
+  EDIT: Theme Editor → Collection pages → Collection Banner
+  ============================================================
+{% endcomment %}
+
+{%- assign cb_image = nil -%}
+{%- if section.settings.use_collection_image and collection.image -%}
+  {%- assign cb_image = collection.image -%}
+{%- elsif section.settings.image != blank -%}
+  {%- assign cb_image = section.settings.image -%}
+{%- endif -%}
+
+{%- assign cb_position = section.settings.text_position | default: 'middle' -%}
+{%- assign cb_align    = section.settings.text_align | default: 'center' -%}
+{%- assign cb_size     = section.settings.heading_size | default: 'large' -%}
+{%- assign cb_font     = section.settings.heading_font | default: 'heading' -%}
+{%- assign cb_color    = section.settings.text_color | default: '#FFFFFF' -%}
+
+<section
+  class="collection-banner collection-banner--{{ cb_position }}"
+  style="--cb-min-height: {{ section.settings.min_height | default: 360 }}px; --cb-overlay: {{ section.settings.overlay_opacity | default: 30 }}%;"
+>
+  {% if cb_image %}
+    <div class="collection-banner__bg">
+      <img
+        src="{{ cb_image | img_url: '2000x' }}"
+        srcset="{{ cb_image | img_url: '800x' }} 800w, {{ cb_image | img_url: '1400x' }} 1400w, {{ cb_image | img_url: '2000x' }} 2000w"
+        sizes="100vw"
+        alt=""
+        class="collection-banner__img"
+        loading="eager"
+        fetchpriority="high"
+      >
+    </div>
+    <div class="collection-banner__overlay"></div>
+  {% endif %}
+
+  {% if section.settings.show_heading != false %}
+    <div class="collection-banner__content collection-banner__content--{{ cb_align }}">
+      <h1
+        class="collection-banner__heading collection-banner__heading--{{ cb_size }} collection-banner__heading--font-{{ cb_font }}"
+        style="color: {{ cb_color }};"
+      >{{ section.settings.heading | default: collection.title }}</h1>
+      {% if section.settings.subheading != blank %}
+        <p class="collection-banner__subheading" style="color: {{ cb_color }};">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Collection Banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "By default this banner uses the collection's own Image (set in Shopify Admin → Collections → this collection → Image). Use the settings below to override it or restyle the text."
+    },
+    { "type": "header", "content": "Background" },
+    { "type": "checkbox", "id": "use_collection_image", "label": "Use collection's Image", "default": true },
+    { "type": "image_picker", "id": "image", "label": "Fallback / Override Image",
+      "info": "Shown when 'Use collection's Image' is off, or the collection has no Image set." },
+    { "type": "range", "id": "overlay_opacity", "label": "Image Overlay Darkness",
+      "min": 0, "max": 100, "step": 5, "unit": "%", "default": 30,
+      "info": "Dark scrim over the image so the text stays readable." },
+    { "type": "range", "id": "min_height", "label": "Banner Height",
+      "min": 200, "max": 600, "step": 20, "unit": "px", "default": 360 },
+    { "type": "header", "content": "Content" },
+    { "type": "checkbox", "id": "show_heading", "label": "Show Heading", "default": true },
+    { "type": "text", "id": "heading", "label": "Heading",
+      "info": "Leave blank to use the collection's title." },
+    { "type": "text", "id": "subheading", "label": "Subheading",
+      "info": "Optional. Leave blank to hide." },
+    { "type": "select", "id": "heading_font", "label": "Heading Font",
+      "options": [
+        { "value": "heading", "label": "Heading font" },
+        { "value": "body",    "label": "Body font" }
+      ], "default": "heading" },
+    { "type": "select", "id": "heading_size", "label": "Heading Size",
+      "options": [
+        { "value": "small",  "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large",  "label": "Large" },
+        { "value": "xlarge", "label": "Extra large" }
+      ], "default": "large" },
+    { "type": "color", "id": "text_color", "label": "Text Color", "default": "#FFFFFF" },
+    { "type": "select", "id": "text_align", "label": "Text Alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ], "default": "center" },
+    { "type": "select", "id": "text_position", "label": "Text Vertical Position",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "middle", "label": "Middle" },
+        { "value": "bottom", "label": "Bottom" }
+      ], "default": "middle" }
+  ],
+  "presets": [{ "name": "Collection Banner" }]
+}
+{% endschema %}
