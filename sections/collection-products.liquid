@@ -95,6 +95,13 @@
       </div>
     </div>
 
+    <!-- Mobile/tablet bottom-sheet footer — hidden on desktop (theme.css).
+         Filters already apply live as checkboxes are toggled; this button
+         is the sheet's "done" control, matching the close (X) above. -->
+    <div class="filter-sheet-footer">
+      <button type="button" class="btn btn--primary btn--full" id="filter-apply-btn">Apply Filters</button>
+    </div>
+
     <!-- Hidden data element — passes product tags to JS -->
     <script type="application/json" id="collection-tags-data">
       {
@@ -112,6 +119,7 @@
     </script>
   </div>
 </div>
+<div class="filter-sheet-backdrop" id="filter-sheet-backdrop"></div>
 
 {% comment %} App-block slot (e.g. filter / merchandising apps). Empty and inert until an app block is added in the Theme Editor. {% endcomment %}
 {% for block in section.blocks %}

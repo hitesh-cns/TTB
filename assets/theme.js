@@ -1206,3 +1206,33 @@
     if (dragged) { e.preventDefault(); e.stopPropagation(); }
   }, true);
 })();
+
+/* ================================================================
+   COLLECTION FILTER SHEET — mobile/tablet backdrop + apply button
+   ================================================================
+   collection-filters.js owns opening the sheet (the "Filters" toggle)
+   and its own X close button; filters already apply live as checkboxes
+   are toggled. This just adds the two extra ways a bottom sheet is
+   expected to close: tapping the scrim behind it, and the sheet's own
+   "Apply Filters" button (its filtering has already happened — this is
+   just the sheet's "done" action).
+   ================================================================ */
+(function () {
+  'use strict';
+
+  const backdrop  = document.getElementById('filter-sheet-backdrop');
+  const sidebar   = document.getElementById('collection-sidebar');
+  const filterBar = document.getElementById('coll-filter-bar');
+  const toggle    = document.getElementById('filter-toggle-mobile');
+  const applyBtn  = document.getElementById('filter-apply-btn');
+  if (!sidebar) return;
+
+  function closeFilterSheet() {
+    sidebar.classList.remove('is-mobile-open');
+    filterBar && filterBar.classList.remove('filter-open');
+    toggle && toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  backdrop && backdrop.addEventListener('click', closeFilterSheet);
+  applyBtn && applyBtn.addEventListener('click', closeFilterSheet);
+})();

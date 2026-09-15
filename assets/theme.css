@@ -7631,3 +7631,267 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 
   .footer-payments { flex-wrap: wrap; }
 }
+
+/* ============================================================
+   PHASE 2 — HOME PAGE, MOBILE + TABLET
+   ============================================================
+   Append-only. Phone rules in (max-width:767px), tablet in
+   (min-width:768px) and (max-width:1024px) — both inclusive at
+   768px so there's no seam between them. Nothing here touches
+   desktop (>=1025px) or an existing base/desktop rule.
+   ============================================================ */
+@media (max-width: 767px) {
+
+  /* Hero: the *--small/medium/large modifiers set height with
+     !important, so a plain .hero-section override would silently
+     lose — matching !important here is the only way to actually
+     shorten it. Full screen (*--full) is left as-is: it's meant to
+     be full height. A shorter hero means less scroll to reach the
+     rest of the page, and the heading/CTA are already centered so
+     they're on-screen the instant the page loads either way. */
+  .hero-section--small  { height: 60vh !important; min-height: 380px !important; max-height: 60vh !important; }
+  .hero-section--medium { height: 65vh !important; min-height: 420px !important; max-height: 65vh !important; }
+  .hero-section--large  { height: 75vh !important; min-height: 480px !important; max-height: 75vh !important; }
+
+  /* Multi-column: existing rule only fully stacks at <=560px, leaving
+     561-767px (part of "phone" per our breakpoint) still 2-up */
+  .multi-col-grid--2,
+  .multi-col-grid--3,
+  .multi-col-grid--4 { grid-template-columns: 1fr; }
+
+  /* Trust cards: same gap — existing full-stack rule is <=640px only;
+     extend it across the whole phone range */
+  .trust-cards__grid { grid-template-columns: 1fr; padding: 0 20px; }
+  .trust-card { flex-direction: row; align-items: flex-start; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--ivory-dk); }
+  .trust-card:last-child { border-bottom: none; }
+
+  /* Discount carousel: existing phone rule is a fixed 260px card, which
+     shows ~1.2-1.5 cards depending on phone width instead of one —
+     match the already-correct testimonial-card pattern */
+  .discount-card { flex: 0 0 calc(100% - 48px); }
+
+  /* Carousel dots (discount/testimonials/pair-with all share this class):
+     the visible dot is 6x6px with no padding — this gives it an
+     invisible ~30x30px hit area without changing how it looks */
+  .carousel-dot { position: relative; }
+  .carousel-dot::before { content: ''; position: absolute; inset: -12px; }
+
+  /* These two sections don't use .section-spacing (which already
+     reduces 100px->64px on phone), so their padding never shrinks */
+  .discount-section { padding: 56px 0; }
+  .spotlight-section { padding: 56px 0; }
+
+  /* Home "New Arrivals" product-grid card (snippets/product-card.liquid):
+     same hover-only bug as the collection card — .product-card__actions
+     is translateY(100%) until :hover, so "Quick Add"/"Choose Options"
+     is unreachable on touch. Make it permanently visible with a real
+     44px tap target. */
+  .product-card__actions { transform: translateY(0); }
+  .btn-quick-add { min-height: 44px; display: flex; align-items: center; justify-content: center; padding: 12px; }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Same tiny-hit-area fix as phones — a touch-screen tablet has no
+     hover/mouse precision either */
+  .carousel-dot { position: relative; }
+  .carousel-dot::before { content: ''; position: absolute; inset: -12px; }
+
+  /* Same touch-visibility fix as phones for the home product grid */
+  .product-card__actions { transform: translateY(0); }
+  .btn-quick-add { min-height: 44px; display: flex; align-items: center; justify-content: center; padding: 12px; }
+}
+
+/* ============================================================
+   PHASE 3 — COLLECTION PAGE, MOBILE + TABLET
+   ============================================================ */
+
+/* New element (theme.js opens/closes it via the existing
+   .filter-open / .is-mobile-open classes collection-filters.js
+   already toggles) — hidden by default so it does nothing outside
+   the two media queries below, where it becomes the bottom sheet's
+   scrim + a tap-to-close target. */
+.filter-sheet-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2199;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
+@media (max-width: 767px) {
+
+  /* Collection banner: heading-only on phones — no image, no wasted
+     scroll. The section already falls back to the plain dark
+     background (.collection-banner's base rule) once these two are
+     hidden, so nothing looks broken/empty underneath. */
+  .collection-banner__bg,
+  .collection-banner__overlay { display: none; }
+  .collection-banner { min-height: 160px !important; padding: 28px 20px; }
+
+  /* Product grid: exactly 2 per row regardless of the merchant's
+     column setting. NOTE: .collection-grid[data-columns="N"] are
+     unscoped (no media query) attribute-selector rules with higher
+     specificity than the plain-class mobile rules already in this
+     file (e.g. line ~3841's "max-width:900px" block) — so those
+     never actually took effect on phones. !important is the only
+     way to actually win here; flagging this pre-existing specificity
+     mismatch rather than touching those base rules. */
+  .collection-grid,
+  .collection-grid[data-columns="2"],
+  .collection-grid[data-columns="3"],
+  .collection-grid[data-columns="4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+
+  /* Product card: .cpc-add-btn is opacity:0 until :hover, which touch
+     screens never reliably trigger, so "Add to Cart" is effectively
+     invisible on phones today. Make it permanently visible with a
+     real 44px tap target, then clear the badge and image-carousel
+     dots that would otherwise now sit underneath it. */
+  .cpc-add-btn {
+    opacity: 1;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+  }
+  .cpc-badge--label { bottom: 56px; }
+  .cpc-dots-container { bottom: 52px; }
+  .cpc-price-row { flex-wrap: wrap; }
+  .cpc-title { font-size: 13px; }
+
+  /* Filters: bottom sheet instead of the floating dropdown panel
+     (which used a hard max-height:400px + overflow:hidden — content
+     past that was simply clipped, unreachable, on a small screen). */
+  .collection-sidebar {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2200;
+    max-height: 80vh;
+    border: none;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+    transform: translateY(100%);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .collection-sidebar.is-mobile-open {
+    max-height: 80vh;
+    transform: translateY(0);
+  }
+  .coll-filter-panel { flex-direction: column; padding: 20px; }
+  .filter-groups { flex-direction: column; gap: 24px; }
+  .filter-group { min-width: 0; width: 100%; }
+  .filter-option { padding: 8px 0; }
+  .sidebar-close-btn { width: 44px; height: 44px; }
+  .filter-sheet-backdrop { display: block; }
+  #coll-filter-bar.filter-open + .filter-sheet-backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .filter-sheet-footer {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    background: var(--white);
+    padding: 16px 20px;
+    border-top: 1px solid var(--ivory-dk);
+  }
+
+  /* Sort dropdown: full width, easy to tap */
+  .coll-filter-bar__right { width: 100%; flex-wrap: wrap; gap: 10px; }
+  .collection-sort {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--ivory-dk);
+    border-radius: var(--radius);
+  }
+
+  /* Add-to-cart size sheet: bigger, easier-to-tap size AND colour pills */
+  .size-sheet__pill { padding: 14px 16px; min-height: 44px; }
+  .size-sheet__color-swatch { width: 40px; height: 40px; }
+
+  /* Footer newsletter subscribe button — was ~40px tall */
+  .footer-nl-btn { min-height: 44px; }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  /* Collection banner: shorter, image stays optional/visible */
+  .collection-banner { min-height: 220px !important; }
+
+  /* Same specificity issue as the phone rule above — this restores
+     the tablet column count the dead <=900px rule already intended */
+  .collection-grid,
+  .collection-grid[data-columns="2"],
+  .collection-grid[data-columns="3"],
+  .collection-grid[data-columns="4"] {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  /* Same touch-visibility fix as phones — hover doesn't fire on
+     iPad-class devices either */
+  .cpc-add-btn {
+    opacity: 1;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cpc-badge--label { bottom: 56px; }
+  .cpc-dots-container { bottom: 52px; }
+
+  /* Filters: same bottom-sheet treatment as phone */
+  .collection-sidebar {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2200;
+    max-height: 75vh;
+    border: none;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+    transform: translateY(100%);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .collection-sidebar.is-mobile-open {
+    max-height: 75vh;
+    transform: translateY(0);
+  }
+  .filter-groups { flex-wrap: wrap; gap: 24px; }
+  .filter-sheet-backdrop { display: block; }
+  #coll-filter-bar.filter-open + .filter-sheet-backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .filter-sheet-footer {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    background: var(--white);
+    padding: 16px 24px;
+    border-top: 1px solid var(--ivory-dk);
+  }
+
+  .collection-sort { min-height: 44px; }
+
+  .size-sheet__pill { min-height: 44px; }
+  .size-sheet__color-swatch { width: 36px; height: 36px; }
+
+  .footer-nl-btn { min-height: 44px; }
+}
