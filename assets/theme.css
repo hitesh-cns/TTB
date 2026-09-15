@@ -7541,10 +7541,37 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   /* 1) Safety net: body must never scroll sideways */
   html, body { overflow-x: hidden; }
 
-  /* 2) Tap targets: header icons (search/account/cart) + hamburger >= 44x44
-     (base .header-action / .mobile-menu-toggle are sized for a mouse pointer) */
-  .header-action { width: 44px; height: 44px; }
-  .mobile-menu-toggle { width: 44px; height: 44px; }
+  /* 2) Tap targets: header icons (search/account/cart) + hamburger >= 44x44.
+     NOTE: this used to just set width/height:44px directly, but with the
+     hamburger + logo + 3x 44px action icons all in one nowrap flex row,
+     that alone doesn't fit a ~390px phone — the cart icon got pushed past
+     the right edge and clipped by the overflow-x:hidden guard above. Kept
+     visually at their existing (mouse-pointer) size and instead given an
+     invisible ::before that expands the tap area to 44x44 without taking
+     any extra layout width, so the row's total width is unchanged. */
+  .header-action { position: relative; }
+  .header-action::before {
+    content: '';
+    position: absolute;
+    inset: -4px; /* 36px box + 4px each side = 44px */
+  }
+  .mobile-menu-toggle { position: relative; }
+  .mobile-menu-toggle::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+  }
+
+  /* Header row: reclaim width so search/account/cart never overflow —
+     tighter icon spacing and a cap on logo width (it has no max-width
+     today, so a wide logo image could push the icons off-screen too) */
+  .header-actions { gap: 10px; }
+  .logo-img { max-width: 130px; }
+
+  /* Header height: balanced/compact instead of the base 20px top+bottom
+     (already reduced to 16px by an existing <=768px rule — tighten
+     further so the bar isn't too tall on a phone) */
+  .header-inner { padding-top: 12px; padding-bottom: 12px; }
 
   /* Mobile drawer sub-links: base padding (10px) is a bit short of 44px tall */
   .mobile-nav-child { padding: 14px 36px; }
@@ -7621,8 +7648,15 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 
   html, body { overflow-x: hidden; }
 
-  /* Touch-friendly header icons on iPad-class devices */
-  .header-action { width: 44px; height: 44px; }
+  /* Touch-friendly header icons on iPad-class devices — invisible tap-area
+     expansion rather than resizing the icon itself, so the header row's
+     total width is unaffected (same reasoning as the phone rule above) */
+  .header-action { position: relative; }
+  .header-action::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+  }
 
   /* Footer: .footer-body's 2-column tablet layout (set <=1100px) leaves
      the contact column wrapping to a half-width row under it — give it
@@ -7808,14 +7842,34 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     border-top: 1px solid var(--ivory-dk);
   }
 
-  /* Sort dropdown: full width, easy to tap */
-  .coll-filter-bar__right { width: 100%; flex-wrap: wrap; gap: 10px; }
+  /* Toolbar ("Filters | Clear all" + item count + sort): the row was a
+     single no-wrap flex line, so once .coll-filter-bar__right below is
+     forced to width:100% it had nowhere to go but overflow past the
+     right edge — the parent needs to wrap so each side gets its own row. */
+  .coll-filter-bar__inner { flex-wrap: wrap; gap: 10px; row-gap: 12px; padding: 12px 0; }
+  .coll-filter-bar__left { width: 100%; height: auto; }
+  .coll-filter-bar__controls { height: auto; }
+
+  /* Filters + Clear all were plain unstyled text — give them real,
+     tappable button treatment */
+  .coll-filter-toggle {
+    min-height: 44px;
+    padding: 8px 14px;
+    border: 1px solid var(--ivory-dk);
+    border-radius: 20px;
+    background: var(--white);
+  }
+  .coll-clear-all { min-height: 44px; padding: 8px 4px; }
+
+  /* Sort dropdown: full width, easy to tap, on its own row */
+  .coll-filter-bar__right { width: 100%; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
   .collection-sort {
     width: 100%;
     min-height: 44px;
     padding: 10px 12px;
     border: 1px solid var(--ivory-dk);
     border-radius: var(--radius);
+    background: var(--white);
   }
 
   /* Add-to-cart size sheet: bigger, easier-to-tap size AND colour pills */
