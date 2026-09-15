@@ -35,6 +35,8 @@
   const mobileToggle    = document.getElementById('filter-toggle-mobile');
   const sidebar         = document.getElementById('collection-sidebar');
   const noResultsClear  = document.getElementById('no-results-clear');
+  const sheetBackdrop   = document.getElementById('filter-sheet-backdrop');
+  const applyBtn        = document.getElementById('filter-apply-btn');
 
   // -- Read tag data passed from Liquid --
   const tagsDataEl = document.getElementById('collection-tags-data');
@@ -260,6 +262,8 @@
     sidebar && sidebar.classList.remove('is-mobile-open');
     filterBar && filterBar.classList.remove('filter-open');
     mobileToggle && mobileToggle.setAttribute('aria-expanded', 'false');
+    sheetBackdrop && sheetBackdrop.classList.remove('is-visible');
+    document.body.style.overflow = '';
   }
 
   mobileToggle && mobileToggle.addEventListener('click', function(e) {
@@ -275,6 +279,8 @@
     sidebar && sidebar.classList.add('is-mobile-open');
     filterBar && filterBar.classList.add('filter-open');
     mobileToggle && mobileToggle.setAttribute('aria-expanded', 'true');
+    sheetBackdrop && sheetBackdrop.classList.add('is-visible');
+    document.body.style.overflow = 'hidden';
     // Attach outside-click handler on next tick so this click doesn't immediately fire it
     setTimeout(function() {
       document.addEventListener('click', function outsideHandler(ev) {
@@ -288,6 +294,12 @@
   // -- Sidebar X close button --
   const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
   sidebarCloseBtn && sidebarCloseBtn.addEventListener('click', closeSidebar);
+
+  // -- Mobile/tablet bottom-sheet controls: backdrop tap and "Apply
+  //    Filters" both just close the sheet — filtering already applied
+  //    live as each checkbox was toggled, same as the X button above. --
+  sheetBackdrop && sheetBackdrop.addEventListener('click', closeSidebar);
+  applyBtn && applyBtn.addEventListener('click', closeSidebar);
 
   // -- Initialise --
   const groups = parseTags(tagsData.tags || []);
