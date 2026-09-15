@@ -3382,6 +3382,14 @@ a.footer-contact-item:hover { color: var(--ivory); }
 }
 .sidebar-close-btn:hover { background: var(--espresso); color: var(--ivory); }
 
+/* New wrapper (collection-products.liquid) around the title + close X.
+   display:contents makes it invisible to layout by default, so on
+   desktop .sidebar-close-btn is promoted straight into .coll-filter-panel
+   exactly as before — same position, same flex behaviour, unchanged.
+   Mobile/tablet turn it into the full-screen panel's real top bar. */
+.coll-filter-panel__head { display: contents; }
+.coll-filter-panel__title { display: none; }
+
 /* Filter groups — horizontal layout inside panel */
 .filter-groups {
   display: flex;
@@ -7562,34 +7570,43 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     inset: -4px;
   }
 
-  /* Header row: true-centered logo, evenly-spaced icons, no overflow.
-     .header-logo is taken out of flex flow and centered on the row
-     itself (not just "between" the hamburger and icon groups, whose
-     widths differ) — being absolutely positioned, it can never compete
-     with the hamburger/icons for space or push them off-screen, and
-     the width cap is just a visual safety net for a very wide logo. */
+  /* Header row: icons are guaranteed their space first (flex:0 0 auto,
+     nowrap — they never shrink or get clipped); the logo is the ONE
+     flexible column (flex:1 1 auto; min-width:0; overflow:hidden) and
+     shrinks/clips to whatever room is left, instead of competing with
+     or overlapping the icons. */
   .header-inner {
-    position: relative;
     padding-top: 12px;
     padding-bottom: 12px;
     padding-left: 16px;
     padding-right: 16px;
   }
   .header-logo {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 45vw;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
     display: flex;
     justify-content: center;
   }
   .header-logo .logo-img,
   .header-logo .logo-text { max-width: 100%; }
 
-  /* Icons: evenly spaced from each other (base rule already right-aligns
-     the group via justify-content:flex-end — left untouched here) */
-  .header-actions { gap: 14px; }
+  /* header .header-logo .logo-img beats the element's own inline
+     style="height:{{logo_height}}px;...;--logo-h-mobile:{{...}}px"
+     (which otherwise renders the desktop wordmark size on phones and
+     was the real cause of it overlapping/hiding the icons) — the
+     extra-specific selector + !important is required to actually win
+     over that inline style. Width is capped relative to the viewport
+     (not just max-width:100% of its own shrunk flex column) so a very
+     wide source image can't still force the row wider than the phone. */
+  header .header-logo .logo-img {
+    height: var(--logo-h-mobile, 34px) !important;
+    width: auto !important;
+    max-width: calc(100vw - 190px) !important;
+  }
+
+  /* Icons: guaranteed to fit, never shrink, evenly spaced, always visible */
+  .header-actions { flex: 0 0 auto; flex-wrap: nowrap; gap: 14px; }
 
   /* The desktop :hover dropdown has no reliable equivalent on touch —
      force it fully out of the layout so a stray tap can't leave it
@@ -7823,43 +7840,91 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .cpc-price-row { flex-wrap: wrap; }
   .cpc-title { font-size: 13px; }
 
-  /* Filters: bottom sheet instead of the floating dropdown panel
-     (which used a hard max-height:400px + overflow:hidden — content
-     past that was simply clipped, unreachable, on a small screen). */
+  /* Filters: clean full-screen panel instead of the floating dropdown
+     (which used position:absolute;top:100% plus a hard max-height:400px
+     + overflow:hidden — content past that was simply clipped/unreachable,
+     and looked broken pinned under the sticky bar on a small screen).
+     The panel itself now covers the viewport, so the separate dim
+     backdrop is redundant — and would look like a stray gray layer
+     peeking from under it — hence display:none below. */
   .collection-sidebar {
     position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    inset: 0;
     z-index: 2200;
-    max-height: 80vh;
+    max-height: none;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     border: none;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
-    transform: translateY(100%);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 200ms ease-in-out, visibility 0s 200ms;
   }
   .collection-sidebar.is-mobile-open {
-    max-height: 80vh;
-    transform: translateY(0);
-  }
-  .coll-filter-panel { flex-direction: column; padding: 20px; }
-  .filter-groups { flex-direction: column; gap: 24px; }
-  .filter-group { min-width: 0; width: 100%; }
-  .filter-option { padding: 8px 0; }
-  .sidebar-close-btn { width: 44px; height: 44px; }
-  .filter-sheet-backdrop { display: block; }
-  .filter-sheet-backdrop.is-visible {
     opacity: 1;
     visibility: visible;
-    pointer-events: auto;
+    transition: opacity 200ms ease-in-out, visibility 0s 0s;
   }
+  .filter-sheet-backdrop { display: none; }
+
+  /* Top bar: title + close X, pinned */
+  .coll-filter-panel__head {
+    display: flex;
+    order: -1;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--ivory-dk);
+  }
+  .coll-filter-panel__title {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--espresso);
+  }
+  .sidebar-close-btn { width: 44px; height: 44px; margin-left: 0; }
+
+  /* Middle: the .container/.coll-filter-panel wrapping is still there
+     from the desktop markup — flatten it to fill the remaining height
+     and let #filter-groups be the one scrollable region */
+  .collection-sidebar > .container {
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    display: flex;
+  }
+  .coll-filter-panel {
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+  }
+  .filter-groups {
+    order: 0;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-direction: column;
+    gap: 24px;
+    padding: 20px;
+  }
+  .filter-group { min-width: 0; width: 100%; }
+  .filter-option { padding: 8px 0; }
+
+  /* Bottom: Apply Filters, pinned */
   .filter-sheet-footer {
     display: block;
-    position: sticky;
-    bottom: 0;
+    flex-shrink: 0;
     background: var(--white);
     padding: 16px 20px;
     border-top: 1px solid var(--ivory-dk);
@@ -7931,37 +7996,79 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .cpc-badge--label { bottom: 56px; }
   .cpc-dots-container { bottom: 52px; }
 
-  /* Filters: same bottom-sheet treatment as phone */
+  /* Filters: same clean full-screen panel as phone (see the phone block
+     above for the full reasoning) */
   .collection-sidebar {
     position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    inset: 0;
     z-index: 2200;
-    max-height: 75vh;
+    max-height: none;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     border: none;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
-    transform: translateY(100%);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 200ms ease-in-out, visibility 0s 200ms;
   }
   .collection-sidebar.is-mobile-open {
-    max-height: 75vh;
-    transform: translateY(0);
-  }
-  .filter-groups { flex-wrap: wrap; gap: 24px; }
-  .filter-sheet-backdrop { display: block; }
-  .filter-sheet-backdrop.is-visible {
     opacity: 1;
     visibility: visible;
-    pointer-events: auto;
+    transition: opacity 200ms ease-in-out, visibility 0s 0s;
   }
+  .filter-sheet-backdrop { display: none; }
+
+  .coll-filter-panel__head {
+    display: flex;
+    order: -1;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--ivory-dk);
+  }
+  .coll-filter-panel__title {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--espresso);
+  }
+  .sidebar-close-btn { width: 44px; height: 44px; margin-left: 0; }
+
+  .collection-sidebar > .container {
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    display: flex;
+    max-width: none;
+  }
+  .coll-filter-panel {
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+  }
+  .filter-groups {
+    order: 0;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 24px;
+    padding: 28px;
+  }
+
   .filter-sheet-footer {
     display: block;
-    position: sticky;
-    bottom: 0;
+    flex-shrink: 0;
     background: var(--white);
     padding: 16px 24px;
     border-top: 1px solid var(--ivory-dk);

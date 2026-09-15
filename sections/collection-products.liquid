@@ -88,9 +88,15 @@
           </div>
         </div>
 
-        <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close filters">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
+        <!-- display:contents by default (theme.css) — on desktop this is
+             an invisible wrapper and .sidebar-close-btn sits exactly where
+             it always has; on mobile/tablet it becomes the panel's top bar. -->
+        <div class="coll-filter-panel__head">
+          <span class="coll-filter-panel__title">{{ section.settings.filters_label | default: "Filters" }}</span>
+          <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close filters">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
 
       </div>
     </div>
