@@ -7581,32 +7581,50 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     padding-left: 16px;
     padding-right: 16px;
   }
+  /* NOTE: this used to also set overflow:hidden on .header-logo, which
+     was over-correcting — it cropped the logo whenever the image's own
+     computed width (bounded below by max-height + the viewport-relative
+     max-width) didn't line up exactly with this flex column's actual
+     shrunk width. Removed: the image's own two caps below are now the
+     only sizing limits, so it scales down and is never cropped. */
   .header-logo {
     flex: 1 1 auto;
     min-width: 0;
-    overflow: hidden;
     display: flex;
     justify-content: center;
   }
-  .header-logo .logo-img,
   .header-logo .logo-text { max-width: 100%; }
 
   /* header .header-logo .logo-img beats the element's own inline
      style="height:{{logo_height}}px;...;--logo-h-mobile:{{...}}px"
      (which otherwise renders the desktop wordmark size on phones and
-     was the real cause of it overlapping/hiding the icons) — the
+     was the original cause of it overlapping/hiding the icons) — the
      extra-specific selector + !important is required to actually win
-     over that inline style. Width is capped relative to the viewport
-     (not just max-width:100% of its own shrunk flex column) so a very
-     wide source image can't still force the row wider than the phone. */
+     over that inline style. height:auto + max-height (not a fixed
+     height) lets the browser scale the image proportionally; max-width
+     is the second limit, relative to the viewport so a very wide
+     source image can't force the row wider than the phone — whichever
+     of the two limits is hit first wins, and the image is never
+     cropped or distorted either way. */
   header .header-logo .logo-img {
-    height: var(--logo-h-mobile, 34px) !important;
+    height: auto !important;
+    max-height: 30px !important;
     width: auto !important;
     max-width: calc(100vw - 190px) !important;
   }
 
   /* Icons: guaranteed to fit, never shrink, evenly spaced, always visible */
   .header-actions { flex: 0 0 auto; flex-wrap: nowrap; gap: 14px; }
+
+  /* Search icon: plain icon button, no input-like box (global `button`
+     reset already strips border/background — this also neutralises
+     native mobile browser button chrome via -webkit-appearance) */
+  .header-action {
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: none;
+  }
 
   /* The desktop :hover dropdown has no reliable equivalent on touch —
      force it fully out of the layout so a stray tap can't leave it
@@ -7691,7 +7709,13 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   /* Touch-friendly header icons on iPad-class devices — invisible tap-area
      expansion rather than resizing the icon itself, so the header row's
      total width is unaffected (same reasoning as the phone rule above) */
-  .header-action { position: relative; }
+  .header-action {
+    position: relative;
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: none;
+  }
   .header-action::before {
     content: '';
     position: absolute;
@@ -7966,8 +7990,68 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .size-sheet__pill { padding: 14px 16px; min-height: 44px; }
   .size-sheet__color-swatch { width: 40px; height: 40px; }
 
-  /* Footer newsletter subscribe button — was ~40px tall */
-  .footer-nl-btn { min-height: 44px; }
+  /* Size sheet: harden the open/close so no stray artifact can show.
+     The base rule only animates transform+visibility (no opacity), so
+     during the close transition (visibility stays "visible" for the
+     full 200ms while it slides down) the sheet is always fully opaque;
+     fading it too means nothing can read as a solid strip if it ever
+     stops mid-slide. overflow-x is tightened for the same reason —
+     .size-sheet only set overflow-y, which per spec leaves overflow-x
+     computed as auto rather than visible, an inconsistent state. */
+  .size-sheet {
+    opacity: 0;
+    overflow-x: hidden;
+    transition: transform 200ms ease-out, opacity 150ms ease-out, visibility 0s 200ms;
+  }
+  .size-sheet.is-open {
+    opacity: 1;
+    transition: transform 200ms ease-out, opacity 150ms ease-out, visibility 0s 0s;
+  }
+  .size-sheet-backdrop { overflow: hidden; }
+
+  /* Product card colour swatches: .cpc-info has zero padding, and the
+     selected swatch's outline (outline-offset:2px) draws OUTSIDE its
+     own circle — with no breathing room it visually pokes past the
+     card's left edge instead of lining up with the title/price above
+     it. Equal negative margin + padding keeps the swatch's visible
+     position unchanged (still aligned with the text) while giving the
+     outline room to render without escaping the card. */
+  .cpc-color-row {
+    margin-left: -4px;
+    margin-right: -4px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  /* Footer trust strip: existing rule forces 1-per-row at <=640px,
+     which covers most phones — extend 2-per-row across the whole
+     phone range instead, per this pass's explicit request */
+  .footer-trust__grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .footer-trust__item {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    padding: 16px 12px;
+    border-bottom: none;
+  }
+
+  /* Footer column headings: --gold resolves to pure black in this
+     theme's palette, rendering as black-on-near-black (#111111) —
+     unreadable. Also true on desktop (flagged, not fixed there since
+     it's a shared CSS variable, not a mobile-only rule); scoped to a
+     light colour here so mobile is at least readable. */
+  .footer-col-title { color: var(--ivory); }
+
+  /* Footer bottom bar: force the same dark fill directly on the bar
+     itself so it unambiguously reads as part of the footer regardless
+     of any stacking/inheritance edge case, with no gap before it */
+  .footer-bottom { background: #111111; margin: 0; }
+
+  /* Footer newsletter subscribe button: --espresso (black) on the
+     near-black footer is invisible — swap to a light fill with a dark
+     icon so it clearly stands out */
+  .footer-nl-btn { min-height: 44px; background: var(--ivory); color: var(--espresso); }
+  .footer-nl-btn:hover { background: var(--blush); }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -8079,5 +8163,32 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .size-sheet__pill { min-height: 44px; }
   .size-sheet__color-swatch { width: 36px; height: 36px; }
 
-  .footer-nl-btn { min-height: 44px; }
+  /* Size sheet: same hardening as the phone block above */
+  .size-sheet {
+    opacity: 0;
+    overflow-x: hidden;
+    transition: transform 200ms ease-out, opacity 150ms ease-out, visibility 0s 200ms;
+  }
+  .size-sheet.is-open {
+    opacity: 1;
+    transition: transform 200ms ease-out, opacity 150ms ease-out, visibility 0s 0s;
+  }
+  .size-sheet-backdrop { overflow: hidden; }
+
+  /* Product card colour swatches: same containment as the phone block */
+  .cpc-color-row {
+    margin-left: -4px;
+    margin-right: -4px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  /* Footer: trust badges 2-per-row (already the case at <=1024px via
+     the existing rule), headings readable, bottom bar attached, and
+     newsletter button visible on the dark background */
+  .footer-trust__item { flex-direction: column; text-align: center; align-items: center; }
+  .footer-col-title { color: var(--ivory); }
+  .footer-bottom { background: #111111; margin: 0; }
+  .footer-nl-btn { min-height: 44px; background: var(--ivory); color: var(--espresso); }
+  .footer-nl-btn:hover { background: var(--blush); }
 }

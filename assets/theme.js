@@ -667,6 +667,13 @@
     if (searchInput) { searchInput.value = ''; searchInput.focus(); }
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
+  // Click/tap anywhere outside the open bar (and its toggle) closes it
+  document.addEventListener('click', e => {
+    if (!searchBar || !searchBar.classList.contains('is-open')) return;
+    if (searchBar.contains(e.target)) return;
+    if (searchToggle && searchToggle.contains(e.target)) return;
+    closeSearch();
+  });
 
   /* -- MOBILE DRAWER --
      The 3-line hamburger opens a panel from the LEFT side.
