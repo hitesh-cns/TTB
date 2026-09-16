@@ -8090,6 +8090,44 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .footer-nl-btn { min-height: 44px; background: var(--ivory); color: var(--espresso); }
   .footer-nl-btn:hover { background: var(--blush); }
 
+  /* Mobile drawer logo (separate element from the header logo) — base
+     rule theme.css:2977 renders it at a fixed 36px height with no
+     inline style to fight, so a plain scoped override is enough. */
+  .mobile-drawer__logo .logo-img { height: 28px !important; width: auto !important; }
+
+  /* Filter panel still collapsing to "Apply Filters only": traced the
+     real open mechanism in collection-filters.js — tapping Filters adds
+     BOTH #collection-sidebar.is-mobile-open (which the max-height fix
+     above already targets) AND #coll-filter-bar.filter-open. The bar
+     (#coll-filter-bar) is position:sticky (theme.css:3235, its own
+     comment says "creates a containing block for the absolute dropdown")
+     and .collection-sidebar (position:fixed for the full-screen panel)
+     is NESTED INSIDE it. Several mobile WebKit versions incorrectly treat
+     a sticky ancestor as the containing block for a fixed descendant too,
+     which would size/clip the "full-screen" panel to the sticky bar's own
+     ~56px height instead of the viewport — the only part tall enough to
+     stay visible in that sliver is the pinned Apply Filters footer,
+     matching exactly what was reported. Drop the ancestor's sticky
+     positioning while the sheet is open so .collection-sidebar's
+     position:fixed is unambiguously relative to the viewport everywhere. */
+  .filter-wrapper.filter-open { position: static !important; z-index: auto !important; }
+
+  /* Belt-and-suspenders: force the panel's own content visible even if
+     some other rule collapses it. (display:flex, not the requested
+     display:block, so the head/groups/footer flex-column layout already
+     built above keeps working — display:block would flatten it back to
+     normal document flow and break the pinned header/scrollable middle/
+     pinned footer structure.) */
+  .collection-sidebar.is-mobile-open .container,
+  .collection-sidebar.is-mobile-open .coll-filter-panel {
+    display: flex !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .collection-sidebar.is-mobile-open #filter-groups {
+    display: flex !important;
+  }
+
   /* Search bar overlap: .header-search-input has no min-width:0, so on a
      360px screen it refuses to shrink below its intrinsic content size
      and the row overflows — the SEARCH button (and clear ×) get pushed
@@ -8257,4 +8295,18 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .footer-bottom .footer-legal-links { display: none; }
   .footer-nl-btn { min-height: 44px; background: var(--ivory); color: var(--espresso); }
   .footer-nl-btn:hover { background: var(--blush); }
+
+  /* Same drawer-logo and filter-panel fixes as the phone block above —
+     see the phone block for the full reasoning on each. */
+  .mobile-drawer__logo .logo-img { height: 28px !important; width: auto !important; }
+  .filter-wrapper.filter-open { position: static !important; z-index: auto !important; }
+  .collection-sidebar.is-mobile-open .container,
+  .collection-sidebar.is-mobile-open .coll-filter-panel {
+    display: flex !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .collection-sidebar.is-mobile-open #filter-groups {
+    display: flex !important;
+  }
 }
