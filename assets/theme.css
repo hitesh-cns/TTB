@@ -7906,7 +7906,16 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     visibility: hidden;
     transition: opacity 200ms ease-in-out, visibility 0s 200ms;
   }
+  /* .collection-sidebar.is-mobile-open (base rule, theme.css ~line 3373,
+     written for the original small dropdown panel) sets max-height:400px
+     with NO media query — same specificity (0,2,0) as this rule, and it
+     is NOT bounded to any width, so it silently overrides this block's
+     max-height:none and caps the "full-screen" panel to 400px tall. That
+     squeezed #filter-groups down to almost nothing beside the fixed-height
+     head/footer bars, which is why only the Apply Filters footer was
+     visible. !important forces this scoped override to win instead. */
   .collection-sidebar.is-mobile-open {
+    max-height: none !important;
     opacity: 1;
     visibility: visible;
     transition: opacity 200ms ease-in-out, visibility 0s 0s;
@@ -8080,6 +8089,29 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
      icon so it clearly stands out */
   .footer-nl-btn { min-height: 44px; background: var(--ivory); color: var(--espresso); }
   .footer-nl-btn:hover { background: var(--blush); }
+
+  /* Search bar overlap: .header-search-input has no min-width:0, so on a
+     360px screen it refuses to shrink below its intrinsic content size
+     and the row overflows — the SEARCH button (and clear ×) get pushed
+     past the form's edge and visually sit on top of/overlap the input.
+     Shrink the outer padding (was 40px/side, wasting width) and let the
+     form use the full row so there's enough budget for every child. */
+  .header-search-bar__inner { padding: 10px 16px; }
+  .header-search-bar__inner .header-search-form {
+    width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .header-search-form { gap: 8px; padding: 8px 12px; }
+  .header-search-input { min-width: 0; }
+  .header-search-submit { padding: 6px 12px; font-size: 11px; white-space: nowrap; }
+
+  /* Cart drawer: existing base rule @media(max-width:768px) .cart-drawer
+     { width:100% } (theme.css ~line 1741) makes it full-width on phones.
+     Same-specificity override placed later in the cascade + !important
+     to be safe; drawer already has right:0 from its base rule so 80%
+     naturally leaves the left ~20% as overlay-only. */
+  .cart-drawer { width: 80% !important; }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -8126,7 +8158,11 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     visibility: hidden;
     transition: opacity 200ms ease-in-out, visibility 0s 200ms;
   }
+  /* Same max-height:400px specificity bug as the phone block above —
+     the unscoped base .collection-sidebar.is-mobile-open rule beats this
+     block's max-height:none without !important. */
   .collection-sidebar.is-mobile-open {
+    max-height: none !important;
     opacity: 1;
     visibility: visible;
     transition: opacity 200ms ease-in-out, visibility 0s 0s;
