@@ -2911,6 +2911,25 @@ a.footer-contact-item:hover { color: var(--ivory); }
 }
 .search-toggle.is-open .search-open-dot { display: block; }
 
+/* Grepped every .search-toggle / .header-action rule in this file — none
+   of them add a border/background/box-shadow (the account link and cart
+   button get none either, from the same .header-action base rule). The
+   box search-toggle alone shows is the browser's own native <button>
+   focus/active appearance, never explicitly neutralised for it. Applies
+   at every width — the account/cart icons already have no box on
+   desktop too, so this brings search in line with its siblings rather
+   than changing how desktop looks. */
+.search-toggle,
+.search-toggle:hover,
+.search-toggle:focus,
+.search-toggle:focus-visible,
+.search-toggle:active {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+}
+
 /* -- Mobile hamburger (3 lines) — desktop hidden -- */
 .mobile-menu-toggle {
   display: none;
@@ -7570,23 +7589,21 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     inset: -4px;
   }
 
-  /* Header row: icons are guaranteed their space first (flex:0 0 auto,
-     nowrap — they never shrink or get clipped); the logo is the ONE
-     flexible column (flex:1 1 auto; min-width:0; overflow:hidden) and
-     shrinks/clips to whatever room is left, instead of competing with
-     or overlapping the icons. */
+  /* Header row: a real `gap` on .header-inner itself guarantees minimum
+     spacing between hamburger/logo/icons (justify-content alone only
+     distributes leftover space — it can't guarantee a minimum if
+     content is tight, which is how the logo and search icon ended up
+     touching). Icons keep their own space (flex:0 0 auto, nowrap —
+     never shrink/clip); the logo is the one flexible column. */
   .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding-top: 12px;
     padding-bottom: 12px;
     padding-left: 16px;
     padding-right: 16px;
   }
-  /* NOTE: this used to also set overflow:hidden on .header-logo, which
-     was over-correcting — it cropped the logo whenever the image's own
-     computed width (bounded below by max-height + the viewport-relative
-     max-width) didn't line up exactly with this flex column's actual
-     shrunk width. Removed: the image's own two caps below are now the
-     only sizing limits, so it scales down and is never cropped. */
   .header-logo {
     flex: 1 1 auto;
     min-width: 0;
@@ -7600,17 +7617,19 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
      (which otherwise renders the desktop wordmark size on phones and
      was the original cause of it overlapping/hiding the icons) — the
      extra-specific selector + !important is required to actually win
-     over that inline style. height:auto + max-height (not a fixed
-     height) lets the browser scale the image proportionally; max-width
-     is the second limit, relative to the viewport so a very wide
-     source image can't force the row wider than the phone — whichever
-     of the two limits is hit first wins, and the image is never
-     cropped or distorted either way. */
+     over that inline style.
+     A small FIXED height (not max-height/auto-scale-up, which left too
+     little headroom last pass) makes the logo's rendered size fully
+     predictable. max-width is an independent, viewport-relative budget
+     — not just "100% of whatever the flex column computes" — so it's
+     guaranteed correct regardless of flex rounding: on a 360px phone,
+     16+16 padding + 12+12 gap + 36 hamburger + (3x36 + 2x14 icons =136)
+     leaves ~132px for the logo; 230px reserved gives a safety margin
+     on top of that. */
   header .header-logo .logo-img {
-    height: auto !important;
-    max-height: 30px !important;
+    height: 26px !important;
     width: auto !important;
-    max-width: calc(100vw - 190px) !important;
+    max-width: calc(100vw - 230px) !important;
   }
 
   /* Icons: guaranteed to fit, never shrink, evenly spaced, always visible */
@@ -8042,10 +8061,19 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
      light colour here so mobile is at least readable. */
   .footer-col-title { color: var(--ivory); }
 
+  /* Newsletter label: same --gold-is-black issue as the column
+     headings above — also true on desktop (flagged, not fixed there). */
+  .footer-newsletter__label { color: var(--ivory); }
+
   /* Footer bottom bar: force the same dark fill directly on the bar
      itself so it unambiguously reads as part of the footer regardless
      of any stacking/inheritance edge case, with no gap before it */
   .footer-bottom { background: #111111; margin: 0; }
+
+  /* Bottom bar legal links duplicate the Help column's own Privacy/
+     Terms/Shipping/Returns links — hide the bottom-bar copy so they
+     only appear once; copyright + payment icons stay in the bar. */
+  .footer-bottom .footer-legal-links { display: none; }
 
   /* Footer newsletter subscribe button: --espresso (black) on the
      near-black footer is invisible — swap to a light fill with a dark
@@ -8188,7 +8216,9 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
      newsletter button visible on the dark background */
   .footer-trust__item { flex-direction: column; text-align: center; align-items: center; }
   .footer-col-title { color: var(--ivory); }
+  .footer-newsletter__label { color: var(--ivory); }
   .footer-bottom { background: #111111; margin: 0; }
+  .footer-bottom .footer-legal-links { display: none; }
   .footer-nl-btn { min-height: 44px; background: var(--ivory); color: var(--espresso); }
   .footer-nl-btn:hover { background: var(--blush); }
 }
