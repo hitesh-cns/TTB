@@ -9037,3 +9037,64 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   #qty-atc-row .btn-wishlist { width: 40px !important; }
   #qty-atc-row #add-to-cart-btn svg { display: none !important; }
 }
+
+/* ================================================================
+   CART DRAWER — mobile/tablet: one-line qty+price per item, sticky
+   footer. Wrapper chain confirmed by reading layout/theme.liquid +
+   sections/cart-drawer.liquid: #cart-drawer (layout/theme.liquid:315)
+   > {%- section 'cart-drawer' -%} renders Shopify's own auto-wrapper
+   div#shopify-section-{id}.shopify-section > .cart-drawer__inner
+   (sections/cart-drawer.liquid:32) > #cart-drawer-items /
+   #cart-drawer-footer as its direct children. Both intermediate
+   wrappers (.shopify-section and .cart-drawer__inner) are added to
+   the flex column below — without them the sticky footer's flex:1
+   items chain breaks at the first non-flex ancestor.
+   ================================================================ */
+@media (max-width: 1024px) {
+  #cart-drawer .cart-item__info { min-width: 0 !important; }
+  #cart-drawer .cart-item__controls {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+  }
+  #cart-drawer .cart-item__qty { flex: 0 0 auto !important; }
+  #cart-drawer .cart-item__price {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+  }
+
+  #cart-drawer.cart-drawer {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+  }
+  /* Real intermediate wrappers between #cart-drawer and #cart-drawer-items
+     / #cart-drawer-footer, per sections/cart-drawer.liquid + the {% section %}
+     tag's own auto-generated wrapper in layout/theme.liquid: */
+  #cart-drawer .shopify-section,
+  #cart-drawer .cart-drawer__inner {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+  #cart-drawer #cart-drawer-items {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    min-height: 0 !important;
+  }
+  #cart-drawer #cart-drawer-footer {
+    flex: 0 0 auto !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: #ffffff !important;
+    border-top: 1px solid rgba(0,0,0,0.08) !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    z-index: 2 !important;
+  }
+}
