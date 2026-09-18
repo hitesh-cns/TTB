@@ -8946,9 +8946,9 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     display: flex !important;
     flex-wrap: nowrap !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 8px !important;
     margin: 0 !important;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom)) !important;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) !important;
     background: #ffffff !important;
     border-top: 1px solid rgba(0,0,0,0.08) !important;
     box-shadow: 0 -2px 12px rgba(0,0,0,0.06) !important;
@@ -8965,11 +8965,13 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   #qty-atc-row .qty-inline {
     display: flex !important;
     align-items: center !important;
-    flex: 0 0 auto !important;
-    padding: 0 10px !important;
-    gap: 6px !important;
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    padding: 0 6px !important;
+    gap: 2px !important;
   }
   #qty-atc-row .qty-inline__label {
+    display: none !important;
     line-height: 1 !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -8985,7 +8987,7 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   }
   #qty-atc-row .qty-selector-btn {
     height: 100% !important;
-    padding: 0 8px !important;
+    padding: 0 6px !important;
     line-height: 1 !important;
     border: 0 !important;
     background: transparent !important;
@@ -8995,7 +8997,7 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   }
   #qty-atc-row .qty-selector-input {
     height: 100% !important;
-    width: 34px !important;
+    width: 26px !important;
     padding: 0 !important;
     margin: 0 !important;
     border: 0 !important;
@@ -9005,18 +9007,24 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   }
   #qty-atc-row #add-to-cart-btn {
     flex: 1 1 auto !important;
-    min-width: 0 !important;
     white-space: nowrap !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
-    padding: 0 16px !important;
+    padding: 0 12px !important;
+    font-size: 13px !important;
     line-height: 1 !important;
+    overflow: visible !important;
+  }
+  #qty-atc-row #add-to-cart-btn svg {
+    flex: 0 0 auto !important;
+    width: 16px !important;
+    height: 16px !important;
   }
   #qty-atc-row .btn-wishlist {
-    flex: 0 0 48px !important;
-    width: 48px !important;
+    flex: 0 0 44px !important;
+    width: 44px !important;
     padding: 0 !important;
     display: inline-flex !important;
     align-items: center !important;
