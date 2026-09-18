@@ -8991,3 +8991,137 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     max-height: 48px;
   }
 }
+
+/* ================================================================
+   FOLLOW-UP ROUND 3 — sticky bar hard-pinned to 48px, Similar Pieces
+   padding cut, and the tablet (768-1024px) two-column layout bug.
+   Phone.
+   ================================================================ */
+@media (max-width: 767px) {
+
+  /* --- 1) Sticky bar — all three controls exactly 48px ---
+     Fresh measurement showed the bar still rendering ~76.75px tall
+     (content area ~56.75px against a 48px target) even after the
+     previous two rounds' height/max-height overrides on the three
+     top-level controls — something inside one of them (inherited
+     line-height, a UA default on the <input>, or padding a level
+     down) was still pushing past 48px. Rather than keep guessing at
+     the single remaining property, pin height/min-height/max-height
+     AND box-sizing on every level (not just the three outer controls)
+     with !important, and zero line-height/vertical padding throughout
+     so nothing has any remaining room to grow past 48px. */
+  .qty-atc-row {
+    align-items: center !important;
+    padding: 10px 16px !important;
+  }
+  .qty-inline,
+  .qty-atc-row__btn,
+  .btn-wishlist {
+    box-sizing: border-box !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    line-height: 1 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .qty-inline .qty-selector,
+  .qty-inline .qty-selector-btn,
+  .qty-inline .qty-selector-input {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 48px !important;
+    line-height: 1 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .qty-inline__label {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    line-height: 1 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .btn-wishlist { width: 48px !important; }
+  .qty-atc-row__btn { flex: 1 1 auto !important; }
+
+  /* --- 2) Remove the Similar Pieces padding band ---
+     Base @media(max-width:768px) .section-spacing{padding:64px 0}
+     (theme.css:1718) is where the leftover 64px bottom padding comes
+     from (an earlier round already zeroed the top half of this same
+     rule down to 28px, per fresh inspection: "28px 0px 64px" — this
+     finishes the job on both sides). */
+  .similar-products.section-spacing {
+    padding-top: 0 !important;
+    padding-bottom: 24px !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* Same fixes, tablet. */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .qty-atc-row {
+    align-items: center !important;
+    padding: 10px 16px !important;
+  }
+  .qty-inline,
+  .qty-atc-row__btn,
+  .btn-wishlist {
+    box-sizing: border-box !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    line-height: 1 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .qty-inline .qty-selector,
+  .qty-inline .qty-selector-btn,
+  .qty-inline .qty-selector-input {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 48px !important;
+    line-height: 1 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .qty-inline__label {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    line-height: 1 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .btn-wishlist { width: 48px !important; }
+  .qty-atc-row__btn { flex: 1 1 auto !important; }
+
+  .similar-products.section-spacing {
+    padding-top: 0 !important;
+    padding-bottom: 24px !important;
+    margin-top: 0 !important;
+  }
+
+  /* --- 3) iPad/tablet PDP two-column layout bug ---
+     .product-layout's base rule (theme.css:1773) is a two-column grid
+     (1.1fr 0.9fr, gallery | info) and was previously only collapsed to
+     a single column by the pre-existing base rule at max-width:768px
+     (theme.css:2690) — a single pixel boundary, not the 769-1024px
+     tablet range this whole task has been targeting. Every mobile-only
+     PDP treatment already written for this range (breadcrumb-top block,
+     swipe carousel, sticky ATC bar, hidden/clipped in-panel breadcrumb+
+     h1, compact price row) was rendering INSIDE that still-two-column
+     grid the rest of the time — auto-placing three children (the new
+     mobile-top block, the gallery, and product-info) across two
+     explicit column tracks instead of stacking them, which is exactly
+     the "title left with a void beneath it, image right, price/colour/
+     size spilling full-width below" breakage. Collapsing the grid here
+     (matching the phone treatment exactly) fixes it directly. */
+  .product-layout { grid-template-columns: 1fr !important; }
+  .product-gallery {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto;
+    position: static !important;
+  }
+}
