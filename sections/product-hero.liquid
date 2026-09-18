@@ -3,6 +3,25 @@
   <div class="container">
     <div class="product-layout">
 
+      <!-- Mobile/tablet-only breadcrumb + product name, shown ABOVE the
+           gallery. Hidden everywhere by default (theme.css); revealed only
+           inside the mobile/tablet media queries. The name here is a plain
+           span (not a second h1) — the real <h1 class="product-title">
+           below stays in the DOM for SEO but is visually hidden on
+           mobile/tablet so there's still exactly one H1 on the page. -->
+      <div class="product-mobile-top" id="product-mobile-top">
+        <nav class="product-mobile-breadcrumb" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span>›</span>
+          {% if product.collections.first %}
+            <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+            <span>›</span>
+          {% endif %}
+          <span>{{ product.title }}</span>
+        </nav>
+        <span class="product-mobile-title">{{ product.title }}</span>
+      </div>
+
       <!-- GALLERY -->
       {% assign g_mode_raw = section.settings.gallery_mode | default: 'global' %}
       {% if g_mode_raw == 'global' or g_mode_raw == blank %}
