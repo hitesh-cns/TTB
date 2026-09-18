@@ -8234,25 +8234,12 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     z-index: 900; /* above page content, below drawers/modals (2000+) */
     background: var(--white);
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
     margin: 0;
-    gap: 8px;
-    flex-wrap: nowrap !important; /* beat the base @media(max-width:480px) flex-wrap:wrap rule (theme.css:6489) */
   }
-  .qty-atc-row__btn {
-    flex: 1 1 auto !important; /* beat the base @media(max-width:480px) flex:1 0 100% rule (theme.css:6492) */
-    order: 2;
-    height: 44px;
-  }
-  .qty-inline {
-    order: 1;
-    flex-shrink: 0;
-    height: 44px;
-  }
-  .qty-inline__label { padding: 0 6px 0 10px; font-size: 10px; }
-  .qty-inline .qty-selector-btn { width: 30px; height: 44px; }
-  .qty-inline .qty-selector-input { width: 26px; font-size: 13px; }
-  .btn-wishlist { order: 3; flex-shrink: 0; width: 44px; height: 44px; }
+  /* Sizing/alignment for .qty-atc-row's children (qty-inline, the ATC
+     button, wishlist) previously lived here across several attempts —
+     removed per this round's instruction; the verbatim block appended
+     at the end of this file now owns all of that exclusively. */
 
   /* #notify-me-row logic in product-page.js is untouched — it still just
      toggles display between this row and .qty-atc-row. Give it the same
@@ -8545,17 +8532,8 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     z-index: 900;
     background: var(--white);
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
     margin: 0;
-    gap: 8px;
-    flex-wrap: nowrap !important;
   }
-  .qty-atc-row__btn { flex: 1 1 auto !important; order: 2; height: 44px; }
-  .qty-inline { order: 1; flex-shrink: 0; height: 44px; }
-  .qty-inline__label { padding: 0 6px 0 10px; font-size: 10px; }
-  .qty-inline .qty-selector-btn { width: 30px; height: 44px; }
-  .qty-inline .qty-selector-input { width: 26px; font-size: 13px; }
-  .btn-wishlist { order: 3; flex-shrink: 0; width: 44px; height: 44px; }
   .notify-me-row {
     position: fixed;
     left: 0;
@@ -8762,22 +8740,10 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   }
   .gallery-swipe-dot.is-active { width: 16px; border-radius: 3px; background: #fff; }
 
-  /* --- 3) Sticky Add to Basket - premium/aligned refinement ---
-     Refines the fixed bar added by the earlier task (position/order/
-     flex basis there were already correct: qty left, ATC fills the
-     middle, wishlist right) up to the now-specified 48px control
-     height, ~10px gaps, and a hairline top border. Equal corner radius
-     across qty-inline/ATC button/wishlist already comes for free - all
-     three already share the same var(--radius) token. */
-  .qty-atc-row {
-    border-top: 1px solid var(--ivory-dk);
-    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.08);
-    gap: 10px !important;
-  }
-  .qty-inline { height: 48px !important; }
-  .qty-inline .qty-selector-btn { height: 48px !important; }
-  .qty-atc-row__btn { height: 48px !important; }
-  .btn-wishlist { width: 48px !important; height: 48px !important; }
+  /* --- 3) Sticky Add to Basket ---
+     Sizing/alignment for the bar's children previously lived here —
+     removed per this round's cleanup; the verbatim block appended at
+     the end of this file now owns it exclusively. */
 
   /* --- 4) Double gap before "You May Also Love" ---
      .product-hero's bottom padding is reduced above (item 1's rule);
@@ -8907,89 +8873,6 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     transition: width 0.2s, border-radius 0.2s, background 0.2s;
   }
   .gallery-swipe-dot.is-active { width: 16px; border-radius: 3px; background: #fff; }
-
-  .qty-atc-row {
-    border-top: 1px solid var(--ivory-dk);
-    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.08);
-    gap: 10px !important;
-  }
-  .qty-inline { height: 48px !important; }
-  .qty-inline .qty-selector-btn { height: 48px !important; }
-  .qty-atc-row__btn { height: 48px !important; }
-  .btn-wishlist { width: 48px !important; height: 48px !important; }
-}
-
-/* ================================================================
-   STICKY BAR — final alignment pass. The three controls (qty-inline,
-   #add-to-cart-btn, wishlist) already share var(--radius) and were
-   already forced to height:48px in the previous round, but the ATC
-   button's label ("Add to Basket" + a fairly large 18px cart icon)
-   does not reliably fit the width left over once the qty stepper and
-   wishlist square take their share of a ~360px bar — with white-space:
-   nowrap already set (theme.css:6490) that forces the button's own
-   content box, and therefore the button, taller than the other two
-   fixed-height controls instead of wrapping, which is what actually
-   breaks the "same height" alignment. Guaranteeing max-height (with
-   overflow:hidden as the hard stop) fixes this unconditionally rather
-   than relying on the label always fitting. Phone.
-   ================================================================ */
-@media (max-width: 767px) {
-  .qty-atc-row {
-    align-items: center !important;
-  }
-  .qty-inline,
-  .qty-inline .qty-selector,
-  .qty-inline .qty-selector-btn {
-    max-height: 48px;
-  }
-  .qty-atc-row__btn {
-    max-height: 48px;
-    overflow: hidden;
-    padding: 0 12px !important;
-    gap: 6px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #add-to-cart-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .btn-wishlist {
-    max-height: 48px;
-  }
-}
-
-/* Same alignment pass, tablet. */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .qty-atc-row {
-    align-items: center !important;
-  }
-  .qty-inline,
-  .qty-inline .qty-selector,
-  .qty-inline .qty-selector-btn {
-    max-height: 48px;
-  }
-  .qty-atc-row__btn {
-    max-height: 48px;
-    overflow: hidden;
-    padding: 0 12px !important;
-    gap: 6px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #add-to-cart-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .btn-wishlist {
-    max-height: 48px;
-  }
 }
 
 /* ================================================================
@@ -8999,52 +8882,10 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
    ================================================================ */
 @media (max-width: 767px) {
 
-  /* --- 1) Sticky bar — all three controls exactly 48px ---
-     Fresh measurement showed the bar still rendering ~76.75px tall
-     (content area ~56.75px against a 48px target) even after the
-     previous two rounds' height/max-height overrides on the three
-     top-level controls — something inside one of them (inherited
-     line-height, a UA default on the <input>, or padding a level
-     down) was still pushing past 48px. Rather than keep guessing at
-     the single remaining property, pin height/min-height/max-height
-     AND box-sizing on every level (not just the three outer controls)
-     with !important, and zero line-height/vertical padding throughout
-     so nothing has any remaining room to grow past 48px. */
-  .qty-atc-row {
-    align-items: center !important;
-    padding: 10px 16px !important;
-  }
-  .qty-inline,
-  .qty-atc-row__btn,
-  .btn-wishlist {
-    box-sizing: border-box !important;
-    height: 48px !important;
-    min-height: 48px !important;
-    max-height: 48px !important;
-    line-height: 1 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  .qty-inline .qty-selector,
-  .qty-inline .qty-selector-btn,
-  .qty-inline .qty-selector-input {
-    box-sizing: border-box !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    max-height: 48px !important;
-    line-height: 1 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  .qty-inline__label {
-    box-sizing: border-box !important;
-    height: 100% !important;
-    line-height: 1 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  .btn-wishlist { width: 48px !important; }
-  .qty-atc-row__btn { flex: 1 1 auto !important; }
+  /* --- 1) Sticky bar ---
+     Sizing/alignment previously lived here across several attempts —
+     removed per this round's cleanup; the verbatim block appended at
+     the end of this file now owns it exclusively. */
 
   /* --- 2) Remove the Similar Pieces padding band ---
      Base @media(max-width:768px) .section-spacing{padding:64px 0}
@@ -9061,41 +8902,8 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 
 /* Same fixes, tablet. */
 @media (min-width: 768px) and (max-width: 1024px) {
-  .qty-atc-row {
-    align-items: center !important;
-    padding: 10px 16px !important;
-  }
-  .qty-inline,
-  .qty-atc-row__btn,
-  .btn-wishlist {
-    box-sizing: border-box !important;
-    height: 48px !important;
-    min-height: 48px !important;
-    max-height: 48px !important;
-    line-height: 1 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  .qty-inline .qty-selector,
-  .qty-inline .qty-selector-btn,
-  .qty-inline .qty-selector-input {
-    box-sizing: border-box !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    max-height: 48px !important;
-    line-height: 1 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  .qty-inline__label {
-    box-sizing: border-box !important;
-    height: 100% !important;
-    line-height: 1 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  .btn-wishlist { width: 48px !important; }
-  .qty-atc-row__btn { flex: 1 1 auto !important; }
+  /* Sticky bar sizing/alignment previously lived here — removed per
+     this round's cleanup; see the phone block above for the note. */
 
   .similar-products.section-spacing {
     padding-top: 0 !important;
@@ -9123,5 +8931,81 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     grid-template-columns: 1fr !important;
     grid-template-rows: auto auto;
     position: static !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  #qty-atc-row.qty-atc-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom)) !important;
+  }
+  #qty-atc-row.qty-atc-row > * {
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    box-sizing: border-box !important;
+    align-self: center !important;
+    margin: 0 !important;
+    border-radius: 8px !important;
+  }
+  #qty-atc-row .qty-inline {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 0 auto !important;
+    padding: 0 10px !important;
+    gap: 6px !important;
+  }
+  #qty-atc-row .qty-inline__label {
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #qty-atc-row .qty-selector {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+  }
+  #qty-atc-row .qty-selector-btn {
+    height: 100% !important;
+    padding: 0 8px !important;
+    line-height: 1 !important;
+    border: 0 !important;
+    background: transparent !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  #qty-atc-row .qty-selector-input {
+    height: 100% !important;
+    width: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    background: transparent !important;
+  }
+  #qty-atc-row #add-to-cart-btn {
+    flex: 1 1 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 0 16px !important;
+    line-height: 1 !important;
+  }
+  #qty-atc-row .btn-wishlist {
+    flex: 0 0 48px !important;
+    width: 48px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 }
