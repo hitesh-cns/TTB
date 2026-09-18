@@ -8918,3 +8918,76 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .qty-atc-row__btn { height: 48px !important; }
   .btn-wishlist { width: 48px !important; height: 48px !important; }
 }
+
+/* ================================================================
+   STICKY BAR — final alignment pass. The three controls (qty-inline,
+   #add-to-cart-btn, wishlist) already share var(--radius) and were
+   already forced to height:48px in the previous round, but the ATC
+   button's label ("Add to Basket" + a fairly large 18px cart icon)
+   does not reliably fit the width left over once the qty stepper and
+   wishlist square take their share of a ~360px bar — with white-space:
+   nowrap already set (theme.css:6490) that forces the button's own
+   content box, and therefore the button, taller than the other two
+   fixed-height controls instead of wrapping, which is what actually
+   breaks the "same height" alignment. Guaranteeing max-height (with
+   overflow:hidden as the hard stop) fixes this unconditionally rather
+   than relying on the label always fitting. Phone.
+   ================================================================ */
+@media (max-width: 767px) {
+  .qty-atc-row {
+    align-items: center !important;
+  }
+  .qty-inline,
+  .qty-inline .qty-selector,
+  .qty-inline .qty-selector-btn {
+    max-height: 48px;
+  }
+  .qty-atc-row__btn {
+    max-height: 48px;
+    overflow: hidden;
+    padding: 0 12px !important;
+    gap: 6px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #add-to-cart-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .btn-wishlist {
+    max-height: 48px;
+  }
+}
+
+/* Same alignment pass, tablet. */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .qty-atc-row {
+    align-items: center !important;
+  }
+  .qty-inline,
+  .qty-inline .qty-selector,
+  .qty-inline .qty-selector-btn {
+    max-height: 48px;
+  }
+  .qty-atc-row__btn {
+    max-height: 48px;
+    overflow: hidden;
+    padding: 0 12px !important;
+    gap: 6px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #add-to-cart-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .btn-wishlist {
+    max-height: 48px;
+  }
+}

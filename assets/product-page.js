@@ -230,6 +230,45 @@
     }
   }
 
+  /* Mobile swipe carousel — keep it in sync with the selected variant's
+     image. Deliberately a SEPARATE, additive listener (not a change to
+     findVariant() above) registered after the existing one, so by the
+     time it runs selectedOptions/variantsData already reflect the new
+     variant. Guarded to only touch the DOM when the swipe carousel is
+     actually active — desktop's own gallery-sync logic above (thumbs +
+     showSlide) is completely untouched either way. */
+  function syncMobileGalleryToVariant(imageIndex) {
+    if (isNaN(imageIndex) || imageIndex < 0) return;
+    const swipeGallery = document.querySelector('.product-gallery[data-mobile-gallery="swipe"]');
+    if (!swipeGallery) return;
+    if (!window.matchMedia('(max-width: 1024px)').matches) return;
+
+    const mainEl = document.getElementById('gallery-main');
+    if (!mainEl) return;
+    const track = mainEl.querySelector('.gallery-grid-stack, .gallery-scroll-stack, .gallery-main__inner');
+    if (!track) return;
+
+    const target = track.querySelector('[data-index="' + imageIndex + '"]');
+    if (!target) return;
+
+    target.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+
+    const dotsEl = mainEl.querySelector('.gallery-swipe-dots');
+    if (dotsEl) {
+      dotsEl.querySelectorAll('.gallery-swipe-dot').forEach((d, i) => d.classList.toggle('is-active', i === imageIndex));
+    }
+  }
+
+  document.querySelectorAll('.size-btn-input, .color-swatch-input').forEach(input => {
+    input.addEventListener('change', () => {
+      const selectedValues = Object.values(selectedOptions);
+      const match = variantsData.find(v => selectedValues.every((val, i) => v.options[i] === val));
+      if (match && match.featured_image) {
+        syncMobileGalleryToVariant(match.featured_image.position - 1);
+      }
+    });
+  });
+
   /* =============================================
      ADD TO CART (PRODUCT FORM)
      ============================================= */
