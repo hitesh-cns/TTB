@@ -767,3 +767,84 @@
   }
 
 })();
+
+/* ==================================================================
+   MOBILE GALLERY SWIPE — dot indicators
+   Separate, self-contained IIFE (does not touch the gallery logic
+   above). Only does anything when the merchant has picked "Horizontal
+   swipe" for the new Mobile Gallery Mode setting (data-mobile-gallery
+   ="swipe" on .product-gallery, product-hero.liquid) and the viewport
+   is phone/tablet width — otherwise it no-ops, so desktop and the
+   "stacked"/"desktop" mobile options are completely unaffected.
+   ================================================================== */
+(function () {
+  'use strict';
+
+  var galleryEl = document.querySelector('.product-gallery[data-mobile-gallery="swipe"]');
+  var mainEl = document.getElementById('gallery-main');
+  if (!galleryEl || !mainEl) return;
+
+  var dotsEl = null;
+  var track = null;
+
+  function getTrack() {
+    return mainEl.querySelector('.gallery-grid-stack, .gallery-scroll-stack, .gallery-main__inner');
+  }
+
+  function isSwipeActive() {
+    return window.matchMedia('(max-width: 1024px)').matches;
+  }
+
+  function onScroll() {
+    if (!track || !dotsEl) return;
+    var w = track.clientWidth || 1;
+    var idx = Math.round(track.scrollLeft / w);
+    var dots = dotsEl.querySelectorAll('.gallery-swipe-dot');
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle('is-active', i === idx);
+    }
+  }
+
+  function teardown() {
+    if (track) track.removeEventListener('scroll', onScroll);
+    if (dotsEl) { dotsEl.remove(); dotsEl = null; }
+    track = null;
+  }
+
+  function build() {
+    teardown();
+    if (!isSwipeActive()) return;
+
+    track = getTrack();
+    if (!track) return;
+
+    var items = Array.prototype.filter.call(track.children, function (el) {
+      return el.nodeType === 1;
+    });
+    if (items.length < 2) { track = null; return; }
+
+    dotsEl = document.createElement('div');
+    dotsEl.className = 'gallery-swipe-dots';
+    items.forEach(function (_, i) {
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'gallery-swipe-dot' + (i === 0 ? ' is-active' : '');
+      dot.setAttribute('aria-label', 'View image ' + (i + 1));
+      dot.addEventListener('click', function () {
+        track.scrollTo({ left: i * track.clientWidth, behavior: 'smooth' });
+      });
+      dotsEl.appendChild(dot);
+    });
+    mainEl.appendChild(dotsEl);
+
+    track.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  build();
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(build, 150);
+  });
+})();

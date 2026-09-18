@@ -35,10 +35,13 @@
       {% assign g_sec    = settings.grid_secondary_ratio      | default: '1/1' %}
       {% assign g_sticky = section.settings.scroll_sticky_thumbs %}
       {% if g_sticky == nil %}{% assign g_sticky = true %}{% endif %}
+      {% assign g_mobile_mode   = section.settings.mobile_gallery_mode   | default: 'swipe' %}
+      {% assign g_mobile_aspect = section.settings.mobile_gallery_aspect | default: '3/4' %}
 
       <div class="product-gallery{% if g_sticky and g_mode == 'scroll' %} gallery--sticky-thumbs{% endif %}"
            data-gallery-mode="{{ g_mode }}"
-           style="--scroll-gap:{{ g_gap }}px;--scroll-aspect:{{ g_aspect }};--grid-first-ratio:{{ g_first }};--grid-sec-ratio:{{ g_sec }};">
+           data-mobile-gallery="{{ g_mobile_mode }}"
+           style="--scroll-gap:{{ g_gap }}px;--scroll-aspect:{{ g_aspect }};--grid-first-ratio:{{ g_first }};--grid-sec-ratio:{{ g_sec }};--mobile-gallery-aspect:{{ g_mobile_aspect }};">
 
         <!-- Thumbs -->
         <div class="gallery-thumbs" id="gallery-thumbs">
@@ -504,6 +507,31 @@
         { "value": "grid",      "label": "Grid (H&M style)" }
       ],
       "default": "global"
+    },
+    { "type": "header",   "content": "Gallery — Mobile" },
+    { "type": "paragraph","content": "Controls the gallery on phone/tablet ONLY. Desktop always uses Gallery Mode above, unaffected by this setting." },
+    {
+      "type": "select",
+      "id": "mobile_gallery_mode",
+      "label": "Mobile Gallery Mode",
+      "options": [
+        { "value": "swipe",   "label": "Horizontal swipe (recommended)" },
+        { "value": "stacked", "label": "Stacked (scroll down)" },
+        { "value": "desktop", "label": "Same as desktop" }
+      ],
+      "default": "swipe"
+    },
+    {
+      "type": "select",
+      "id": "mobile_gallery_aspect",
+      "label": "Mobile Image Aspect Ratio",
+      "options": [
+        { "value": "3/4",  "label": "3:4 Portrait" },
+        { "value": "1/1",  "label": "1:1 Square" },
+        { "value": "4/5",  "label": "4:5 Tall portrait" },
+        { "value": "auto", "label": "Auto" }
+      ],
+      "default": "3/4"
     },
     { "type": "header",   "content": "Scroll Stack Settings" },
     { "type": "paragraph","content": "These settings apply when Gallery Mode is Scroll Stack." },

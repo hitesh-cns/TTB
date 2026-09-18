@@ -8617,3 +8617,304 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
   .product-form-wrap { margin-bottom: 16px; }
   .product-bundle-nudge { margin-bottom: 16px; }
 }
+
+/* ================================================================
+   PDP follow-up round — header gap, gallery mobile-mode setting,
+   sticky ATC polish, double gap before Similar Pieces, and the
+   Similar Pieces right-side overflow. Phone.
+   ================================================================ */
+@media (max-width: 767px) {
+
+  /* --- 1) Gap between header and breadcrumb ---
+     Base rule theme.css:1766 .product-hero{padding:48px 0 80px} - the
+     48px top padding pushed the breadcrumb well below the header. Zero
+     it out; bottom padding is also reduced here (see item 4 below, same
+     selector) to fix the double-gap before Similar Pieces in one place. */
+  .product-hero { padding: 6px 0 24px; }
+
+  /* --- 2) Mobile Gallery Mode setting (new section schema setting) ---
+     product-hero.liquid now outputs data-mobile-gallery="{{ mobile_
+     gallery_mode }}" (default "swipe") and --mobile-gallery-aspect on
+     .product-gallery. This covers all three DESKTOP gallery modes
+     (grid/scroll/slideshow) so swipe works regardless of which one the
+     store has picked (currently "grid" per templates/product.json).
+
+     NOTE: an earlier task already forced the slideshow (.gallery-main__
+     inner) and scroll (.gallery-scroll-stack) markup into a swipe
+     carousel unconditionally for every mobile visit, with no awareness
+     of this new per-product setting. Those old rules are left in place
+     (append-only) and now double as the behaviour for data-mobile-
+     gallery="swipe" (still the default); the "stacked"/"desktop" blocks
+     directly below explicitly undo them when the merchant picks either
+     of those two options. */
+
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-thumbs { display: none; }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-zoom-hint { display: none; }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-arrow { display: none !important; }
+
+  /* Grid mode -> swipe (new: grid mode had no mobile swipe support before) */
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-grid-stack {
+    display: flex !important;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 0;
+  }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-grid-item {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    scroll-snap-align: center;
+  }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-grid-item--full .gallery-grid-img,
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-grid-item--half .gallery-grid-img {
+    aspect-ratio: var(--mobile-gallery-aspect, 3/4) !important;
+  }
+
+  /* Scroll mode -> swipe (row instead of the existing column stack) */
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-scroll-stack {
+    flex-direction: row;
+    gap: 0;
+  }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-scroll-item {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    scroll-snap-align: center;
+    aspect-ratio: var(--mobile-gallery-aspect, 3/4);
+  }
+
+  /* Slideshow mode -> swipe, using the new mobile aspect ratio */
+  .product-gallery[data-mobile-gallery="swipe"]:not([data-gallery-mode="scroll"]):not([data-gallery-mode="grid"]) .gallery-main {
+    aspect-ratio: var(--mobile-gallery-aspect, 3/4);
+  }
+
+  /* "stacked" / "desktop" - undo the earlier task's unconditional
+     slideshow + scroll swipe conversion. On a phone-width viewport,
+     literal desktop parity (76px side thumb column etc.) is not
+     legible, so both options resolve to the same practical outcome:
+     the plain vertical/stacked presentation that existed before any
+     swipe work, with the thumb strip restored. Flagged here rather
+     than assumed. */
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-main__inner,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-main__inner {
+    display: block !important;
+    overflow-x: visible !important;
+    scroll-snap-type: none !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-slide,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-slide {
+    position: absolute !important;
+    inset: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-slide.is-active,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-slide.is-active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-scroll-stack,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-scroll-stack {
+    flex-direction: column !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-scroll-item,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-scroll-item {
+    flex: none !important;
+    aspect-ratio: auto !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-thumbs,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-thumbs {
+    display: flex !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-zoom-hint,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-zoom-hint {
+    display: flex !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-arrow,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-arrow {
+    display: flex !important;
+  }
+
+  /* Dot indicators: see the new IIFE appended to product-page.js -
+     it creates .gallery-swipe-dots/.gallery-swipe-dot only when
+     data-mobile-gallery="swipe" and the viewport is <=1024px. */
+  .gallery-swipe-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .gallery-swipe-dot {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    pointer-events: auto;
+    cursor: pointer;
+    transition: width 0.2s, border-radius 0.2s, background 0.2s;
+  }
+  .gallery-swipe-dot.is-active { width: 16px; border-radius: 3px; background: #fff; }
+
+  /* --- 3) Sticky Add to Basket - premium/aligned refinement ---
+     Refines the fixed bar added by the earlier task (position/order/
+     flex basis there were already correct: qty left, ATC fills the
+     middle, wishlist right) up to the now-specified 48px control
+     height, ~10px gaps, and a hairline top border. Equal corner radius
+     across qty-inline/ATC button/wishlist already comes for free - all
+     three already share the same var(--radius) token. */
+  .qty-atc-row {
+    border-top: 1px solid var(--ivory-dk);
+    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.08);
+    gap: 10px !important;
+  }
+  .qty-inline { height: 48px !important; }
+  .qty-inline .qty-selector-btn { height: 48px !important; }
+  .qty-atc-row__btn { height: 48px !important; }
+  .btn-wishlist { width: 48px !important; height: 48px !important; }
+
+  /* --- 4) Double gap before "You May Also Love" ---
+     .product-hero's bottom padding is reduced above (item 1's rule);
+     the other half of the stack is similar-products' own top padding
+     from the shared .section-spacing class (theme.css:1718 already
+     drops it to 64px on mobile site-wide) - scoped to just this
+     section so no other .section-spacing section is affected. */
+  .similar-products.section-spacing { padding-top: 28px; }
+
+  /* --- 5) Similar Pieces right-side overflow ---
+     Root cause: the pre-existing base rule @media(max-width:480px)
+     .similar-card{flex:0 0 calc(80vw)} (theme.css ~2701) sizes the card
+     off the VIEWPORT width, ignoring .container's own side padding -
+     so an 80vw-wide card runs past the container's padded right edge
+     while the left edge sits flush, reading as off-centre overflow.
+     Fixed separately below at the same <=480px breakpoint. */
+}
+
+@media (max-width: 480px) {
+  .similar-card { flex: 0 0 100%; }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Same PDP follow-up fixes as the phone block above - see it for
+     full reasoning on each. Tablet has no <=480px sub-breakpoint so
+     item 5 (Similar Pieces overflow) does not apply here. */
+  .product-hero { padding: 6px 0 24px; }
+  .similar-products.section-spacing { padding-top: 28px; }
+
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-thumbs { display: none; }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-zoom-hint { display: none; }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-arrow { display: none !important; }
+
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-grid-stack {
+    display: flex !important;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 0;
+  }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-grid-item {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    scroll-snap-align: center;
+  }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-grid-item--full .gallery-grid-img,
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-grid-item--half .gallery-grid-img {
+    aspect-ratio: var(--mobile-gallery-aspect, 3/4) !important;
+  }
+
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-scroll-stack {
+    flex-direction: row;
+    gap: 0;
+  }
+  .product-gallery[data-mobile-gallery="swipe"] .gallery-scroll-item {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    scroll-snap-align: center;
+    aspect-ratio: var(--mobile-gallery-aspect, 3/4);
+  }
+
+  .product-gallery[data-mobile-gallery="swipe"]:not([data-gallery-mode="scroll"]):not([data-gallery-mode="grid"]) .gallery-main {
+    aspect-ratio: var(--mobile-gallery-aspect, 3/4);
+  }
+
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-main__inner,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-main__inner {
+    display: block !important;
+    overflow-x: visible !important;
+    scroll-snap-type: none !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-slide,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-slide {
+    position: absolute !important;
+    inset: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-slide.is-active,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-slide.is-active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-scroll-stack,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-scroll-stack {
+    flex-direction: column !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-scroll-item,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-scroll-item {
+    flex: none !important;
+    aspect-ratio: auto !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-thumbs,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-thumbs {
+    display: flex !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-zoom-hint,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-zoom-hint {
+    display: flex !important;
+  }
+  .product-gallery[data-mobile-gallery="stacked"] .gallery-arrow,
+  .product-gallery[data-mobile-gallery="desktop"] .gallery-arrow {
+    display: flex !important;
+  }
+
+  .gallery-swipe-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .gallery-swipe-dot {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    pointer-events: auto;
+    cursor: pointer;
+    transition: width 0.2s, border-radius 0.2s, background 0.2s;
+  }
+  .gallery-swipe-dot.is-active { width: 16px; border-radius: 3px; background: #fff; }
+
+  .qty-atc-row {
+    border-top: 1px solid var(--ivory-dk);
+    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.08);
+    gap: 10px !important;
+  }
+  .qty-inline { height: 48px !important; }
+  .qty-inline .qty-selector-btn { height: 48px !important; }
+  .qty-atc-row__btn { height: 48px !important; }
+  .btn-wishlist { width: 48px !important; height: 48px !important; }
+}
