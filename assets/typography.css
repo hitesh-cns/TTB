@@ -314,26 +314,53 @@ body {
   letter-spacing: 0;
 }
 
-/* Column layout only when both was/now spans are present (the
-   .cart-item__price--stack modifier, added by theme.js only for
-   discounted lines) — applying display:flex/line-height:1.25 to the
-   plain single-price case would change its line-box height and could
-   shift it against the qty stepper it sits beside, so a no-discount
-   line keeps today's exact plain-span rendering untouched. */
-#cart-drawer .cart-item__price--stack {
+#cart-drawer .cart-item__controls {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  line-height: 1.25;
-  gap: 1px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+#cart-drawer .cart-item__qty { flex: 0 0 auto; }
+#cart-drawer .cart-item__price {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 #cart-drawer .cart-item__price-was {
   font-size: var(--t-caption);
   font-weight: var(--fw-body);
   text-decoration: line-through;
   opacity: 0.45;
+  white-space: nowrap;
 }
 #cart-drawer .cart-item__price-now {
   font-size: var(--t-price-md);
   font-weight: var(--fw-ui);
+  white-space: nowrap;
+}
+@media (max-width: 360px) {
+  #cart-drawer .cart-item__price { gap: 4px; }
+  #cart-drawer .cart-item__price-was { font-size: 11px; }
+}
+
+#cart-drawer .cart-item__head .cart-item__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  #cart-drawer .cart-item__title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    line-height: 1.3;
+  }
 }

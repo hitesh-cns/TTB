@@ -174,7 +174,7 @@
 
       const info = priceInfo[idx];
       const priceHtml = (info.nowPrice < info.wasPrice)
-        ? `<span class="cart-item__price cart-item__price--stack"><span class="cart-item__price-was">${formatMoney(info.wasPrice)}</span><span class="cart-item__price-now">${formatMoney(info.nowPrice)}</span></span>`
+        ? `<span class="cart-item__price"><span class="cart-item__price-was">${formatMoney(info.wasPrice)}</span><span class="cart-item__price-now">${formatMoney(info.nowPrice)}</span></span>`
         : `<span class="cart-item__price">${formatMoney(info.wasPrice)}</span>`;
 
       const hasDiscount = item.original_line_price > item.final_line_price;
