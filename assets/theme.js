@@ -131,17 +131,53 @@
     if (footer)   { footer.style.display   = 'flex'; }
     if (subtotalEl) subtotalEl.textContent = formatMoney(cart.total_price);
 
+    // Per-line was/now prices. /cart.js gives original_line_price ===
+    // final_line_price for every item here — the bundle discount is a
+    // checkout-only code, never applied to the live cart — so the bundle
+    // reduction has to be apportioned from the same tier % the footer
+    // uses, and reconciled to add up to the exact footer figure (not a
+    // rupee off from per-line rounding). Real Shopify line discounts
+    // (original > final), if any exist, are used as-is and left out of
+    // that reconciliation pool entirely.
+    const tierQty = getBxgyCount(cart);
+    const activeTier = getCurrentTier(tierQty);
+    const tierPct = activeTier ? activeTier.pct : 0;
+    const footerDiscountAmount = cart.total_discount > 0
+      ? cart.total_discount
+      : (activeTier ? Math.round(cart.total_price * activeTier.pct / 100) : 0);
+
+    const priceInfo = cart.items.map(item => {
+      if (item.original_line_price > item.final_line_price) {
+        return { apportioned: false, wasPrice: item.original_line_price, nowPrice: item.final_line_price };
+      }
+      const off = tierPct > 0 ? Math.round(item.original_line_price * tierPct / 100) : 0;
+      return { apportioned: true, wasPrice: item.original_line_price, off };
+    });
+
+    const apportionedIdx = [];
+    priceInfo.forEach((p, i) => { if (p.apportioned) apportionedIdx.push(i); });
+    if (apportionedIdx.length > 0) {
+      const apportionedSum = apportionedIdx.reduce((sum, i) => sum + priceInfo[i].off, 0);
+      const remainder = footerDiscountAmount - apportionedSum;
+      const lastIdx = apportionedIdx[apportionedIdx.length - 1];
+      priceInfo[lastIdx].off += remainder;
+    }
+    priceInfo.forEach(p => {
+      if (p.apportioned) p.nowPrice = p.wasPrice - p.off;
+    });
+
     // Render each cart item BEFORE the emptyEl node
-    cart.items.forEach(item => {
+    cart.items.forEach((item, idx) => {
       const itemEl = document.createElement('div');
       itemEl.className = 'cart-item';
       itemEl.dataset.key = item.key;
 
-      const hasDiscount = item.original_line_price > item.final_line_price;
-      const priceHtml = hasDiscount
-        ? `<span class="cart-item__price-was">${formatMoney(item.original_line_price)}</span><span class="cart-item__price-now">${formatMoney(item.final_line_price)}</span>`
-        : `<span class="cart-item__price">${formatMoney(item.final_line_price)}</span>`;
+      const info = priceInfo[idx];
+      const priceHtml = (info.nowPrice < info.wasPrice)
+        ? `<span class="cart-item__price cart-item__price--stack"><span class="cart-item__price-was">${formatMoney(info.wasPrice)}</span><span class="cart-item__price-now">${formatMoney(info.nowPrice)}</span></span>`
+        : `<span class="cart-item__price">${formatMoney(info.wasPrice)}</span>`;
 
+      const hasDiscount = item.original_line_price > item.final_line_price;
       let savingsHtml = '';
       if (hasDiscount) {
         const alloc = item.line_level_discount_allocations && item.line_level_discount_allocations[0];

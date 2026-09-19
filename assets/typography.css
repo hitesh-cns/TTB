@@ -313,3 +313,27 @@ body {
   font-feature-settings: "tnum" 1, "lnum" 1;
   letter-spacing: 0;
 }
+
+/* Column layout only when both was/now spans are present (the
+   .cart-item__price--stack modifier, added by theme.js only for
+   discounted lines) — applying display:flex/line-height:1.25 to the
+   plain single-price case would change its line-box height and could
+   shift it against the qty stepper it sits beside, so a no-discount
+   line keeps today's exact plain-span rendering untouched. */
+#cart-drawer .cart-item__price--stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.25;
+  gap: 1px;
+}
+#cart-drawer .cart-item__price-was {
+  font-size: var(--t-caption);
+  font-weight: var(--fw-body);
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+#cart-drawer .cart-item__price-now {
+  font-size: var(--t-price-md);
+  font-weight: var(--fw-ui);
+}
