@@ -88,13 +88,13 @@
 
   <!-- Footer — hidden when cart is empty -->
   <div class="cart-drawer__footer" id="cart-drawer-footer" style="display:none;">
+    <div class="cart-subtotal cart-discount-row" id="cart-discount-row" style="display:none;">
+      <span id="cart-discount-row-label">Discount</span>
+      <span id="cart-discount-row-value"></span>
+    </div>
     <div class="cart-subtotal">
       <span>{{ section.settings.subtotal_label | default: "Subtotal" }}</span>
       <span id="cart-subtotal-price"></span>
-    </div>
-    <div class="cart-discount-row" id="cart-discount-row" style="display:none;">
-      <span id="cart-discount-row-label"></span>
-      <span class="cart-discount-row__value" id="cart-discount-row-value"></span>
     </div>
     {% if section.settings.shipping_message != blank %}
       <p class="cart-shipping-note">{{ section.settings.shipping_message }}</p>

@@ -43,17 +43,44 @@
   const cartOverlay = document.getElementById('cart-overlay');
   const cartClose = document.getElementById('cart-drawer-close');
 
+  // Hard scroll lock while the cart drawer is open — pins the page in
+  // place (rather than just overflow:hidden) so background content
+  // can't be dragged/scrolled behind the drawer on touch devices, and
+  // restores the exact scroll position on close.
+  var _cartScrollY = 0;
+  function lockPageScroll() {
+    _cartScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = (-_cartScrollY) + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('cart-drawer-open');
+  }
+  function unlockPageScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    document.body.classList.remove('cart-drawer-open');
+    window.scrollTo(0, _cartScrollY);
+  }
+
   function openCart() {
     cartDrawer && cartDrawer.setAttribute('aria-hidden', 'false');
     cartOverlay && cartOverlay.classList.add('is-visible');
-    document.body.style.overflow = 'hidden';
+    lockPageScroll();
     fetchCart();
+    requestAnimationFrame(updateCartScrollbar);
   }
 
   function closeCart() {
     cartDrawer && cartDrawer.setAttribute('aria-hidden', 'true');
     cartOverlay && cartOverlay.classList.remove('is-visible');
-    document.body.style.overflow = '';
+    unlockPageScroll();
   }
 
   cartToggle && cartToggle.addEventListener('click', openCart);
@@ -107,6 +134,20 @@
       const itemEl = document.createElement('div');
       itemEl.className = 'cart-item';
       itemEl.dataset.key = item.key;
+
+      const hasDiscount = item.original_line_price > item.final_line_price;
+      const priceHtml = hasDiscount
+        ? `<span class="cart-item__price-was">${formatMoney(item.original_line_price)}</span><span class="cart-item__price-now">${formatMoney(item.final_line_price)}</span>`
+        : `<span class="cart-item__price">${formatMoney(item.final_line_price)}</span>`;
+
+      let savingsHtml = '';
+      if (hasDiscount) {
+        const alloc = item.line_level_discount_allocations && item.line_level_discount_allocations[0];
+        const discountTitle = (alloc && alloc.discount_application && alloc.discount_application.title) || 'Discount';
+        const saved = item.original_line_price - item.final_line_price;
+        savingsHtml = `<span class="cart-item__savings">${escHtml(discountTitle)} &minus; ${formatMoney(saved)}</span>`;
+      }
+
       itemEl.innerHTML = `
         <div class="cart-item__image">
           ${item.image ? `<img src="${item.image}" alt="${escHtml(item.product_title)}" loading="lazy">` : ''}
@@ -120,9 +161,13 @@
               <span class="qty-value">${item.quantity}</span>
               <button class="qty-btn qty-btn--plus" data-key="${item.key}" data-qty="${item.quantity + 1}" aria-label="Add one">+</button>
             </div>
-            <span class="cart-item__price">${formatMoney(item.final_line_price)}</span>
+            ${priceHtml}
           </div>
+          ${savingsHtml}
         </div>
+        <button type="button" class="cart-item__remove" data-key="${item.key}" aria-label="Remove item">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
+        </button>
       `;
       // Insert before emptyEl so empty state stays at the bottom of the DOM
       if (emptyEl && emptyEl.parentNode === itemsEl) {
@@ -140,6 +185,16 @@
         await updateCartItem(key, qty);
       });
     });
+
+    // Attach remove button handlers — same updateCartItem() the qty
+    // buttons use, just called with quantity 0
+    itemsEl && itemsEl.querySelectorAll('.cart-item__remove').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await updateCartItem(btn.dataset.key, 0);
+      });
+    });
+
+    requestAnimationFrame(updateCartScrollbar);
   }
 
   function escHtml(str) {
@@ -157,6 +212,32 @@
       renderCart(cart);
       updateDiscountUI(cart);
     } catch (e) { console.error('Update error:', e); }
+  }
+
+  // Always-visible scroll indicator for the item list — a plain custom
+  // track/thumb pair (native scrollbars are hidden via CSS) so there's
+  // a persistent visual cue that the list scrolls, not just on hover.
+  function updateCartScrollbar() {
+    const list = document.getElementById('cart-drawer-items');
+    if (!list || !list.parentNode) return;
+    let track = list.parentNode.querySelector('.cart-scrollbar');
+    if (!track) {
+      track = document.createElement('div');
+      track.className = 'cart-scrollbar';
+      track.innerHTML = '<div class="cart-scrollbar__thumb"></div>';
+      list.parentNode.insertBefore(track, list.nextSibling);
+      list.addEventListener('scroll', updateCartScrollbar, { passive: true });
+      window.addEventListener('resize', updateCartScrollbar);
+    }
+    const thumb = track.querySelector('.cart-scrollbar__thumb');
+    const ratio = list.clientHeight / list.scrollHeight;
+    if (!isFinite(ratio) || ratio >= 0.995) { track.classList.remove('is-visible'); return; }
+    track.classList.add('is-visible');
+    const th = Math.max(28, track.clientHeight * ratio);
+    const maxTop = track.clientHeight - th;
+    const prog = list.scrollTop / (list.scrollHeight - list.clientHeight);
+    thumb.style.height = th + 'px';
+    thumb.style.transform = 'translateY(' + (prog * maxTop) + 'px)';
   }
 
   /* ---- Quick Add ---- */
@@ -254,18 +335,21 @@
       }
     }
 
-    // -- Discount amount row (real currency, shown below Subtotal) --
+    // -- Discount amount row (real currency, shown above Subtotal) --
     // Subtotal itself stays the pre-discount figure — the discount is
     // applied at checkout via the code (see checkoutBtns below); this
     // row is just the customer-facing saving, not a recalculated total.
+    // No percentage or discount code is shown here, just "Discount".
     const discountRowEl   = document.getElementById('cart-discount-row');
     const discountLabelEl = document.getElementById('cart-discount-row-label');
     const discountValueEl = document.getElementById('cart-discount-row-value');
     if (discountRowEl && discountLabelEl && discountValueEl) {
-      if (currentTier) {
-        const amount = Math.round(cart.total_price * currentTier.pct / 100);
-        discountLabelEl.textContent = `Bundle discount (${currentTier.pct}% off)`;
-        discountValueEl.textContent = `− ${formatMoney(amount)}`;
+      const amount = cart.total_discount > 0
+        ? cart.total_discount
+        : (currentTier ? Math.round(cart.total_price * currentTier.pct / 100) : 0);
+      if (amount > 0) {
+        discountLabelEl.textContent = 'Discount';
+        discountValueEl.textContent = '-' + formatMoney(amount);
         discountRowEl.style.display = 'flex';
       } else {
         discountRowEl.style.display = 'none';
@@ -474,24 +558,26 @@
 
   /* ---- Utilities ---- */
   // ============================================================
-  // FORMAT MONEY — uses shop currency from Shopify Markets
+  // FORMAT MONEY — Indian rupee formatting (en-IN grouping, ₹ symbol)
   // ============================================================
-  // window.moneyFormat is set in layout/theme.liquid from
-  // {{ shop.money_format }}, which Shopify automatically
-  // localises when you have Markets / multi-currency enabled.
-  // Format string looks like: "₹{{amount}}" or "${{amount}}"
+  // Drops decimals when the amount is a whole rupee value; shows
+  // exactly 2 decimal places otherwise.
   // ============================================================
   function formatMoney(cents) {
-    const amount = (cents / 100).toFixed(2);
-    const fmt = window.moneyFormat || '{{amount}}';
-
-    // Shopify format tokens: {{amount}}, {{amount_no_decimals}},
-    // {{amount_with_comma_separator}}, {{amount_no_decimals_with_comma_separator}}
-    return fmt
-      .replace('{{amount_no_decimals_with_comma_separator}}', Math.round(cents / 100).toLocaleString('en-IN'))
-      .replace('{{amount_with_comma_separator}}', (cents / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }))
-      .replace('{{amount_no_decimals}}', Math.round(cents / 100).toString())
-      .replace('{{amount}}', amount);
+    var n = (cents || 0) / 100;
+    var neg = n < 0;
+    n = Math.abs(n);
+    var paise = Math.round(n * 100) % 100 !== 0;
+    var out;
+    try {
+      out = n.toLocaleString('en-IN', {
+        minimumFractionDigits: paise ? 2 : 0,
+        maximumFractionDigits: paise ? 2 : 0
+      });
+    } catch (e) {
+      out = n.toFixed(paise ? 2 : 0);
+    }
+    return (neg ? '-' : '') + '₹' + out;
   }
 
   /* ---- Animate on Scroll ---- */
@@ -527,6 +613,8 @@
   /* ---- Expose cart functions globally for use by other scripts ---- */
   window.fetchCart = fetchCart;
   window.renderCart = renderCart;
+  window.lockPageScroll = lockPageScroll;
+  window.unlockPageScroll = unlockPageScroll;
 
   /* ---- Initial Cart Load ---- */
   fetchCart();
@@ -920,7 +1008,7 @@
         if (cartDrawer) void cartDrawer.offsetHeight;
         if (cartDrawer)  { cartDrawer.setAttribute('aria-hidden', 'false'); cartDrawer.classList.add('is-open'); }
         if (cartOverlay) cartOverlay.classList.add('is-visible');
-        document.body.style.overflow = 'hidden';
+        if (typeof window.lockPageScroll === 'function') window.lockPageScroll();
         btn.textContent = 'Added ✓';
         setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
       } else {
