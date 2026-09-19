@@ -92,11 +92,9 @@
       <span>{{ section.settings.subtotal_label | default: "Subtotal" }}</span>
       <span id="cart-subtotal-price"></span>
     </div>
-    <div class="cart-discount-applied" id="cart-discount-applied" style="display:none;">
-      <span class="discount-tag">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        Bundle discount: <span id="cart-discount-label"></span>
-      </span>
+    <div class="cart-discount-row" id="cart-discount-row" style="display:none;">
+      <span id="cart-discount-row-label"></span>
+      <span class="cart-discount-row__value" id="cart-discount-row-value"></span>
     </div>
     {% if section.settings.shipping_message != blank %}
       <p class="cart-shipping-note">{{ section.settings.shipping_message }}</p>

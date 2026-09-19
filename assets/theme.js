@@ -254,15 +254,21 @@
       }
     }
 
-    // -- Discount applied badge --
-    const appliedEl = document.getElementById('cart-discount-applied');
-    const labelEl   = document.getElementById('cart-discount-label');
-    if (appliedEl && labelEl) {
+    // -- Discount amount row (real currency, shown below Subtotal) --
+    // Subtotal itself stays the pre-discount figure — the discount is
+    // applied at checkout via the code (see checkoutBtns below); this
+    // row is just the customer-facing saving, not a recalculated total.
+    const discountRowEl   = document.getElementById('cart-discount-row');
+    const discountLabelEl = document.getElementById('cart-discount-row-label');
+    const discountValueEl = document.getElementById('cart-discount-row-value');
+    if (discountRowEl && discountLabelEl && discountValueEl) {
       if (currentTier) {
-        appliedEl.style.display = 'block';
-        labelEl.textContent = currentTier.label;
+        const amount = Math.round(cart.total_price * currentTier.pct / 100);
+        discountLabelEl.textContent = `Bundle discount (${currentTier.pct}% off)`;
+        discountValueEl.textContent = `− ${formatMoney(amount)}`;
+        discountRowEl.style.display = 'flex';
       } else {
-        appliedEl.style.display = 'none';
+        discountRowEl.style.display = 'none';
       }
     }
 

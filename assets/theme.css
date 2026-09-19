@@ -1450,6 +1450,20 @@ body:not(.is-touch) .nav-item--mega:hover .nav-chevron,
   font-weight: 400;
 }
 
+.cart-discount-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--espresso-lt);
+}
+
+.cart-discount-row__value {
+  font-weight: 600;
+  color: var(--sage);
+}
+
 .discount-tag {
   display: inline-flex;
   align-items: center;
