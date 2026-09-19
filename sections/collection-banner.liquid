@@ -24,7 +24,6 @@
 {%- assign cb_position = section.settings.text_position | default: 'middle' -%}
 {%- assign cb_align    = section.settings.text_align | default: 'center' -%}
 {%- assign cb_size     = section.settings.heading_size | default: 'large' -%}
-{%- assign cb_font     = section.settings.heading_font | default: 'heading' -%}
 {%- assign cb_color    = section.settings.text_color | default: '#FFFFFF' -%}
 
 <section
@@ -49,7 +48,7 @@
   {% if section.settings.show_heading != false %}
     <div class="collection-banner__content collection-banner__content--{{ cb_align }}">
       <h1
-        class="collection-banner__heading collection-banner__heading--{{ cb_size }} collection-banner__heading--font-{{ cb_font }}"
+        class="collection-banner__heading collection-banner__heading--{{ cb_size }}"
         style="color: {{ cb_color }};"
       >{{ section.settings.heading | default: collection.title }}</h1>
       {% if section.settings.subheading != blank %}
@@ -83,11 +82,6 @@
       "info": "Leave blank to use the collection's title." },
     { "type": "text", "id": "subheading", "label": "Subheading",
       "info": "Optional. Leave blank to hide." },
-    { "type": "select", "id": "heading_font", "label": "Heading Font",
-      "options": [
-        { "value": "heading", "label": "Heading font" },
-        { "value": "body",    "label": "Body font" }
-      ], "default": "heading" },
     { "type": "select", "id": "heading_size", "label": "Heading Size",
       "options": [
         { "value": "small",  "label": "Small" },
