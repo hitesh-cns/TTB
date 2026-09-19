@@ -153,7 +153,12 @@
           ${item.image ? `<img src="${item.image}" alt="${escHtml(item.product_title)}" loading="lazy">` : ''}
         </div>
         <div class="cart-item__info">
-          <p class="cart-item__title">${escHtml(item.product_title)}</p>
+          <div class="cart-item__head">
+            <p class="cart-item__title">${escHtml(item.product_title)}</p>
+            <button type="button" class="cart-item__remove" data-key="${item.key}" aria-label="Remove item">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
+            </button>
+          </div>
           ${item.variant_title && item.variant_title !== 'Default Title' ? `<p class="cart-item__variant">${escHtml(item.variant_title)}</p>` : ''}
           <div class="cart-item__controls">
             <div class="cart-item__qty">
@@ -165,9 +170,6 @@
           </div>
           ${savingsHtml}
         </div>
-        <button type="button" class="cart-item__remove" data-key="${item.key}" aria-label="Remove item">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
-        </button>
       `;
       // Insert before emptyEl so empty state stays at the bottom of the DOM
       if (emptyEl && emptyEl.parentNode === itemsEl) {
