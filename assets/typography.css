@@ -1,8 +1,8 @@
 :root {
-  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  --font-body: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'TTB Rupee', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body: 'TTB Rupee', 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-ui: var(--font-body);
-  --font-numeric: 'TTB Rupee', 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-numeric: var(--font-body);
 
   --t-micro: 11px;
   --t-caption: 12px;
@@ -212,9 +212,9 @@ body {
 }
 
 .cart-item__title {
-  font-family: var(--font-display);
-  font-size: var(--t-d5);
-  font-weight: var(--fw-display);
+  font-family: var(--font-body);
+  font-size: var(--t-ui);
+  font-weight: var(--fw-ui);
 }
 
 .cart-item__variant {

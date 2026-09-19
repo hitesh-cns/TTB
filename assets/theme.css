@@ -9141,39 +9141,13 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 #cart-drawer .cart-item__remove:hover,
 #cart-drawer .cart-item__remove:focus { color: #000; outline: none; }
 #cart-drawer .cart-item__price-was {
-  text-decoration: line-through; opacity: 0.45; font-weight: 400; margin-right: 6px;
+  text-decoration: line-through; opacity: 0.45; margin-right: 6px;
 }
-#cart-drawer .cart-item__price-now { font-weight: 600; }
 #cart-drawer .cart-item__savings {
   display: block; width: 100%; margin-top: 3px;
-  font-size: 11px; line-height: 1.3; letter-spacing: 0.02em; color: #1c7a4a;
+  font-size: 11px; line-height: 1.3; color: #1c7a4a;
 }
 #cart-drawer #cart-discount-row span:last-child { color: #1c7a4a; }
-
-/* Price typography — .cart-item__price used var(--font-display), a
-   decorative serif (Cormorant Garamond) that doesn't carry the ₹
-   glyph (U+20B9), so it was silently falling back elsewhere in that
-   font's stack. Route cart prices through the body font instead,
-   which is the theme's normal numeral typeface, with an explicit
-   fallback tail so ₹ always has a home. There is no .cart-subtotal-value
-   class in this theme — the subtotal's value element is unclassed,
-   identified only by #cart-subtotal-price — so that ID is targeted
-   directly for the bold weight instead of a placeholder class. */
-#cart-drawer .cart-item__price,
-#cart-drawer .cart-item__price-was,
-#cart-drawer .cart-item__price-now,
-#cart-drawer #cart-discount-row span,
-#cart-drawer .cart-subtotal span {
-  font-family: var(--font-body), "Helvetica Neue", Arial, sans-serif;
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1, "lnum" 1;
-  letter-spacing: 0;
-  font-weight: 500;
-}
-#cart-drawer .cart-item__price-now,
-#cart-drawer #cart-subtotal-price {
-  font-weight: 600;
-}
 
 /* always-visible scroll indicator */
 #cart-drawer .cart-scrollbar {
