@@ -28,7 +28,7 @@
   --price-sale:   #E8775A;   /* coral/salmon for sale prices */
 
   --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body:    'DM Sans', 'Jost', 'Helvetica Neue', sans-serif;
+  --font-body:    'DM Sans', 'Helvetica Neue', Arial, sans-serif;
 
   --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --transition-slow: 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -3233,8 +3233,7 @@ a.footer-contact-item:hover { color: var(--ivory); }
   margin-bottom: 12px;
   max-width: 720px;
 }
-.collection-banner__heading--font-heading { font-family: var(--font-display); font-style: italic; }
-.collection-banner__heading--font-body    { font-family: var(--font-body); font-style: normal; font-weight: 600; }
+.collection-banner__heading--font-heading { font-style: italic; }
 
 .collection-banner__heading--small  { font-size: clamp(22px, 4vw, 29px); }
 .collection-banner__heading--medium { font-size: clamp(29px, 5vw, 42px); }
@@ -7318,20 +7317,33 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
 
   /* Title */
   .product__title,
-  .product-title,
   h1.product__title {
     font-size: 20px !important;
     margin-bottom: 4px !important;
     margin-top: 0 !important;
     line-height: 1.2 !important;
   }
+  /* .product-title split out from the group above: font-size !important
+     removed here so typography.css's --t-d3 token wins instead (Step 5) —
+     margin/line-height stay important and unchanged. */
+  .product-title {
+    margin-bottom: 4px !important;
+    margin-top: 0 !important;
+    line-height: 1.2 !important;
+  }
 
   /* Price */
-  .price,
   .product__price,
   .price-wrapper,
   .price__container {
     font-size: 16px !important;
+    margin-bottom: 8px !important;
+    margin-top: 0 !important;
+  }
+  /* .price split out from the group above: font-size !important removed
+     here so typography.css's shared price rule wins instead (Step 5) —
+     margins stay important and unchanged. */
+  .price {
     margin-bottom: 8px !important;
     margin-top: 0 !important;
   }

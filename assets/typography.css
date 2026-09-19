@@ -1,0 +1,298 @@
+:root {
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-ui: var(--font-body);
+  --font-numeric: 'TTB Rupee', 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+
+  --t-micro: 11px;
+  --t-caption: 12px;
+  --t-small: 13px;
+  --t-ui: 14px;
+  --t-body: 16px;
+  --t-lead: 18px;
+
+  --t-d5: 18px;
+  --t-d4: 24px;
+  --t-d3: clamp(26px, 3.2vw, 38px);
+  --t-d2: clamp(30px, 4.2vw, 48px);
+  --t-d1: clamp(40px, 6vw, 72px);
+
+  --t-price-lg: 24px;
+  --t-price-md: 17px;
+  --t-price-sm: 15px;
+
+  --fw-display-hero: 300;
+  --fw-display: 400;
+  --fw-body: 400;
+  --fw-ui: 500;
+  --fw-strong: 600;
+
+  --ls-upper-sm: 0.14em;
+  --ls-upper-md: 0.10em;
+  --ls-display-lg: -0.01em;
+}
+
+.price, .cpc-price, .cpc-price--compare, .product-price,
+.cart-item__price, .cart-item__price-was, .cart-item__price-now,
+#cart-drawer .cart-subtotal span, #cart-discount-row span,
+.size-table td, .size-table--popup td {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  font-weight: var(--fw-body);
+}
+
+.announcement-item {
+  font-size: var(--t-small);
+  font-weight: var(--fw-ui);
+  letter-spacing: var(--ls-upper-md);
+  text-transform: uppercase;
+}
+
+.nav-link {
+  font-size: var(--t-small);
+  font-weight: var(--fw-ui);
+  letter-spacing: var(--ls-upper-md);
+  text-transform: uppercase;
+}
+
+.mega-panel__title {
+  font-family: var(--font-display);
+  font-size: var(--t-d4);
+  font-weight: var(--fw-display);
+  letter-spacing: 0;
+}
+
+.mega-panel__eyebrow {
+  font-size: var(--t-micro);
+  font-weight: var(--fw-strong);
+  letter-spacing: var(--ls-upper-sm);
+  text-transform: uppercase;
+}
+
+.mobile-nav-link {
+  font-size: var(--t-body);
+  font-weight: var(--fw-body);
+}
+
+.product-breadcrumb {
+  font-size: var(--t-caption);
+  font-weight: var(--fw-body);
+}
+
+.hero-heading {
+  font-family: var(--font-display);
+  font-size: var(--t-d1);
+  font-weight: var(--fw-display-hero);
+  letter-spacing: var(--ls-display-lg);
+}
+
+.hero-subheading {
+  font-size: var(--t-lead);
+  font-weight: var(--fw-body);
+}
+
+.btn {
+  font-family: var(--font-ui);
+  font-size: var(--t-small);
+  font-weight: var(--fw-ui);
+  letter-spacing: var(--ls-upper-md);
+  text-transform: uppercase;
+}
+
+.btn--add-to-cart {
+  font-size: var(--t-ui);
+}
+
+.section-heading {
+  font-family: var(--font-display);
+  font-size: var(--t-d2);
+  font-weight: var(--fw-display);
+  letter-spacing: 0;
+}
+
+.section-eyebrow {
+  font-size: var(--t-caption);
+  font-weight: var(--fw-strong);
+  letter-spacing: var(--ls-upper-sm);
+  text-transform: uppercase;
+}
+
+.cpc-title {
+  font-family: var(--font-body);
+  font-size: var(--t-ui);
+  font-weight: var(--fw-body);
+}
+
+.cpc-price {
+  font-size: var(--t-price-sm);
+  font-weight: var(--fw-strong);
+}
+
+.cpc-price--compare {
+  font-size: var(--t-price-sm);
+  font-weight: var(--fw-body);
+  text-decoration: line-through;
+  color: var(--espresso-lt);
+}
+
+.collection-banner__heading {
+  font-family: var(--font-display);
+  font-size: var(--t-d3);
+  font-weight: var(--fw-display);
+}
+
+.collection-banner__subheading {
+  font-size: var(--t-body);
+  font-weight: var(--fw-body);
+}
+
+.coll-filter-toggle {
+  font-size: var(--t-micro);
+  font-weight: var(--fw-strong);
+  letter-spacing: var(--ls-upper-sm);
+  text-transform: uppercase;
+}
+
+.collection-sort {
+  font-size: var(--t-small);
+  font-weight: var(--fw-body);
+  letter-spacing: 0;
+}
+
+.product-title {
+  font-family: var(--font-display);
+  font-size: var(--t-d3);
+  font-weight: var(--fw-display);
+}
+
+.product-price {
+  font-size: var(--t-price-lg);
+  font-weight: var(--fw-strong);
+}
+
+.option-label {
+  font-size: var(--t-small);
+  font-weight: var(--fw-ui);
+  letter-spacing: 0;
+}
+
+.accordion-trigger {
+  font-size: var(--t-ui);
+  font-weight: var(--fw-ui);
+  letter-spacing: var(--ls-upper-md);
+  text-transform: uppercase;
+}
+
+.accordion-body {
+  font-size: var(--t-body);
+  font-weight: var(--fw-body);
+}
+
+.size-table {
+  font-size: var(--t-small);
+  font-weight: var(--fw-body);
+}
+
+.size-table--popup {
+  font-size: var(--t-ui);
+  font-weight: var(--fw-body);
+}
+
+.cart-drawer__title {
+  font-family: var(--font-display);
+  font-size: var(--t-d4);
+  font-weight: var(--fw-display);
+}
+
+.cart-item__title {
+  font-family: var(--font-display);
+  font-size: var(--t-d5);
+  font-weight: var(--fw-display);
+}
+
+.cart-item__variant {
+  font-size: var(--t-caption);
+  font-weight: var(--fw-body);
+}
+
+.cart-item__price {
+  font-size: var(--t-price-md);
+  font-weight: var(--fw-strong);
+}
+
+.footer-col-title {
+  font-size: var(--t-micro);
+  font-weight: var(--fw-strong);
+  letter-spacing: var(--ls-upper-sm);
+  text-transform: uppercase;
+}
+
+.footer-col-link {
+  font-size: var(--t-ui);
+  font-weight: var(--fw-body);
+}
+
+.footer-newsletter__label {
+  font-size: var(--t-micro);
+  font-weight: var(--fw-strong);
+  letter-spacing: var(--ls-upper-sm);
+  text-transform: uppercase;
+}
+
+.footer-nl-input {
+  font-size: var(--t-ui);
+  font-weight: var(--fw-body);
+}
+
+.trust-badge {
+  font-size: var(--t-small);
+  font-weight: var(--fw-body);
+  letter-spacing: 0;
+}
+
+.auth-input {
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  font-weight: var(--fw-body);
+}
+
+.blog-featured__title {
+  font-family: var(--font-display);
+  font-size: var(--t-d3);
+  font-weight: var(--fw-display);
+}
+
+.article-hero__title {
+  font-family: var(--font-display);
+  font-size: var(--t-d3);
+  font-weight: var(--fw-display);
+}
+
+.rte p, .article-content p {
+  font-size: var(--t-body);
+  font-weight: var(--fw-body);
+  line-height: 1.7;
+}
+
+.page-404 {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.page-404__title {
+  font-family: var(--font-display);
+  font-size: var(--t-d2);
+  font-weight: var(--fw-display);
+}
+
+.page-404__text {
+  font-size: var(--t-body);
+  font-weight: var(--fw-body);
+}
