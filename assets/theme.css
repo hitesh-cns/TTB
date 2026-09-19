@@ -1625,7 +1625,7 @@ body:not(.is-touch) .nav-item--mega:hover .nav-chevron,
 .footer-newsletter { margin-top: 4px; }
 .footer-newsletter__label {
   font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+  text-transform: uppercase; color: var(--ivory); margin-bottom: 10px;
 }
 .footer-nl-form {}
 .footer-nl-wrap {
@@ -1655,7 +1655,7 @@ body:not(.is-touch) .nav-item--mega:hover .nav-chevron,
 .footer-nav-col {}
 .footer-col-title {
   font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--gold);
+  text-transform: uppercase; color: var(--ivory);
   margin-bottom: 18px;
 }
 .footer-col-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
@@ -1677,7 +1677,7 @@ body:not(.is-touch) .nav-item--mega:hover .nav-chevron,
 }
 a.footer-contact-item:hover { color: var(--ivory); }
 .footer-contact-item--addr { line-height: 1.5; }
-.footer-contact-item svg { flex-shrink: 0; margin-top: 2px; color: var(--gold); }
+.footer-contact-item svg { flex-shrink: 0; margin-top: 2px; color: rgba(255, 255, 255, 0.65); }
 .footer-contact-hours { font-size: 12px; color: rgba(255, 255, 255, 0.4); margin-top: 6px; }
 .footer-app-links { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .footer-app-btn {
@@ -8092,17 +8092,6 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
     border-bottom: none;
   }
 
-  /* Footer column headings: --gold resolves to pure black in this
-     theme's palette, rendering as black-on-near-black (#111111) —
-     unreadable. Also true on desktop (flagged, not fixed there since
-     it's a shared CSS variable, not a mobile-only rule); scoped to a
-     light colour here so mobile is at least readable. */
-  .footer-col-title { color: var(--ivory); }
-
-  /* Newsletter label: same --gold-is-black issue as the column
-     headings above — also true on desktop (flagged, not fixed there). */
-  .footer-newsletter__label { color: var(--ivory); }
-
   /* Footer bottom bar: force the same dark fill directly on the bar
      itself so it unambiguously reads as part of the footer regardless
      of any stacking/inheritance edge case, with no gap before it */
@@ -8485,8 +8474,6 @@ html, body { margin-bottom: 0; padding-bottom: 0; }
      the existing rule), headings readable, bottom bar attached, and
      newsletter button visible on the dark background */
   .footer-trust__item { flex-direction: column; text-align: center; align-items: center; }
-  .footer-col-title { color: var(--ivory); }
-  .footer-newsletter__label { color: var(--ivory); }
   .footer-bottom { background: #111111; margin: 0; }
   .footer-bottom .footer-legal-links { display: none; }
   .footer-nl-btn { min-height: 44px; background: var(--ivory); color: var(--espresso); }
