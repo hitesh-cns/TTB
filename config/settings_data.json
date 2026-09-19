@@ -174,7 +174,7 @@
       "cart-drawer": {
         "type": "cart-drawer",
         "settings": {
-          "subtotal_label": "Subtotal",
+          "subtotal_label": "Total",
           "checkout_btn": "Proceed to Checkout",
           "empty_cta": "Start Shopping",
           "title": "Your Cart",

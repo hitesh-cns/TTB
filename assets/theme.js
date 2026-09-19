@@ -116,6 +116,8 @@
 
     // Remove all existing cart-item elements first
     itemsEl && itemsEl.querySelectorAll('.cart-item').forEach(el => el.remove());
+    const existingScrollSubtotal = document.getElementById('cart-scroll-subtotal');
+    existingScrollSubtotal && existingScrollSubtotal.remove();
 
     if (!cart.item_count) {
       // Cart is empty: show empty state, hide footer
@@ -178,6 +180,21 @@
         itemsEl && itemsEl.appendChild(itemEl);
       }
     });
+
+    // Subtotal row that scrolls with the products — last child of
+    // #cart-drawer-items, sum of the line prices before the bundle
+    // discount (the footer's own Total row applies that separately).
+    if (itemsEl) {
+      const scrollSubtotalEl = document.createElement('div');
+      scrollSubtotalEl.className = 'cart-scroll-subtotal';
+      scrollSubtotalEl.id = 'cart-scroll-subtotal';
+      const scrollSubtotalAmount = cart.items_subtotal_price != null ? cart.items_subtotal_price : cart.total_price;
+      scrollSubtotalEl.innerHTML = `
+        <span>Subtotal</span>
+        <span id="cart-scroll-subtotal-value">${formatMoney(scrollSubtotalAmount)}</span>
+      `;
+      itemsEl.appendChild(scrollSubtotalEl);
+    }
 
     // Attach quantity button handlers
     itemsEl && itemsEl.querySelectorAll('.qty-btn').forEach(btn => {
@@ -337,25 +354,33 @@
       }
     }
 
-    // -- Discount amount row (real currency, shown above Subtotal) --
-    // Subtotal itself stays the pre-discount figure — the discount is
-    // applied at checkout via the code (see checkoutBtns below); this
-    // row is just the customer-facing saving, not a recalculated total.
-    // No percentage or discount code is shown here, just "Discount".
+    // -- Discount amount row (real currency, shown above Total) --
+    // The discount is applied at checkout via the code (see checkoutBtns
+    // below); this row is the customer-facing saving. No percentage or
+    // discount code is shown here, just "Discount".
+    const discountAmount = cart.total_discount > 0
+      ? cart.total_discount
+      : (currentTier ? Math.round(cart.total_price * currentTier.pct / 100) : 0);
+
     const discountRowEl   = document.getElementById('cart-discount-row');
     const discountLabelEl = document.getElementById('cart-discount-row-label');
     const discountValueEl = document.getElementById('cart-discount-row-value');
     if (discountRowEl && discountLabelEl && discountValueEl) {
-      const amount = cart.total_discount > 0
-        ? cart.total_discount
-        : (currentTier ? Math.round(cart.total_price * currentTier.pct / 100) : 0);
-      if (amount > 0) {
+      if (discountAmount > 0) {
         discountLabelEl.textContent = 'Discount';
-        discountValueEl.textContent = '-' + formatMoney(amount);
+        discountValueEl.textContent = '-' + formatMoney(discountAmount);
         discountRowEl.style.display = 'flex';
       } else {
         discountRowEl.style.display = 'none';
       }
+    }
+
+    // -- Footer "Total" row — the discounted amount, not the raw subtotal --
+    const footerTotalEl = document.getElementById('cart-subtotal-price');
+    if (footerTotalEl) {
+      const base = (cart.items_subtotal_price != null ? cart.items_subtotal_price : cart.total_price);
+      const total = Math.max(0, base - discountAmount);
+      footerTotalEl.textContent = formatMoney(total);
     }
 
     // -- Pre-fill discount code in checkout URL --

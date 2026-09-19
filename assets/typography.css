@@ -213,7 +213,7 @@ body {
 
 .cart-item__title {
   font-family: var(--font-body);
-  font-size: var(--t-ui);
+  font-size: var(--t-body);
   font-weight: var(--fw-ui);
 }
 
@@ -224,7 +224,7 @@ body {
 
 .cart-item__price {
   font-size: var(--t-price-md);
-  font-weight: var(--fw-strong);
+  font-weight: var(--fw-ui);
 }
 
 .footer-col-title {
@@ -295,4 +295,21 @@ body {
 .page-404__text {
   font-size: var(--t-body);
   font-weight: var(--fw-body);
+}
+
+#cart-drawer .cart-scroll-subtotal {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0 4px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-family: var(--font-body);
+  font-size: var(--t-ui);
+  font-weight: var(--fw-ui);
+}
+#cart-drawer #cart-scroll-subtotal-value {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: 0;
 }
